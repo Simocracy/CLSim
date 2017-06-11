@@ -21,7 +21,7 @@ namespace Simocracy.CLSim
 		{
 			// Setup logger
 			SimpleLog.SetLogFile(logDir: "SSS-Log", writeText: true, check: false);
-			SimpleLog.Check($"{ProgramName} {ProgramVersion} started");
+			SimpleLog.Check($"{Globals.ProgramName} {Globals.ProgramVersion} started");
 
 			// Load Settings
 			//Settings.LoadSettings();
@@ -40,24 +40,9 @@ namespace Simocracy.CLSim
 			}
 
 			app.Shutdown();
-			SimpleLog.Info($"{ProgramName} {ProgramVersion} closed");
+			SimpleLog.Info($"{Globals.ProgramName} {Globals.ProgramVersion} closed");
 			SimpleLog.Flush();
 			SimpleLog.StopLogging();
 		}
-
-		public static string ProgramVersion
-		{
-			get
-			{
-				var version = Assembly.GetExecutingAssembly().GetName().Version;
-				var versionString = $"{version.Major}.{version.Minor}.{version.Revision}";
-#if DEBUG
-				versionString = $"{versionString} Debug Build";
-#endif
-				return versionString;
-			}
-		}
-
-		public static string ProgramName => ((AssemblyTitleAttribute)Assembly.GetExecutingAssembly().GetCustomAttribute(typeof(AssemblyTitleAttribute))).Title;
 	}
 }

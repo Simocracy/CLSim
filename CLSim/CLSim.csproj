@@ -53,6 +53,10 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Globals.cs" />
+    <Compile Include="Simulation\FootballLeague.cs" />
+    <Compile Include="Simulation\FootballMatch.cs" />
+    <Compile Include="Simulation\FootballTeam.cs" />
     <Page Include="App.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
