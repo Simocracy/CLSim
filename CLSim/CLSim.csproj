@@ -54,6 +54,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Globals.cs" />
+    <Compile Include="Simulation\ChampionsLeague.cs" />
     <Compile Include="Simulation\FootballLeague.cs" />
     <Compile Include="Simulation\FootballMatch.cs" />
     <Compile Include="Simulation\FootballTeam.cs" />

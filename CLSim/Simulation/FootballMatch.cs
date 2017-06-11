@@ -36,6 +36,23 @@ namespace Simocracy.CLSim.Simulation
 
 		#endregion
 
+		#region Constructors
+
+		/// <summary>
+		/// Creates a new match
+		/// </summary>
+		/// <param name="teamA">Team A (Home)</param>
+		/// <param name="teamB">Team B (Away)</param>
+		public FootballMatch(FootballTeam teamA, FootballTeam teamB)
+		{
+			TeamA = teamA;
+			TeamB = teamB;
+
+			Reset();
+		}
+
+		#endregion
+
 		#region Properties
 
 		/// <summary>
@@ -66,7 +83,7 @@ namespace Simocracy.CLSim.Simulation
 		/// <summary>
 		/// Match name
 		/// </summary>
-		public string Name { get; private set; }
+		public string Name => $"{TeamA}-{TeamB}";
 
 		#endregion
 
@@ -83,7 +100,6 @@ namespace Simocracy.CLSim.Simulation
 			ResultA = ResultB;
 			TeamB = oldTeamA;
 			ResultB = oldResultA;
-			Name = $"{TeamA}-{TeamB}";
 		}
 
 		public override string ToString()

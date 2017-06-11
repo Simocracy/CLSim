@@ -17,6 +17,11 @@ namespace Simocracy.CLSim.Simulation
 		public string Name { get; set; }
 
 		/// <summary>
+		/// Association/Nationality/State of Team
+		/// </summary>
+		public string State { get; set; }
+
+		/// <summary>
 		/// Team strength
 		/// </summary>
 		public int Strength { get; set; }

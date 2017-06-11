@@ -25,6 +25,29 @@ namespace Simocracy.CLSim.Simulation
 
 		#endregion
 
+		#region Constuctor
+
+		/// <summary>
+		/// Creates a new group
+		/// </summary>
+		/// <param name="id">Group ID</param>
+		/// <param name="teams">Teams</param>
+		public FootballLeague(string id, params FootballTeam[] teams)
+		{
+			ID = id;
+			Teams = new ObservableCollection<FootballTeam>(teams);
+
+			SimpleLog.Log($"Create Football League: {ToString()}");
+
+			Matches = new ObservableCollection<FootballMatch>();
+			CreateMatches();
+			CreateTable();
+
+			SimpleLog.Log($"Football League created with ID={ID}");
+		}
+
+		#endregion
+
 		#region Properties
 
 		/// <summary>
@@ -80,7 +103,7 @@ namespace Simocracy.CLSim.Simulation
 				foreach (var teamB in Teams)
 				{
 					if (teamA != teamB)
-						Matches.Add(new FootballMatch() {TeamA = teamA, TeamB = teamB});
+						Matches.Add(new FootballMatch(teamA, teamB));
 				}
 			}
 
@@ -198,7 +221,7 @@ namespace Simocracy.CLSim.Simulation
 		/// Gibt einen <see cref="String"/> zurück, der das Objekt darstellt.
 		/// </summary>
 		/// <returns>Objekt als String</returns>
-		public override string ToString()
+		public sealed override string ToString()
 		{
 			return $"ID={ID}, TeamCount={TeamCount}";
 		}
