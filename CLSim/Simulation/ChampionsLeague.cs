@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using SimpleLogger;
 
 namespace Simocracy.CLSim.Simulation
 {
@@ -60,7 +61,7 @@ namespace Simocracy.CLSim.Simulation
 		public ObservableCollection<FootballTeam> AllTeamsOrdered
 		{
 			get => _AllTeamsOrdered;
-			set
+			private set
 			{
 				_AllTeamsOrdered = value;
 				Notify();
@@ -68,7 +69,7 @@ namespace Simocracy.CLSim.Simulation
 		}
 
 		/// <summary>
-		/// CL Groups from A to H
+		/// CL Groups from A to H, all groups should have 5 members!
 		/// </summary>
 		public ObservableCollection<FootballLeague> Groups
 		{
@@ -128,23 +129,23 @@ namespace Simocracy.CLSim.Simulation
 		}
 
 		/// <summary>
-		/// Validate the groups (no multiple teams from one state) and tries to switch teams between groups
+		/// Validate the groups (no multiple teams from one state) and tries to switch teams between groups. Returns for each group if success.
 		/// </summary>
-		private bool[] ValidateGroups()
+		public bool[] ValidateGroups()
 		{
-			bool[] isNationValid = new bool[8];
+			bool[] isNationValid = new bool[Groups.Count];
 			bool reValidNeeded = false;
-			for(int i = 0; i < GroupCount; i++)
+			for(int i = 0; i < Groups.Count; i++)
 			{
 				var group = Groups[i];
-				isNationValid[i] = AreSameStatesInGroup(group);
+				isNationValid[i] = !AreSameStatesInGroup(group);
 				if(isNationValid[i])
 					continue;
 
 				// Switch teams
-				for(int teamA = 0; teamA < TeamsPerGroup - 1; teamA++)
+				for(int teamA = 0; teamA < group.TeamCount - 1; teamA++)
 				{
-					for(int teamB = teamA + 1; teamB < TeamsPerGroup; teamB++)
+					for(int teamB = teamA + 1; teamB < group.TeamCount; teamB++)
 					{
 						var res = SwitchTeamGroups(i, teamA, teamB);
 						if(!reValidNeeded)
@@ -153,7 +154,7 @@ namespace Simocracy.CLSim.Simulation
 				}
 
 				if(reValidNeeded)
-					isNationValid[i] = AreSameStatesInGroup(group);
+					isNationValid[i] = !AreSameStatesInGroup(group);
 			}
 
 			return isNationValid;
@@ -161,6 +162,7 @@ namespace Simocracy.CLSim.Simulation
 
 		/// <summary>
 		/// Switches teams between groups. If <paramref name="teamA"/> und <paramref name="teamB"/> are from same state, then switch <paramref name="teamA"/> to another group.
+		/// Returns true if teams switched.
 		/// </summary>
 		/// <param name="groupNo">Base group number (group A = 0)</param>
 		/// <param name="teamA">Position of Team A</param>
@@ -171,7 +173,7 @@ namespace Simocracy.CLSim.Simulation
 
 			// Check
 			if(group.Teams[teamA].State != group.Teams[teamB].State)
-				return true;
+				return false;
 
 			// Previous group
 			if(groupNo > 0 && Groups[groupNo - 1].Teams[teamA].State != group.Teams[teamA].State)
@@ -179,13 +181,15 @@ namespace Simocracy.CLSim.Simulation
 				var newTeam = Groups[groupNo - 1].Teams[teamA];
 				Groups[groupNo - 1].Teams[teamA] = group.Teams[teamA];
 				group.Teams[teamA] = newTeam;
+				SimpleLog.Info($"Switched teams in groups {Groups[groupNo - 1].ID} and  {group.ID}");
 			}
 			// Next group
-			else if(groupNo < 7 && Groups[groupNo + 1].Teams[teamA].State != group.Teams[teamA].State)
+			else if(groupNo < Groups.Count-1 && Groups[groupNo + 1].Teams[teamA].State != group.Teams[teamA].State)
 			{
 				var newTeam = Groups[groupNo + 1].Teams[teamA];
 				Groups[groupNo + 1].Teams[teamA] = group.Teams[teamA];
 				group.Teams[teamA] = newTeam;
+				SimpleLog.Info($"Switched teams in groups {group.ID} and {Groups[groupNo + 1].ID}");
 			}
 			else return false;
 
@@ -198,8 +202,8 @@ namespace Simocracy.CLSim.Simulation
 		/// <param name="group">Group</param>
 		private bool AreSameStatesInGroup(FootballLeague group)
 		{
-			for(int i = 0; i < TeamsPerGroup - 1; i++)
-			for(int j = i + 1; j < TeamsPerGroup; j++)
+			for(int i = 0; i < group.TeamCount - 1; i++)
+			for(int j = i + 1; j < group.TeamCount; j++)
 				if(group.Teams[i].State == group.Teams[j].State)
 					return true;
 			return false;

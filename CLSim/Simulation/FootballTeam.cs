@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Simocracy.CLSim.Simulation
@@ -11,6 +12,9 @@ namespace Simocracy.CLSim.Simulation
 	[DebuggerDisplay("Team={Name}, Strength={Strength}")]
 	public class FootballTeam
 	{
+
+		#region Properties
+
 		/// <summary>
 		/// Team name
 		/// </summary>
@@ -26,9 +30,55 @@ namespace Simocracy.CLSim.Simulation
 		/// </summary>
 		public int Strength { get; set; }
 
+		#endregion
+
+		#region Constructor
+
+		/// <summary>
+		/// Creates a football team
+		/// </summary>
+		/// <param name="inputStr">Input string with name and state</param>
+		/// <param name="strength">Team strength</param>
+		public FootballTeam(string inputStr, string strength)
+		{
+			var regexMatch = Regex.Match(inputStr, @"(\{\{[^\}]+\}\}) (.+)");
+			SetupTeam(regexMatch.Groups[2].Value, regexMatch.Groups[1].Value, Int32.Parse(strength));
+		}
+
+		/// <summary>
+		/// Creates a football team
+		/// </summary>
+		/// <param name="name">Team name</param>
+		/// <param name="state">Association/Nationality/State of Team</param>
+		/// <param name="strength">Team strength</param>
+		public FootballTeam(string name, string state, int strength)
+		{
+			SetupTeam(name, state, strength);
+		}
+
+		/// <summary>
+		/// Set ups a football team
+		/// </summary>
+		/// <param name="name">Team name</param>
+		/// <param name="state">Association/Nationality/State of Team</param>
+		/// <param name="strength">Team strength</param>
+		private void SetupTeam(string name, string state, int strength)
+		{
+			Name = name;
+			State = state;
+			Strength = strength;
+		}
+
+		#endregion
+
+		#region Methods
+
 		public override string ToString()
 		{
 			return $"Team={Name}, Strength={Strength}";
 		}
+
+		#endregion
+
 	}
 }

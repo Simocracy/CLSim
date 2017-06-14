@@ -5,11 +5,15 @@ using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Controls;
 
 namespace Simocracy.CLSim
 {
 	public static class Globals
 	{
+
+		#region Global Constants
+
 		private static readonly ThreadLocal<Random> _Random = new ThreadLocal<Random>(() => new Random());
 		
 		/// <summary>
@@ -37,6 +41,9 @@ namespace Simocracy.CLSim
 		/// Returns the current program name
 		/// </summary>
 		public static string ProgramName => ((AssemblyTitleAttribute)Assembly.GetExecutingAssembly().GetCustomAttribute(typeof(AssemblyTitleAttribute))).Title;
+
+		#endregion
+
 
 	}
 }

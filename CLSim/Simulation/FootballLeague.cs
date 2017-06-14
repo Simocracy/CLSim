@@ -37,13 +37,13 @@ namespace Simocracy.CLSim.Simulation
 			ID = id;
 			Teams = new ObservableCollection<FootballTeam>(teams);
 
-			SimpleLog.Log($"Create Football League: {ToString()}");
+			SimpleLog.Info($"Create Football League: {ToString()}");
 
 			Matches = new ObservableCollection<FootballMatch>();
 			CreateMatches();
 			CreateTable();
 
-			SimpleLog.Log($"Football League created with ID={ID}");
+			SimpleLog.Info($"Football League created with ID={ID}");
 		}
 
 		#endregion
@@ -107,7 +107,7 @@ namespace Simocracy.CLSim.Simulation
 				}
 			}
 
-			SimpleLog.Log($"Matches Created in Football League ID={ID}");
+			SimpleLog.Info($"Matches Created in Football League ID={ID}");
 		}
 
 		/// <summary>
@@ -115,7 +115,7 @@ namespace Simocracy.CLSim.Simulation
 		/// </summary>
 		public void Simulate()
 		{
-			SimpleLog.Log($"Simulate Matches in Football League ID={ID}");
+			SimpleLog.Info($"Simulate Matches in Football League ID={ID}");
 			foreach(var match in Matches)
 				match.Simulate();
 		}
@@ -141,7 +141,7 @@ namespace Simocracy.CLSim.Simulation
 		/// </summary>
 		public void CalculateTable()
 		{
-			SimpleLog.Log($"Calculate Table in Football League ID={ID}");
+			SimpleLog.Info($"Calculate Table in Football League ID={ID}");
 			CreateTable();
 
 			foreach(var team in Teams)
