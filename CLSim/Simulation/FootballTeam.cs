@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace Simocracy.CLSim.Simulation
 {
 
-	[DebuggerDisplay("Team={Name}, Strength={Strength}")]
+	[DebuggerDisplay("Team=" + nameof(FullName) + ", Strength={" + nameof(Strength) + "}")]
 	public class FootballTeam
 	{
 
@@ -29,6 +29,11 @@ namespace Simocracy.CLSim.Simulation
 		/// Team strength
 		/// </summary>
 		public int Strength { get; set; }
+
+		/// <summary>
+		/// Full name of the team with state
+		/// </summary>
+		public string FullName => $"{{{{{State}}}}} {Name}";
 
 		#endregion
 
@@ -75,7 +80,7 @@ namespace Simocracy.CLSim.Simulation
 
 		public override string ToString()
 		{
-			return $"Team={Name}, Strength={Strength}";
+			return $"Team={FullName}, Strength={Strength}";
 		}
 
 		#endregion

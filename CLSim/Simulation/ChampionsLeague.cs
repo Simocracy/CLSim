@@ -99,33 +99,35 @@ namespace Simocracy.CLSim.Simulation
 		#region Group Drawing
 
 		/// <summary>
-		/// Draw groups
+		/// Draw groups. If validation not succesfull, <paramref name="tryCount"/> times will be tried.
+		/// The last executed try will be used for match recreation.
 		/// </summary>
-		/// <param name="recursiveCount">Try-Count</param>
-		public void DrawGroups(int recursiveCount = 0)
+		/// <param name="tryCount">Draw tries</param>
+		public void DrawGroups(int tryCount = 1)
 		{
-			var ordered = AllTeamsRaw.OrderBy(x => Globals.Random.Next());
-			AllTeamsOrdered = new ObservableCollection<FootballTeam>(ordered);
-
-			Groups = new ObservableCollection<FootballLeague>();
-			char groupID = 'A';
-			for(int i = 0; i < AllTeamsRaw.Count; i += 5)
+			for(int trie = 0; trie < tryCount; trie++)
 			{
-				Groups.Add(new FootballLeague(groupID.ToString(), AllTeamsOrdered[i], AllTeamsOrdered[i + 1], AllTeamsOrdered[i + 2], AllTeamsRaw[i + 3], AllTeamsRaw[i + 4]));
-				groupID = (char) (groupID + 1);
+				var ordered = AllTeamsRaw.OrderBy(x => Globals.Random.Next());
+				AllTeamsOrdered = new ObservableCollection<FootballTeam>(ordered);
+
+				Groups = new ObservableCollection<FootballLeague>();
+				char groupID = 'A';
+				for(int i = 0; i < AllTeamsRaw.Count; i += 5)
+				{
+					Groups.Add(new FootballLeague(groupID.ToString(), AllTeamsOrdered[i], AllTeamsOrdered[i + 1],
+						AllTeamsOrdered[i + 2], AllTeamsRaw[i + 3], AllTeamsRaw[i + 4]));
+					groupID = (char) (groupID + 1);
+				}
+
+				bool[] isNationValid = ValidateGroups();
+
+				IsGroupsSimulatable = isNationValid.Contains(false);
+
+				if(IsGroupsSimulatable)
+					break;
 			}
 
-			bool[] isNationValid = ValidateGroups();
-
-			// Restart if validation fails
-			IsGroupsSimulatable = true;
-			if(isNationValid.Contains(false))
-			{
-				if(recursiveCount < 5)
-					DrawGroups();
-				else
-					IsGroupsSimulatable = false;
-			}
+			ResetGroupMatches();
 		}
 
 		/// <summary>
@@ -161,7 +163,7 @@ namespace Simocracy.CLSim.Simulation
 		}
 
 		/// <summary>
-		/// Switches teams between groups. If <paramref name="teamA"/> und <paramref name="teamB"/> are from same state, then switch <paramref name="teamA"/> to another group.
+		/// Switches teams between groups. If <paramref name="teamA"/> and <paramref name="teamB"/> are from same state, then switch <paramref name="teamA"/> to another group.
 		/// Returns true if teams switched.
 		/// </summary>
 		/// <param name="groupNo">Base group number (group A = 0)</param>
@@ -207,6 +209,15 @@ namespace Simocracy.CLSim.Simulation
 				if(group.Teams[i].State == group.Teams[j].State)
 					return true;
 			return false;
+		}
+
+		/// <summary>
+		/// Resets the group matches und creates the new match plan
+		/// </summary>
+		public void ResetGroupMatches()
+		{
+			foreach(var g in Groups)
+				g.CreateMatches();
 		}
 
 		#endregion
