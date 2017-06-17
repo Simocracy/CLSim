@@ -14,7 +14,7 @@ namespace Simocracy.CLSim.Simulation
 	/// Football Match
 	/// </summary>
 	/// <remarks>By Laserdisc, adapted from Simocracy Sport Simulator</remarks>
-	[DebuggerDisplay("Match: {TeamA.Name} vs {TeamB.Name}")]
+	[DebuggerDisplay("Match:{" + nameof(Name) + "}")]
 	public class FootballMatch
 	{
 		#region Members
@@ -23,16 +23,16 @@ namespace Simocracy.CLSim.Simulation
 		private int _Minutes;
 		private int _Start;
 
-		private const int TORWART_A = 10;
-		private const int TORWART_B = 20;
-		private const int ABWEHR_A = 11;
-		private const int ABWEHR_B = 21;
-		private const int MITTELFELD_A = 12;
-		private const int MITTELFELD_B = 22;
-		private const int STURM_A = 13;
-		private const int STURM_B = 23;
-		private const int TOR_A = 14;
-		private const int TOR_B = 24;
+		private const int TorwartA = 10;
+		private const int TorwartB = 20;
+		private const int AbwehrA = 11;
+		private const int AbwehrB = 21;
+		private const int MittelfeldA = 12;
+		private const int MittelfeldB = 22;
+		private const int SturmA = 13;
+		private const int SturmB = 23;
+		private const int TorA = 14;
+		private const int TorB = 24;
 
 		#endregion
 
@@ -79,6 +79,16 @@ namespace Simocracy.CLSim.Simulation
 		/// Match date
 		/// </summary>
 		public DateTime Date { get; set; }
+
+		/// <summary>
+		/// Match stadium
+		/// </summary>
+		public string Stadium { get; set; }
+
+		/// <summary>
+		/// Match city (with Flag)
+		/// </summary>
+		public string Location { get; set; }
 
 		/// <summary>
 		/// Match name
@@ -129,46 +139,46 @@ namespace Simocracy.CLSim.Simulation
 			{
 				if(i == 45)
 				{
-					if(_Ball == TOR_A)
+					if(_Ball == TorA)
 						resA++;
-					else if(_Ball == TOR_B)
+					else if(_Ball == TorB)
 						resB++;
 					_Ball = _Start;
 				}
 
 				switch(_Ball)
 				{
-					case TORWART_A:
+					case TorwartA:
 						_Ball = Turn(TeamA.Strength, TeamB.Strength);
 						break;
-					case ABWEHR_A:
+					case AbwehrA:
 						_Ball = Turn(TeamA.Strength, TeamB.Strength);
 						break;
-					case MITTELFELD_A:
+					case MittelfeldA:
 						_Ball = Turn(TeamA.Strength, TeamB.Strength);
 						break;
-					case STURM_A:
+					case SturmA:
 						_Ball = Turn(TeamA.Strength, TeamB.Strength + TeamB.Strength / 2);
 						break;
-					case TOR_A:
+					case TorA:
 						resA++;
-						_Ball = MITTELFELD_B;
+						_Ball = MittelfeldB;
 						break;
-					case TORWART_B:
+					case TorwartB:
 						_Ball = Turn(TeamB.Strength, TeamA.Strength);
 						break;
-					case ABWEHR_B:
+					case AbwehrB:
 						_Ball = Turn(TeamB.Strength, TeamA.Strength);
 						break;
-					case MITTELFELD_B:
+					case MittelfeldB:
 						_Ball = Turn(TeamB.Strength, TeamA.Strength);
 						break;
-					case STURM_B:
+					case SturmB:
 						_Ball = Turn(TeamB.Strength, TeamA.Strength + TeamA.Strength / 2);
 						break;
-					case TOR_B:
+					case TorB:
 						resB++;
-						_Ball = MITTELFELD_A;
+						_Ball = MittelfeldA;
 						break;
 				}
 			}
@@ -197,22 +207,22 @@ namespace Simocracy.CLSim.Simulation
 			else
 				switch(_Ball)
 				{
-					case TORWART_A:
-						return STURM_B;
-					case ABWEHR_A:
-						return MITTELFELD_B;
-					case MITTELFELD_A:
-						return ABWEHR_B;
-					case STURM_A:
-						return TORWART_B;
-					case TORWART_B:
-						return STURM_A;
-					case ABWEHR_B:
-						return MITTELFELD_A;
-					case MITTELFELD_B:
-						return ABWEHR_A;
-					case STURM_B:
-						return TORWART_A;
+					case TorwartA:
+						return SturmB;
+					case AbwehrA:
+						return MittelfeldB;
+					case MittelfeldA:
+						return AbwehrB;
+					case SturmA:
+						return TorwartB;
+					case TorwartB:
+						return SturmA;
+					case AbwehrB:
+						return MittelfeldA;
+					case MittelfeldB:
+						return AbwehrA;
+					case SturmB:
+						return TorwartA;
 				}
 
 			return 0;
@@ -222,9 +232,9 @@ namespace Simocracy.CLSim.Simulation
 		{
 			int random = Globals.Random.Next(2);
 			if(random == 0)
-			{ _Start = MITTELFELD_B; return MITTELFELD_A; }
+			{ _Start = MittelfeldB; return MittelfeldA; }
 			if(random == 1)
-			{ _Start = MITTELFELD_A; return MITTELFELD_B; }
+			{ _Start = MittelfeldA; return MittelfeldB; }
 			else
 				return 0;
 		}

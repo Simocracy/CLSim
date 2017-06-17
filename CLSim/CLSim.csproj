@@ -53,6 +53,8 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Extensions\DataTableExtension.cs" />
+    <Compile Include="Extensions\FootballLeagueBaseComparer.cs" />
     <Compile Include="Globals.cs" />
     <Compile Include="Simulation\ChampionsLeague.cs" />
     <Compile Include="Simulation\FootballLeague.cs" />

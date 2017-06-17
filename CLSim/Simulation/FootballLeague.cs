@@ -8,242 +8,263 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Simocracy.CLSim.Extensions;
 
 namespace Simocracy.CLSim.Simulation
 {
-	/// <summary>
-	/// Football group simulation
-	/// </summary>
-	[DebuggerDisplay("TeamCount={" + nameof(TeamCount) + "}")]
-	public class FootballLeague : INotifyPropertyChanged
-	{
-		#region Members
+    /// <summary>
+    /// Football group simulation
+    /// </summary>
+    [DebuggerDisplay("TeamCount={" + nameof(TeamCount) + "}")]
+    public class FootballLeague : INotifyPropertyChanged
+    {
+        #region Constants
 
-		private ObservableCollection<FootballTeam> _Teams;
-		private ObservableCollection<FootballMatch> _Matches;
-		private DataTable _Table;
+        public const string TeamRow = "Team";
+        public const string MatchCountRow = "Matches";
+        public const string WinCountRow = "Win";
+        public const string DrawnCountRow = "Drawn";
+        public const string LoseCountRow = "Lose";
+        public const string GoalsForCountRow = "GoalsFor";
+        public const string GoalsAgainstCountRow = "GoalsAgainst";
+        public const string GoalDiffRow = "GoalDiff";
+        public const string PointsRow = "Points";
+        public const string DirectMatchPos = "DirectPos";
 
-		#endregion
+        #endregion
 
-		#region Constuctor
+        #region Members
 
-		/// <summary>
-		/// Creates a new group
-		/// </summary>
-		/// <param name="id">Group ID</param>
-		/// <param name="teams">Teams</param>
-		public FootballLeague(string id, params FootballTeam[] teams)
-		{
-			ID = id;
-			Teams = new ObservableCollection<FootballTeam>(teams);
+        private ObservableCollection<FootballTeam> _Teams;
+        private ObservableCollection<FootballMatch> _Matches;
+        private DataTable _Table;
 
-			SimpleLog.Info($"Create Football League: {ToString()}");
+        #endregion
 
-			Matches = new ObservableCollection<FootballMatch>();
-			CreateMatches();
-			CreateTable();
+        #region Constuctor
 
-			SimpleLog.Info($"Football League created with ID={ID}");
-		}
+        /// <summary>
+        /// Creates a new group
+        /// </summary>
+        /// <param name="id">Group ID</param>
+        /// <param name="teams">Teams</param>
+        public FootballLeague(string id, params FootballTeam[] teams)
+        {
+            ID = id;
+            Teams = new ObservableCollection<FootballTeam>(teams);
 
-		#endregion
+            SimpleLog.Info($"Create Football League: {ToString()}");
 
-		#region Properties
+            Matches = new ObservableCollection<FootballMatch>();
+            CreateMatches();
+            CreateTable();
 
-		/// <summary>
-		/// Group ID
-		/// </summary>
-		public string ID { get; set; }
+            SimpleLog.Info($"Football League created with ID={ID}");
+        }
 
-		/// <summary>
-		/// Teams of groupt
-		/// </summary>
-		public ObservableCollection<FootballTeam> Teams
-		{
-			get => _Teams;
-			set { _Teams = value; Notify(); }
-		}
+        #endregion
 
-		/// <summary>
-		/// Group Matches
-		/// </summary>
-		public ObservableCollection<FootballMatch> Matches
-		{
-			get => _Matches;
-			set { _Matches = value; Notify(); }
-		}
+        #region Properties
 
-		/// <summary>
-		/// Team count
-		/// </summary>
-		public int TeamCount => Teams.Count;
+        /// <summary>
+        /// Group ID
+        /// </summary>
+        public string ID { get; set; }
 
-		/// <summary>
-		/// Group table
-		/// </summary>
-		public DataTable Table
-		{
-			get => _Table;
-			set { _Table = value; Notify(); }
-		}
+        /// <summary>
+        /// Teams of groupt
+        /// </summary>
+        public ObservableCollection<FootballTeam> Teams
+        {
+            get => _Teams;
+            set { _Teams = value; Notify(); }
+        }
 
-		#endregion
+        /// <summary>
+        /// Group Matches
+        /// </summary>
+        public ObservableCollection<FootballMatch> Matches
+        {
+            get => _Matches;
+            set { _Matches = value; Notify(); }
+        }
 
-		#region Simulation
+        /// <summary>
+        /// Team count
+        /// </summary>
+        public int TeamCount => Teams.Count;
 
-		/// <summary>
-		/// Creates matches
-		/// </summary>
-		public void CreateMatches()
-		{
-			Matches.Clear();
+        /// <summary>
+        /// Group table.
+        /// Info for DirectMatchPos Column: -1 not needed, 0 position drawing needed, >= 1 position
+        /// </summary>
+        public DataTable Table
+        {
+            get => _Table;
+            set { _Table = value; Notify(); }
+        }
 
-			foreach (var teamA in Teams)
-			{
-				foreach (var teamB in Teams)
-				{
-					if (teamA != teamB)
-						Matches.Add(new FootballMatch(teamA, teamB));
-				}
-			}
+        #endregion
 
-			SimpleLog.Info($"Matches Created in Football League ID={ID}");
-		}
+        #region Simulation
 
-		/// <summary>
-		/// Simulate matches
-		/// </summary>
-		public void Simulate()
-		{
-			SimpleLog.Info($"Simulate Matches in Football League ID={ID}");
-			foreach(var match in Matches)
-				match.Simulate();
-		}
+        /// <summary>
+        /// Creates matches
+        /// </summary>
+        public void CreateMatches()
+        {
+            Matches.Clear();
 
-		/// <summary>
-		/// Simulate matches async
-		/// </summary>
-		public async Task SimulateAsync()
-		{
-			await Task.Run(() => Simulate());
-		}
+            foreach (var teamA in Teams)
+            {
+                foreach (var teamB in Teams)
+                {
+                    if (teamA != teamB)
+                        Matches.Add(new FootballMatch(teamA, teamB));
+                }
+            }
 
-		/// <summary>
-		/// Calculates table async
-		/// </summary>
-		public async Task CalculateTableAsync()
-		{
-			await Task.Run(() => CalculateTable());
-		}
+            SimpleLog.Info($"Matches Created in Football League ID={ID}");
+        }
 
-		/// <summary>
-		/// Calculates Table
-		/// </summary>
-		public void CalculateTable()
-		{
-			SimpleLog.Info($"Calculate Table in Football League ID={ID}");
-			CreateTable();
+        /// <summary>
+        /// Simulate matches
+        /// </summary>
+        public void Simulate()
+        {
+            SimpleLog.Info($"Simulate Matches in Football League ID={ID}");
+            foreach(var match in Matches)
+                match.Simulate();
+        }
 
-			foreach(var team in Teams)
-			{
-				var row = Table.NewRow();
+        /// <summary>
+        /// Simulate matches async
+        /// </summary>
+        public async Task SimulateAsync()
+        {
+            await Task.Run(() => Simulate());
+        }
 
-				int drawn, lose, goalsFor, goalsAgainst;
-				var win = drawn = lose = goalsFor = goalsAgainst = 0;
+        /// <summary>
+        /// Calculates table async
+        /// </summary>
+        public async Task CalculateTableAsync()
+        {
+            await Task.Run(() => CalculateTable());
+        }
 
-				foreach(var match in Matches)
-				{
-					if(match.TeamA == team)
-					{
-						if(match.ResultA > match.ResultB)
-							win++;
-						else if(match.ResultA == match.ResultB)
-							drawn++;
-						else
-							lose++;
+        /// <summary>
+        /// Calculates Table
+        /// </summary>
+        public void CalculateTable()
+        {
+            SimpleLog.Info($"Calculate Table in Football League ID={ID}");
+            CreateTable();
 
-						goalsFor += match.ResultA;
-						goalsAgainst += match.ResultB;
-					}
-					else if(match.TeamB == team)
-					{
-						if(match.ResultB > match.ResultA)
-							win++;
-						else if(match.ResultB == match.ResultA)
-							drawn++;
-						else
-							lose++;
+            foreach(var team in Teams)
+            {
+                var row = Table.NewRow();
 
-						goalsFor += match.ResultB;
-						goalsAgainst += match.ResultA;
-					}
-				}
+                int drawn, lose, goalsFor, goalsAgainst;
+                var win = drawn = lose = goalsFor = goalsAgainst = 0;
 
-				row["Team"] = team;
-				row["Matches"] = win + drawn + lose;
-				row["Win"] = win;
-				row["Drawn"] = drawn;
-				row["Lose"] = lose;
-				row["GoalsFor"] = goalsFor;
-				row["GoalsAgainst"] = goalsAgainst;
-				row["GoalDiff"] = goalsFor - goalsAgainst;
-				row["Points"] = win * 3 + drawn;
+                foreach(var match in Matches)
+                {
+                    if(match.TeamA == team)
+                    {
+                        if(match.ResultA > match.ResultB)
+                            win++;
+                        else if(match.ResultA == match.ResultB)
+                            drawn++;
+                        else
+                            lose++;
 
-				Table.Rows.Add(row);
-			}
+                        goalsFor += match.ResultA;
+                        goalsAgainst += match.ResultB;
+                    }
+                    else if(match.TeamB == team)
+                    {
+                        if(match.ResultB > match.ResultA)
+                            win++;
+                        else if(match.ResultB == match.ResultA)
+                            drawn++;
+                        else
+                            lose++;
 
-			DataView dv = Table.DefaultView;
-			dv.Sort = "Points DESC, GoalDiff DESC, GoalsFor DESC";
-			Table = dv.ToTable();
-		}
+                        goalsFor += match.ResultB;
+                        goalsAgainst += match.ResultA;
+                    }
+                }
 
-		/// <summary>
-		/// Creates table
-		/// </summary>
-		private void CreateTable()
-		{
-			var table = new DataTable();
+                row[TeamRow] = team;
+                row[MatchCountRow] = win + drawn + lose;
+                row[WinCountRow] = win;
+                row[DrawnCountRow] = drawn;
+                row[LoseCountRow] = lose;
+                row[GoalsForCountRow] = goalsFor;
+                row[GoalsAgainstCountRow] = goalsAgainst;
+                row[GoalDiffRow] = goalsFor - goalsAgainst;
+                row[PointsRow] = win * 3 + drawn;
+                row[DirectMatchPos] = -1;
 
-			table.Columns.Add("Team", typeof(FootballTeam));
-			table.Columns.Add("Matches", typeof(int));
-			table.Columns.Add("Win", typeof(int));
-			table.Columns.Add("Drawn", typeof(int));
-			table.Columns.Add("Lose", typeof(int));
-			table.Columns.Add("GoalsFor", typeof(int));
-			table.Columns.Add("GoalsAgainst", typeof(int));
-			table.Columns.Add("GoalDiff", typeof(int));
-			table.Columns.Add("Points", typeof(int));
+                Table.Rows.Add(row);
+            }
 
-			Table = table;
-		}
+            //DataView dv = Table.DefaultView;
+            //dv.Sort = "Points DESC, GoalDiff DESC, GoalsFor DESC";
+            //Table = dv.ToTable();
 
-		/// <summary>
-		/// Gibt einen <see cref="String"/> zurück, der das Objekt darstellt.
-		/// </summary>
-		/// <returns>Objekt als String</returns>
-		public sealed override string ToString()
-		{
-			return $"ID={ID}, TeamCount={TeamCount}";
-		}
+            Table.SortFootballTable(Matches);
+        }
 
-		#endregion
+        /// <summary>
+        /// Creates table
+        /// </summary>
+        private void CreateTable()
+        {
+            var table = new DataTable();
 
-		#region INotifyPropertyChanged
+            table.Columns.Add(TeamRow, typeof(FootballTeam));
+            table.Columns.Add(MatchCountRow, typeof(int));
+            table.Columns.Add(WinCountRow, typeof(int));
+            table.Columns.Add(DrawnCountRow, typeof(int));
+            table.Columns.Add(LoseCountRow, typeof(int));
+            table.Columns.Add(GoalsForCountRow, typeof(int));
+            table.Columns.Add(GoalsAgainstCountRow, typeof(int));
+            table.Columns.Add(GoalDiffRow, typeof(int));
+            table.Columns.Add(PointsRow, typeof(int));
+            table.Columns.Add(DirectMatchPos, typeof(int));
 
-		/// <summary>
-		/// Observer-Event
-		/// </summary>
-		public event PropertyChangedEventHandler PropertyChanged;
+            Table = table;
+        }
 
-		/// <summary>
-		/// Observer
-		/// </summary>
-		/// <param name="propertyName">Property</param>
-		protected void Notify([System.Runtime.CompilerServices.CallerMemberName] string propertyName = "")
-		{
-			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-		}
+        /// <summary>
+        /// Gibt einen <see cref="String"/> zurück, der das Objekt darstellt.
+        /// </summary>
+        /// <returns>Objekt als String</returns>
+        public sealed override string ToString()
+        {
+            return $"ID={ID}, TeamCount={TeamCount}";
+        }
 
-		#endregion
-	}
+        #endregion
+
+        #region INotifyPropertyChanged
+
+        /// <summary>
+        /// Observer-Event
+        /// </summary>
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        /// <summary>
+        /// Observer
+        /// </summary>
+        /// <param name="propertyName">Property</param>
+        protected void Notify([System.Runtime.CompilerServices.CallerMemberName] string propertyName = "")
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        #endregion
+    }
 }
