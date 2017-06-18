@@ -59,9 +59,7 @@
     <Compile Include="Simulation\FootballLeague.cs" />
     <Compile Include="Simulation\FootballMatch.cs" />
     <Compile Include="Simulation\FootballTeam.cs" />
-    <Compile Include="Simulation\LeagueTable.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Simulation\LeagueTable.cs" />
     <Page Include="App.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

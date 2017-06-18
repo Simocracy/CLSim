@@ -1,17 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using SimpleLogger;
-using System.Collections.ObjectModel;
 
 namespace Simocracy.CLSim.Simulation
 {
     /// <summary>
     /// Table of <see cref="FootballLeague"/>
     /// </summary>
+    [System.ComponentModel.DesignerCategory("Code")]
     public class LeagueTable : DataTable
     {
         #region Constants

@@ -1,17 +1,12 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Simocracy.CLSim.Simulation
 {
     /// <summary>
     /// Base comparer for football league tables for rules 1 to 3
     /// </summary>
-    class FootballLeagueBaseComparer : Comparer<DataRow>
+    internal class FootballLeagueBaseComparer : Comparer<DataRow>
     {
 
         public override int Compare(DataRow x, DataRow y)
@@ -38,7 +33,7 @@ namespace Simocracy.CLSim.Simulation
     /// <summary>
     /// Direct match Comparer for football league tables for rules 4 to 7
     /// </summary>
-    class FootballLeagueDirectComparer : Comparer<DataRow>
+    internal class FootballLeagueDirectComparer : Comparer<DataRow>
     {
 
         public override int Compare(DataRow x, DataRow y)
