@@ -53,13 +53,15 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Extensions\DataTableExtension.cs" />
-    <Compile Include="Extensions\FootballLeagueBaseComparer.cs" />
+    <Compile Include="Simulation\FootballLeagueComparer.cs" />
     <Compile Include="Globals.cs" />
     <Compile Include="Simulation\ChampionsLeague.cs" />
     <Compile Include="Simulation\FootballLeague.cs" />
     <Compile Include="Simulation\FootballMatch.cs" />
     <Compile Include="Simulation\FootballTeam.cs" />
+    <Compile Include="Simulation\LeagueTable.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Page Include="App.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
