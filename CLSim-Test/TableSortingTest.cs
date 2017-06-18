@@ -20,6 +20,7 @@ namespace Simocracy.CLSim.Test
         public void InitTest()
         {
             // Original UAFA CL 2053-54 Group G
+            // Source: https://simocracy.de/UAFA_Champions_League_2053/54#Gruppe_G
             A1 = new FootballTeam("{{OB}} Royal George Dutchtown", 0);
             A2 = new FootballTeam("{{NUS}} Lokomotive Simskau", 0);
             A3 = new FootballTeam("{{EMA}} FC Juneborg", 0);
