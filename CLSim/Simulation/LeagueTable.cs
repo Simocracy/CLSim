@@ -75,7 +75,8 @@ namespace Simocracy.CLSim.Simulation
         public void CalculateTable(IEnumerable<FootballTeam> teams, IEnumerable<FootballMatch> matches)
         {
             var subTable = CalculateSubTable(teams, matches);
-            Rows.Add(subTable);
+            foreach(DataRow row in subTable)
+                Rows.Add(row);
 
             SortFootballTable(matches);
         }
@@ -167,9 +168,7 @@ namespace Simocracy.CLSim.Simulation
         {
             List<DataRow> rows = new List<DataRow>();
             foreach(DataRow row in Rows)
-            {
                 rows.Add(row);
-            }
 
             // Base sorting
             rows.Sort(new FootballLeagueBaseComparer());
@@ -195,7 +194,8 @@ namespace Simocracy.CLSim.Simulation
                 {
                     // Get matches
                     var groupTeams = dGroup.Select(t => t.Field<FootballTeam>(TeamRow));
-                    var matches = matchList.Where(m => groupTeams.Any(t => t == m.TeamA || t == m.TeamB));
+                    //var matches = matchList.Where(m => groupTeams.All(t => t == m.TeamA || t == m.TeamB));
+                    var matches = matchList.Where(m => m.AllTeams.Intersect(groupTeams).Count() > 1);
 
                     // Get subtable
                     var subTable = CalculateSubTable(groupTeams, matches);
@@ -207,18 +207,18 @@ namespace Simocracy.CLSim.Simulation
                 else
                 {
                     // One Team
-                    finalTable.AddRange(dGroup);
+                    //finalTable.Add(dGroup.First());
+                    // Workaround to have the Rule 1-3 sorted teams
+                    var newRow = NewRow();
+                    newRow.ItemArray = dGroup.First().ItemArray;
+                    finalTable.Add(newRow);
                 }
             }
 
-            rows = finalTable;
-
             // Save rows
             Rows.Clear();
-            foreach(DataRow row in rows)
-            {
+            foreach(DataRow row in finalTable)
                 Rows.Add(row);
-            }
         }
 
         #endregion

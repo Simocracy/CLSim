@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace Simocracy.CLSim.Simulation
 {
 
-    [DebuggerDisplay("Team=" + nameof(FullName) + ", Strength={" + nameof(Strength) + "}")]
+    [DebuggerDisplay("Team={" + nameof(FullName) + "}, Strength={" + nameof(Strength) + "}")]
     public class FootballTeam
     {
 

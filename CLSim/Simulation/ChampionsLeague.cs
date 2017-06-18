@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,258 +10,342 @@ using SimpleLogger;
 
 namespace Simocracy.CLSim.Simulation
 {
-	/// <summary>
-	/// Simulates the UAFA Champions League in the mode since 2051/52
-	/// </summary>
-	public class ChampionsLeague : INotifyPropertyChanged
-	{
+    /// <summary>
+    /// Simulates the UAFA Champions League in the mode since 2051/52
+    /// </summary>
+    public class ChampionsLeague : INotifyPropertyChanged
+    {
 
-		#region Members
+        #region Members
 
-		private ObservableCollection<FootballTeam> _AllTeamsRaw;
-		private ObservableCollection<FootballTeam> _AllTeamsOrdered;
+        private ObservableCollection<FootballTeam> _AllTeamsRaw;
+        private ObservableCollection<FootballTeam> _AllTeamsOrdered;
 
-		private ObservableCollection<FootballLeague> _Groups;
-		private bool _IsGroupsSimulatable;
+        private ObservableCollection<FootballLeague> _Groups;
+        private bool _IsGroupsSimulatable;
 
-		private const int TeamsPerGroup = 5;
-		private const int GroupCount = 8;
+        private ObservableCollection<FootballMatch> _RoundOf16;
+        private ObservableCollection<FootballMatch> _RoundOf8;
+        private ObservableCollection<FootballMatch> _RoundOf4;
+        private FootballMatch _Final;
 
-		#endregion
+        private const int TeamsPerGroup = 5;
+        private const int GroupCount = 8;
 
-		#region Constructor
+        #endregion
 
-		/// <summary>
-		/// Erstellt eine neue Instanz für einen Amerikapokal
-		/// </summary>
-		public ChampionsLeague()
-		{
-			IsGroupsSimulatable = false;
-		}
+        #region Constructor
 
-		#endregion
+        /// <summary>
+        /// Creates a new CL instance
+        /// </summary>
+        public ChampionsLeague()
+        {
+            IsGroupsSimulatable = false;
+        }
 
-		#region Properties
+        #endregion
 
-		/// <summary>
-		/// All Teams in raw order
-		/// </summary>
-		public ObservableCollection<FootballTeam> AllTeamsRaw
-		{
-			get => _AllTeamsRaw;
-			set
-			{
-				_AllTeamsRaw = value;
-				Notify();
-			}
-		}
+        #region Properties
 
-		/// <summary>
-		/// All Teams in ordered order
-		/// </summary>
-		public ObservableCollection<FootballTeam> AllTeamsOrdered
-		{
-			get => _AllTeamsOrdered;
-			private set
-			{
-				_AllTeamsOrdered = value;
-				Notify();
-			}
-		}
+        /// <summary>
+        /// All Teams in raw order
+        /// </summary>
+        public ObservableCollection<FootballTeam> AllTeamsRaw
+        {
+            get => _AllTeamsRaw;
+            set
+            {
+                _AllTeamsRaw = value;
+                Notify();
+            }
+        }
 
-		/// <summary>
-		/// CL Groups from A to H, all groups should have 5 members!
-		/// </summary>
-		public ObservableCollection<FootballLeague> Groups
-		{
-			get => _Groups;
-			set
-			{
-				_Groups = value;
-				Notify();
-			}
-		}
+        /// <summary>
+        /// All Teams in ordered order
+        /// </summary>
+        public ObservableCollection<FootballTeam> AllTeamsOrdered
+        {
+            get => _AllTeamsOrdered;
+            private set
+            {
+                _AllTeamsOrdered = value;
+                Notify();
+            }
+        }
 
-		/// <summary>
-		/// True if draw was successfully
-		/// </summary>
-		public bool IsGroupsSimulatable
-		{
-			get => _IsGroupsSimulatable;
-			private set
-			{
-				_IsGroupsSimulatable = value;
-				Notify();
-			}
-		}
+        /// <summary>
+        /// CL Groups from A to H, all groups should have 5 members!
+        /// </summary>
+        public ObservableCollection<FootballLeague> Groups
+        {
+            get => _Groups;
+            set
+            {
+                _Groups = value;
+                Notify();
+            }
+        }
 
-		#endregion
+        /// <summary>
+        /// True if draw was successfully
+        /// </summary>
+        public bool IsGroupsSimulatable
+        {
+            get => _IsGroupsSimulatable;
+            private set
+            {
+                _IsGroupsSimulatable = value;
+                Notify();
+            }
+        }
 
-		#region Group Drawing
+        /// <summary>
+        /// Round of 16, 2 games per match
+        /// </summary>
+        public ObservableCollection<FootballMatch> RoundOf16
+        {
+            get => _RoundOf16;
+            set
+            {
+                _RoundOf16 = value;
+                Notify();
+            }
+        }
 
-		/// <summary>
-		/// Draw groups. If validation not succesfull, <paramref name="tryCount"/> times will be tried.
-		/// The last executed try will be used for match recreation.
-		/// </summary>
-		/// <param name="tryCount">Draw tries</param>
-		public void DrawGroups(int tryCount = 1)
-		{
-			for(int trie = 0; trie < tryCount; trie++)
-			{
-				var ordered = AllTeamsRaw.OrderBy(x => Globals.Random.Next());
-				AllTeamsOrdered = new ObservableCollection<FootballTeam>(ordered);
+        /// <summary>
+        /// Round of 8, 2 games per match
+        /// </summary>
+        public ObservableCollection<FootballMatch> RoundOf8
+        {
+            get => _RoundOf8;
+            set
+            {
+                _RoundOf8 = value;
+                Notify();
+            }
+        }
 
-				Groups = new ObservableCollection<FootballLeague>();
-				char groupID = 'A';
-				for(int i = 0; i < AllTeamsRaw.Count; i += 5)
-				{
-					Groups.Add(new FootballLeague(groupID.ToString(), AllTeamsOrdered[i], AllTeamsOrdered[i + 1],
-						AllTeamsOrdered[i + 2], AllTeamsRaw[i + 3], AllTeamsRaw[i + 4]));
-					groupID = (char) (groupID + 1);
-				}
+        /// <summary>
+        /// Round of 4, 2 games per match
+        /// </summary>
+        public ObservableCollection<FootballMatch> RoundOf4
+        {
+            get => _RoundOf4;
+            set
+            {
+                _RoundOf4 = value;
+                Notify();
+            }
+        }
 
-				bool[] isNationValid = ValidateGroups();
+        /// <summary>
+        /// Final
+        /// </summary>
+        public FootballMatch Final
+        {
+            get => _Final;
+            set
+            {
+                Final = value;
+                Notify();
+            }
+        }
 
-				IsGroupsSimulatable = isNationValid.Contains(false);
+        #endregion
 
-				if(IsGroupsSimulatable)
-					break;
-			}
+        #region Group Drawing
 
-			ResetGroupMatches();
-		}
+        /// <summary>
+        /// Draw groups. If validation not succesfull, <paramref name="tryCount"/> times will be tried.
+        /// The last executed try will be used for match recreation.
+        /// </summary>
+        /// <param name="tryCount">Draw tries</param>
+        public void DrawGroups(int tryCount = 5)
+        {
+            for(int trie = 0; trie < tryCount; trie++)
+            {
+                var ordered = AllTeamsRaw.OrderBy(x => Globals.Random.Next());
+                AllTeamsOrdered = new ObservableCollection<FootballTeam>(ordered);
 
-		/// <summary>
-		/// Validate the groups (no multiple teams from one state) and tries to switch teams between groups. Returns for each group if success.
-		/// </summary>
-		public bool[] ValidateGroups()
-		{
-			bool[] isNationValid = new bool[Groups.Count];
-			bool reValidNeeded = false;
-			for(int i = 0; i < Groups.Count; i++)
-			{
-				var group = Groups[i];
-				isNationValid[i] = !AreSameStatesInGroup(group);
-				if(isNationValid[i])
-					continue;
+                Groups = new ObservableCollection<FootballLeague>();
+                char groupID = 'A';
+                for(int i = 0; i < AllTeamsRaw.Count; i += 5)
+                {
+                    Groups.Add(new FootballLeague(groupID.ToString(), AllTeamsOrdered[i], AllTeamsOrdered[i + 1],
+                        AllTeamsOrdered[i + 2], AllTeamsRaw[i + 3], AllTeamsRaw[i + 4]));
+                    groupID = (char) (groupID + 1);
+                }
 
-				// Switch teams
-				for(int teamA = 0; teamA < group.TeamCount - 1; teamA++)
-				{
-					for(int teamB = teamA + 1; teamB < group.TeamCount; teamB++)
-					{
-						var res = SwitchTeamGroups(i, teamA, teamB);
-						if(!reValidNeeded)
-							reValidNeeded = res;
-					}
-				}
+                bool[] isNationValid = ValidateGroups();
 
-				if(reValidNeeded)
-					isNationValid[i] = !AreSameStatesInGroup(group);
-			}
+                IsGroupsSimulatable = isNationValid.Contains(false);
 
-			return isNationValid;
-		}
+                if(IsGroupsSimulatable)
+                    break;
+            }
 
-		/// <summary>
-		/// Switches teams between groups. If <paramref name="teamA"/> and <paramref name="teamB"/> are from same state, then switch <paramref name="teamA"/> to another group.
-		/// Returns true if teams switched.
-		/// </summary>
-		/// <param name="groupNo">Base group number (group A = 0)</param>
-		/// <param name="teamA">Position of Team A</param>
-		/// <param name="teamB">Validation position of Team B</param>
-		private bool SwitchTeamGroups(int groupNo, int teamA = 0, int teamB = 1)
-		{
-			var group = Groups[groupNo];
+            ResetGroupMatches();
+        }
 
-			// Check
-			if(group.Teams[teamA].State != group.Teams[teamB].State)
-				return false;
+        /// <summary>
+        /// Validate the groups (no multiple teams from one state) and tries to switch teams between groups. Returns for each group if success.
+        /// </summary>
+        public bool[] ValidateGroups()
+        {
+            bool[] isNationValid = new bool[Groups.Count];
+            bool reValidNeeded = false;
+            for(int i = 0; i < Groups.Count; i++)
+            {
+                var group = Groups[i];
+                isNationValid[i] = !AreSameStatesInGroup(group);
+                if(isNationValid[i])
+                    continue;
 
-			// Previous group
-			if(groupNo > 0 && Groups[groupNo - 1].Teams[teamA].State != group.Teams[teamA].State)
-			{
-				var newTeam = Groups[groupNo - 1].Teams[teamA];
-				Groups[groupNo - 1].Teams[teamA] = group.Teams[teamA];
-				group.Teams[teamA] = newTeam;
-				SimpleLog.Info($"Switched teams in groups {Groups[groupNo - 1].ID} and  {group.ID}");
-			}
-			// Next group
-			else if(groupNo < Groups.Count-1 && Groups[groupNo + 1].Teams[teamA].State != group.Teams[teamA].State)
-			{
-				var newTeam = Groups[groupNo + 1].Teams[teamA];
-				Groups[groupNo + 1].Teams[teamA] = group.Teams[teamA];
-				group.Teams[teamA] = newTeam;
-				SimpleLog.Info($"Switched teams in groups {group.ID} and {Groups[groupNo + 1].ID}");
-			}
-			else return false;
+                // Switch teams
+                for(int teamA = 0; teamA < group.TeamCount - 1; teamA++)
+                {
+                    for(int teamB = teamA + 1; teamB < group.TeamCount; teamB++)
+                    {
+                        var res = SwitchTeamGroups(i, teamA, teamB);
+                        if(!reValidNeeded)
+                            reValidNeeded = res;
+                    }
+                }
 
-			return true;
-		}
+                if(reValidNeeded)
+                    isNationValid[i] = !AreSameStatesInGroup(group);
+            }
 
-		/// <summary>
-		/// Checks if 2 teams from the same state in the same group and returns false if not
-		/// </summary>
-		/// <param name="group">Group</param>
-		private bool AreSameStatesInGroup(FootballLeague group)
-		{
-			for(int i = 0; i < group.TeamCount - 1; i++)
-			for(int j = i + 1; j < group.TeamCount; j++)
-				if(group.Teams[i].State == group.Teams[j].State)
-					return true;
-			return false;
-		}
+            return isNationValid;
+        }
 
-		/// <summary>
-		/// Resets the group matches und creates the new match plan
-		/// </summary>
-		public void ResetGroupMatches()
-		{
-			foreach(var g in Groups)
-				g.CreateMatches();
-		}
+        /// <summary>
+        /// Switches teams between groups. If <paramref name="teamA"/> and <paramref name="teamB"/> are from same state, then switch <paramref name="teamA"/> to another group.
+        /// Returns true if teams switched.
+        /// </summary>
+        /// <param name="groupNo">Base group number (group A = 0)</param>
+        /// <param name="teamA">Position of Team A</param>
+        /// <param name="teamB">Validation position of Team B</param>
+        private bool SwitchTeamGroups(int groupNo, int teamA = 0, int teamB = 1)
+        {
+            var group = Groups[groupNo];
 
-		#endregion
+            // Check
+            if(group.Teams[teamA].State != group.Teams[teamB].State)
+                return false;
 
-		#region Group Simulation
+            // Previous group
+            if(groupNo > 0 && Groups[groupNo - 1].Teams[teamA].State != group.Teams[teamA].State)
+            {
+                var newTeam = Groups[groupNo - 1].Teams[teamA];
+                Groups[groupNo - 1].Teams[teamA] = group.Teams[teamA];
+                group.Teams[teamA] = newTeam;
+                SimpleLog.Info($"Switched teams in groups {Groups[groupNo - 1].ID} and  {group.ID}");
+            }
+            // Next group
+            else if(groupNo < Groups.Count-1 && Groups[groupNo + 1].Teams[teamA].State != group.Teams[teamA].State)
+            {
+                var newTeam = Groups[groupNo + 1].Teams[teamA];
+                Groups[groupNo + 1].Teams[teamA] = group.Teams[teamA];
+                group.Teams[teamA] = newTeam;
+                SimpleLog.Info($"Switched teams in groups {group.ID} and {Groups[groupNo + 1].ID}");
+            }
+            else return false;
 
-		/// <summary>
-		/// Simulates all Groups
-		/// </summary>
-		public void SimulateGroups()
-		{
-			if(IsGroupsSimulatable && Groups != null)
-				foreach(var group in Groups)
-					group.Simulate();
-		}
+            return true;
+        }
 
-		/// <summary>
-		/// Simulates all groups async
-		/// </summary>
-		public async void SimulateGroupsAsync()
-		{
-			await Task.Run(() => SimulateGroups());
-		}
+        /// <summary>
+        /// Checks if 2 teams from the same state in the same group and returns false if not
+        /// </summary>
+        /// <param name="group">Group</param>
+        private bool AreSameStatesInGroup(FootballLeague group)
+        {
+            for(int i = 0; i < group.TeamCount - 1; i++)
+            for(int j = i + 1; j < group.TeamCount; j++)
+                if(group.Teams[i].State == group.Teams[j].State)
+                    return true;
+            return false;
+        }
 
-		#endregion
+        /// <summary>
+        /// Resets the group matches und creates the new match plan
+        /// </summary>
+        public void ResetGroupMatches()
+        {
+            foreach(var g in Groups)
+                g.CreateMatches();
+        }
 
-		#region INotifyPropertyChanged
+        #endregion
 
-		/// <summary>
-		/// Observer-Event
-		/// </summary>
-		public event PropertyChangedEventHandler PropertyChanged;
+        #region Group Simulation
 
-		/// <summary>
-		/// Observer
-		/// </summary>
-		/// <param name="propertyName">Property</param>
-		protected void Notify([System.Runtime.CompilerServices.CallerMemberName] string propertyName = "")
-		{
-			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-		}
+        /// <summary>
+        /// Simulates all Groups
+        /// </summary>
+        public void SimulateGroups()
+        {
+            if(IsGroupsSimulatable && Groups != null)
+            {
+                SimpleLog.Info("Simulate all CL groups.");
+                foreach(var group in Groups)
+                {
+                    group.Simulate();
+                    group.CalculateTable();
+                }
+            }
+        }
 
-		#endregion
+        /// <summary>
+        /// Simulates all groups async
+        /// </summary>
+        public async void SimulateGroupsAsync()
+        {
+            await Task.Run(() => SimulateGroups());
+        }
 
-	}
+        #endregion
+
+        #region Round of 16
+
+        /// <summary>
+        /// Draw round of 16. If validation not succesfull, <paramref name="tryCount"/> times will be tried.
+        /// The last executed try will be used for match recreation.
+        /// </summary>
+        /// <param name="tryCount">Draw tries</param>
+        public void DrawRoundOf16(int tryCount = 5)
+        {
+            // get group results
+            var firsts = from g in Groups select g.Table.Rows[0][LeagueTable.TeamRow] as FootballTeam;
+            var secs = from g in Groups select g.Table.Rows[1][LeagueTable.TeamRow] as FootballTeam;
+
+            for(int trie = 0; trie < tryCount; trie++)
+            {
+                
+            }
+        }
+
+        #endregion
+
+        #region INotifyPropertyChanged
+
+        /// <summary>
+        /// Observer-Event
+        /// </summary>
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        /// <summary>
+        /// Observer
+        /// </summary>
+        /// <param name="propertyName">Property</param>
+        protected void Notify([System.Runtime.CompilerServices.CallerMemberName] string propertyName = "")
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        #endregion
+
+    }
 }
