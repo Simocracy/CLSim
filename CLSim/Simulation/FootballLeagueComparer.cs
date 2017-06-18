@@ -24,8 +24,6 @@ namespace Simocracy.CLSim.Simulation
                 return x.Field<int>(LeagueTable.GoalsForCountRow).CompareTo(y.Field<int>(LeagueTable.GoalsForCountRow));
 
             // Direct Matches
-            x[LeagueTable.DirectMatchPos] = 0;
-            y[LeagueTable.DirectMatchPos] = 0;
             return 0;
         }
     }

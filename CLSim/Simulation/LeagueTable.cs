@@ -21,7 +21,6 @@ namespace Simocracy.CLSim.Simulation
         public const string GoalsAgainstCountRow = "GoalsAgainst";
         public const string GoalDiffRow = "GoalDiff";
         public const string PointsRow = "Points";
-        public const string DirectMatchPos = "DirectPos";
 
         #endregion
 
@@ -34,6 +33,35 @@ namespace Simocracy.CLSim.Simulation
         {
             CreateTable();
         }
+
+        #endregion
+
+        #region Properties
+
+        /// <summary>
+        /// Team on Position 1
+        /// </summary>
+        public DataRow Pos1 => Rows[0];
+
+        /// <summary>
+        /// Team on Position 2
+        /// </summary>
+        public DataRow Pos2 => Rows[1];
+
+        /// <summary>
+        /// Team on Position 3
+        /// </summary>
+        public DataRow Pos3 => Rows[2];
+
+        /// <summary>
+        /// Team on Position 4
+        /// </summary>
+        public DataRow Pos4 => Rows[3];
+
+        /// <summary>
+        /// Team on Position 5
+        /// </summary>
+        public DataRow Pos5 => Rows[4];
 
         #endregion
 

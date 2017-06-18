@@ -8,7 +8,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Simocracy.CLSim.Extensions;
 
 namespace Simocracy.CLSim.Simulation
 {
@@ -61,7 +60,7 @@ namespace Simocracy.CLSim.Simulation
         public ObservableCollection<FootballTeam> Teams
         {
             get => _Teams;
-            private set { _Teams = value; Notify(); }
+            set { _Teams = value; Notify(); }
         }
 
         /// <summary>
@@ -70,7 +69,7 @@ namespace Simocracy.CLSim.Simulation
         public ObservableCollection<FootballMatch> Matches
         {
             get => _Matches;
-            private set { _Matches = value; Notify(); }
+            set { _Matches = value; Notify(); }
         }
 
         /// <summary>
