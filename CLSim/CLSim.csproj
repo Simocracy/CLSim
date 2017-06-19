@@ -53,6 +53,7 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Football\Base\DoubleMatch.cs" />
     <Compile Include="Football\Base\FootballLeagueComparer.cs" />
     <Compile Include="Globals.cs" />
     <Compile Include="Football\UAFA\ChampionsLeague.cs" />

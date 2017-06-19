@@ -15,7 +15,7 @@ namespace Simocracy.CLSim.Football.Base
         #region Members
 
         private int _Ball;
-        private int _Minutes;
+        private int _MatchTime;
         private int _Start;
 
         private const int TorwartA = 10;
@@ -45,6 +45,18 @@ namespace Simocracy.CLSim.Football.Base
             AllTeams = new[] {TeamA, TeamB};
 
             Reset();
+        }
+
+        /// <summary>
+        /// Creates a new match
+        /// </summary>
+        /// <param name="teamA">Team A (Home)</param>
+        /// <param name="teamB">Team B (Away)</param>
+        /// <param name="matchTime">Specific match time</param>
+        public FootballMatch(FootballTeam teamA, FootballTeam teamB, int matchTime)
+            : this(teamA, teamB)
+        {
+            Reset(matchTime);
         }
 
         #endregion
@@ -101,6 +113,18 @@ namespace Simocracy.CLSim.Football.Base
         #region Methods
 
         /// <summary>
+        /// Resets the match
+        /// </summary>
+        public void Reset(int time = 0)
+        {
+            ResultA = 0;
+            ResultB = 0;
+            _Ball = 0;
+            _MatchTime = time;
+            _Start = 0;
+        }
+
+        /// <summary>
         /// Swaps the teams
         /// </summary>
         public void SwapTeams()
@@ -116,7 +140,7 @@ namespace Simocracy.CLSim.Football.Base
         public override string ToString()
         {
             return
-                $"TeamA={TeamA}, TeamB={TeamB}, ResultA={ResultA}, ResultB={ResultB}, Date={Date.ToShortDateString()}";
+                $"TeamA={TeamA}, TeamB={TeamB}, ResultA={ResultA}, ResultB={ResultB}";
         }
 
         #endregion
@@ -136,7 +160,7 @@ namespace Simocracy.CLSim.Football.Base
             Reset(90);
 
             _Ball = Kickoff();
-            for(int i = 1; i <= _Minutes; i++)
+            for(int i = 1; i <= _MatchTime; i++)
             {
                 if(i == 45)
                 {
@@ -186,18 +210,6 @@ namespace Simocracy.CLSim.Football.Base
 
             ResultA = resA;
             ResultB = resB;
-        }
-
-        /// <summary>
-        /// Resets the simulation
-        /// </summary>
-        private void Reset(int zeit = 0)
-        {
-            ResultA = 0;
-            ResultB = 0;
-            _Ball = 0;
-            _Minutes = zeit;
-            _Start = 0;
         }
 
         private int Turn(int strength1, int strength2)
