@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Data;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+using Simocracy.CLSim.Football.Base;
 using SimpleLogger;
 
-namespace Simocracy.CLSim.Simulation
+namespace Simocracy.CLSim.Football.UAFA
 {
     /// <summary>
     /// Simulates the UAFA Champions League in the mode since 2051/52

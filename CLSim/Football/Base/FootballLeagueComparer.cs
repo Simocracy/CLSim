@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Data;
 
-namespace Simocracy.CLSim.Simulation
+namespace Simocracy.CLSim.Football.Base
 {
     /// <summary>
     /// Base comparer for football league tables for rules 1 to 3

@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
-namespace Simocracy.CLSim.Simulation
+namespace Simocracy.CLSim.Football.Base
 {
 
     [DebuggerDisplay("Team={" + nameof(FullName) + "}, Strength={" + nameof(Strength) + "}")]

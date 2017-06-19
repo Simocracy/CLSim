@@ -53,13 +53,13 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Simulation\FootballLeagueComparer.cs" />
+    <Compile Include="Football\Base\FootballLeagueComparer.cs" />
     <Compile Include="Globals.cs" />
-    <Compile Include="Simulation\ChampionsLeague.cs" />
-    <Compile Include="Simulation\FootballLeague.cs" />
-    <Compile Include="Simulation\FootballMatch.cs" />
-    <Compile Include="Simulation\FootballTeam.cs" />
-    <Compile Include="Simulation\LeagueTable.cs" />
+    <Compile Include="Football\UAFA\ChampionsLeague.cs" />
+    <Compile Include="Football\Base\FootballLeague.cs" />
+    <Compile Include="Football\Base\FootballMatch.cs" />
+    <Compile Include="Football\Base\FootballTeam.cs" />
+    <Compile Include="Football\Base\LeagueTable.cs" />
     <Page Include="App.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

@@ -2,7 +2,7 @@
 using System.Data;
 using System.Linq;
 
-namespace Simocracy.CLSim.Simulation
+namespace Simocracy.CLSim.Football.Base
 {
     /// <summary>
     /// Table of <see cref="FootballLeague"/>

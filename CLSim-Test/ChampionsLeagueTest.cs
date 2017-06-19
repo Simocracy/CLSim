@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Simocracy.CLSim.Simulation;
+using Simocracy.CLSim.Football;
+using Simocracy.CLSim.Football.Base;
+using Simocracy.CLSim.Football.UAFA;
 
 namespace Simocracy.CLSim.Test
 {

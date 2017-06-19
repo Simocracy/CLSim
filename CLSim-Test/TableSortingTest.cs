@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Simocracy.CLSim.Simulation;
+using Simocracy.CLSim.Football.Base;
 
 namespace Simocracy.CLSim.Test
 {
