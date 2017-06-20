@@ -60,11 +60,11 @@ namespace Simocracy.CLSim.Test
         {
             League.CalculateTable();
 
-            Assert.AreEqual(A2, League.Table.Pos1[LeagueTable.TeamRow]);
-            Assert.AreEqual(A3, League.Table.Pos2[LeagueTable.TeamRow]);
-            Assert.AreEqual(A5, League.Table.Pos3[LeagueTable.TeamRow]);
-            Assert.AreEqual(A1, League.Table.Pos4[LeagueTable.TeamRow]);
-            Assert.AreEqual(A4, League.Table.Pos5[LeagueTable.TeamRow]);
+            Assert.AreEqual(A2, League.Table.Pos1);
+            Assert.AreEqual(A3, League.Table.Pos2);
+            Assert.AreEqual(A5, League.Table.Pos3);
+            Assert.AreEqual(A1, League.Table.Pos4);
+            Assert.AreEqual(A4, League.Table.Pos5);
         }
     }
 }

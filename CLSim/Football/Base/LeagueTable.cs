@@ -41,27 +41,27 @@ namespace Simocracy.CLSim.Football.Base
         /// <summary>
         /// Team on Position 1
         /// </summary>
-        public DataRow Pos1 => Rows[0];
+        public FootballTeam Pos1 => Rows[0][TeamRow] as FootballTeam;
 
         /// <summary>
         /// Team on Position 2
         /// </summary>
-        public DataRow Pos2 => Rows[1];
+        public FootballTeam Pos2 => Rows[1][TeamRow] as FootballTeam;
 
         /// <summary>
         /// Team on Position 3
         /// </summary>
-        public DataRow Pos3 => Rows[2];
+        public FootballTeam Pos3 => Rows[2][TeamRow] as FootballTeam;
 
         /// <summary>
         /// Team on Position 4
         /// </summary>
-        public DataRow Pos4 => Rows[3];
+        public FootballTeam Pos4 => Rows[3][TeamRow] as FootballTeam;
 
         /// <summary>
         /// Team on Position 5
         /// </summary>
-        public DataRow Pos5 => Rows[4];
+        public FootballTeam Pos5 => Rows[4][TeamRow] as FootballTeam;
 
         #endregion
 
