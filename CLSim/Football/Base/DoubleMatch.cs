@@ -42,14 +42,24 @@ namespace Simocracy.CLSim.Football.Base
         public FootballMatch ExtraTime { get; set; }
 
         /// <summary>
-        /// Result Team A
+        /// Full Result Team A
         /// </summary>
-        public int ResultA => FirstLeg.ResultA + SecondLegRegular.ResultB + ExtraTime.ResultB;
+        public int FullResultA => FirstLeg.ResultA + SecondLegRegular.ResultB + ExtraTime.ResultB;
 
         /// <summary>
-        /// Result Team B
+        /// Away goals Team A
         /// </summary>
-        public int ResultB => FirstLeg.ResultB + SecondLegRegular.ResultA + ExtraTime.ResultA;
+        public int AwayGoalsA => SecondLegRegular.ResultB + ExtraTime.ResultB;
+
+        /// <summary>
+        /// Full Result Team B
+        /// </summary>
+        public int FullResultB => FirstLeg.ResultB + SecondLegRegular.ResultA + ExtraTime.ResultA;
+
+        /// <summary>
+        /// Away goals Team B
+        /// </summary>
+        public int AwayGoalsB => FirstLeg.ResultB;
 
         /// <summary>
         /// Penalty Shootout Result Team A, -1 if none
@@ -62,22 +72,15 @@ namespace Simocracy.CLSim.Football.Base
         public int PenaltyTeamB { get; set; }
 
         /// <summary>
-        /// Gets the winner Team, null if drawn
-        /// </summary>
-        public FootballTeam Winner
-        {
-            get
-            {
-                if(ResultA > ResultB || PenaltyTeamA > PenaltyTeamB) return TeamA; // Win A
-                if(ResultA == ResultB) return null; // Drawn
-                return TeamB; // Else Win B
-            }
-        }
-
-        /// <summary>
         /// Match name
         /// </summary>
         public string Name => $"{TeamA.FullName} vs. {TeamB.FullName}";
+
+        /// <summary>
+        /// Gets the winner Team, null if drawn
+        /// </summary>
+        public FootballTeam Winner => GetWinner();
+
         #endregion
 
         #region Constructor
@@ -99,6 +102,23 @@ namespace Simocracy.CLSim.Football.Base
         #endregion
 
         #region Methods
+
+        /// <summary>
+        /// Gets the winner Team, null if drawn
+        /// </summary>
+        private FootballTeam GetWinner()
+        {
+            if(FullResultA > FullResultB) return TeamA;
+            if(FullResultB > FullResultA) return TeamB;
+
+            if(AwayGoalsA > AwayGoalsB) return TeamA;
+            if(AwayGoalsB > AwayGoalsA) return TeamB;
+
+            if(PenaltyTeamA > PenaltyTeamB) return TeamA;
+            if(PenaltyTeamB > PenaltyTeamA) return TeamB;
+
+            return null;
+        }
 
         /// <summary>
         /// Resets the match
@@ -130,7 +150,7 @@ namespace Simocracy.CLSim.Football.Base
         public override string ToString()
         {
             return
-                $"TeamA={TeamA}, TeamB={TeamB}, ResultA={ResultA}, ResultB={ResultB}";
+                $"TeamA={TeamA}, TeamB={TeamB}, ResultA={FullResultA}, ResultB={FullResultB}";
         }
 
         #endregion
@@ -146,12 +166,12 @@ namespace Simocracy.CLSim.Football.Base
             SecondLegRegular.Simulate();
 
             // Extra Time
-            if(ResultA == ResultB)
+            if(Winner == null)
             {
                 ExtraTime.Simulate();
 
                 // Penalty
-                if(ResultA == ResultB)
+                if(Winner == null)
                 {
                     
                 }
