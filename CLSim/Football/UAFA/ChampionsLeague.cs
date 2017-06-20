@@ -21,9 +21,10 @@ namespace Simocracy.CLSim.Football.UAFA
         private ObservableCollection<FootballLeague> _Groups;
         private bool _IsGroupsSimulatable;
 
-        private ObservableCollection<FootballMatch> _RoundOf16;
-        private ObservableCollection<FootballMatch> _RoundOf8;
-        private ObservableCollection<FootballMatch> _RoundOf4;
+        private ObservableCollection<DoubleMatch> _RoundOf16;
+        private bool _IsRoundOf16Simulatable;
+        private ObservableCollection<DoubleMatch> _RoundOf8;
+        private ObservableCollection<DoubleMatch> _RoundOf4;
         private FootballMatch _Final;
 
         private const int TeamsPerGroup = 5;
@@ -58,18 +59,18 @@ namespace Simocracy.CLSim.Football.UAFA
             }
         }
 
-        /// <summary>
-        /// All Teams in ordered order
-        /// </summary>
-        public ObservableCollection<FootballTeam> AllTeamsOrdered
-        {
-            get => _AllTeamsOrdered;
-            private set
-            {
-                _AllTeamsOrdered = value;
-                Notify();
-            }
-        }
+        ///// <summary>
+        ///// All Teams in ordered order
+        ///// </summary>
+        //public ObservableCollection<FootballTeam> AllTeamsOrdered
+        //{
+        //    get => _AllTeamsOrdered;
+        //    private set
+        //    {
+        //        _AllTeamsOrdered = value;
+        //        Notify();
+        //    }
+        //}
 
         /// <summary>
         /// CL Groups from A to H, all groups should have 5 members!
@@ -85,7 +86,7 @@ namespace Simocracy.CLSim.Football.UAFA
         }
 
         /// <summary>
-        /// True if draw was successfully
+        /// True if group drawing was successfully
         /// </summary>
         public bool IsGroupsSimulatable
         {
@@ -98,9 +99,9 @@ namespace Simocracy.CLSim.Football.UAFA
         }
 
         /// <summary>
-        /// Round of 16, 2 games per match
+        /// Round of 16
         /// </summary>
-        public ObservableCollection<FootballMatch> RoundOf16
+        public ObservableCollection<DoubleMatch> RoundOf16
         {
             get => _RoundOf16;
             set
@@ -108,12 +109,23 @@ namespace Simocracy.CLSim.Football.UAFA
                 _RoundOf16 = value;
                 Notify();
             }
+        }        /// <summary>
+        /// True if group drawing was successfully
+        /// </summary>
+        public bool IsRoundOf16Simulatable
+        {
+            get => _IsRoundOf16Simulatable;
+            private set
+            {
+                _IsRoundOf16Simulatable = value;
+                Notify();
+            }
         }
 
         /// <summary>
-        /// Round of 8, 2 games per match
+        /// Quarter Final
         /// </summary>
-        public ObservableCollection<FootballMatch> RoundOf8
+        public ObservableCollection<DoubleMatch> RoundOf8
         {
             get => _RoundOf8;
             set
@@ -124,9 +136,9 @@ namespace Simocracy.CLSim.Football.UAFA
         }
 
         /// <summary>
-        /// Round of 4, 2 games per match
+        /// Semi Final
         /// </summary>
-        public ObservableCollection<FootballMatch> RoundOf4
+        public ObservableCollection<DoubleMatch> RoundOf4
         {
             get => _RoundOf4;
             set
@@ -162,15 +174,14 @@ namespace Simocracy.CLSim.Football.UAFA
         {
             for(int trie = 0; trie < tryCount; trie++)
             {
-                var ordered = AllTeamsRaw.OrderBy(x => Globals.Random.Next());
-                AllTeamsOrdered = new ObservableCollection<FootballTeam>(ordered);
+                var ordered = AllTeamsRaw.OrderBy(x => Globals.Random.Next()).ToList();
 
                 Groups = new ObservableCollection<FootballLeague>();
                 char groupID = 'A';
-                for(int i = 0; i < AllTeamsRaw.Count; i += 5)
+                for(int i = 0; i < ordered.Count; i += 5)
                 {
-                    Groups.Add(new FootballLeague(groupID.ToString(), AllTeamsOrdered[i], AllTeamsOrdered[i + 1],
-                        AllTeamsOrdered[i + 2], AllTeamsRaw[i + 3], AllTeamsRaw[i + 4]));
+                    Groups.Add(new FootballLeague(groupID.ToString(), ordered[i], ordered[i + 1],
+                        ordered[i + 2], ordered[i + 3], ordered[i + 4]));
                     groupID = (char) (groupID + 1);
                 }
 
@@ -186,8 +197,9 @@ namespace Simocracy.CLSim.Football.UAFA
         }
 
         /// <summary>
-        /// Validate the groups (no multiple teams from one state) and tries to switch teams between groups. Returns for each group if success.
+        /// Validate the groups (no multiple teams from one state) and tries to switch teams between groups. Returns true for each group if success.
         /// </summary>
+        /// <returns>True for each group if success</returns>
         public bool[] ValidateGroups()
         {
             bool[] isNationValid = new bool[Groups.Count];
@@ -238,7 +250,7 @@ namespace Simocracy.CLSim.Football.UAFA
                 var newTeam = Groups[groupNo - 1].Teams[teamA];
                 Groups[groupNo - 1].Teams[teamA] = group.Teams[teamA];
                 group.Teams[teamA] = newTeam;
-                SimpleLog.Info($"Switched teams in groups {Groups[groupNo - 1].ID} and  {group.ID}");
+                SimpleLog.Info($"Switched teams in groups {Groups[groupNo - 1].ID} and {group.ID}");
             }
             // Next group
             else if(groupNo < Groups.Count-1 && Groups[groupNo + 1].Teams[teamA].State != group.Teams[teamA].State)
@@ -315,13 +327,112 @@ namespace Simocracy.CLSim.Football.UAFA
         public void DrawRoundOf16(int tryCount = 5)
         {
             // get group results
-            var firsts = from g in Groups select g.Table.Rows[0][LeagueTable.TeamRow] as FootballTeam;
-            var secs = from g in Groups select g.Table.Rows[1][LeagueTable.TeamRow] as FootballTeam;
+            var firsts = Groups.Select(g => g.Table.Pos1).ToList();
+            var secs = Groups.Select(g => g.Table.Pos2).ToList();
 
             for(int trie = 0; trie < tryCount; trie++)
             {
-                
+                firsts = firsts.OrderBy(x => Globals.Random.Next()).ToList();
+                secs = secs.OrderBy(x => Globals.Random.Next()).ToList();
+
+                RoundOf16 = new ObservableCollection<DoubleMatch>();
+                for(int i = 0; i < firsts.Count; i++)
+                    RoundOf16.Add(new DoubleMatch(firsts[i], secs[i]));
+
+                bool[] isNationValid = ValidateGroupOf16();
+
+                IsRoundOf16Simulatable = isNationValid.Contains(false);
+
+                if(IsRoundOf16Simulatable)
+                    break;
             }
+        }
+
+        /// <summary>
+        /// Validate the Round of 16 (no multiple teams from one state or group) and tries to switch teams between matches.
+        /// Returns true for each match if success.
+        /// </summary>
+        /// <returns>True for each match if success</returns>
+        public bool[] ValidateGroupOf16()
+        {
+            bool[] isMatchValid = new bool[RoundOf16.Count];
+            bool reValidNeeded = false;
+            for(int i = 0; i < RoundOf16.Count; i++)
+            {
+                var match = RoundOf16[i];
+                isMatchValid[i] = IsMatchValid(match);
+                if(isMatchValid[i])
+                    continue;
+
+                // Switch teams
+                var res = SwitchRoundOf16TeamMatches(i);
+                if(!reValidNeeded)
+                    reValidNeeded = res;
+
+                if(reValidNeeded)
+                    isMatchValid[i] = IsMatchValid(match);
+            }
+
+            return isMatchValid;
+        }
+
+        /// <summary>
+        /// Switches teams between matches. If TeamA and TeamB are from same state or group,
+        /// then switch TeamA to another match.
+        /// Returns true if teams switched.
+        /// </summary>
+        /// <param name="matchNo">Match number</param>
+        private bool SwitchRoundOf16TeamMatches(int matchNo)
+        {
+            var match = RoundOf16[matchNo];
+
+            // Check
+            if(IsMatchValid(match))
+                return false;
+
+            // Previous match
+            if(matchNo > 0 && RoundOf16[matchNo - 1].TeamA.State != match.TeamA.State)
+            {
+                var newTeam = RoundOf16[matchNo - 1].TeamA;
+                RoundOf16[matchNo - 1] = new DoubleMatch(match.TeamA, RoundOf16[matchNo - 1].TeamB);
+                RoundOf16[matchNo] = new DoubleMatch(newTeam, match.TeamB);
+                SimpleLog.Info($"Switched teams in Round of 16 matches {matchNo-1} and {matchNo}");
+            }
+            // Next group
+            else if(matchNo < RoundOf16.Count - 1 && RoundOf16[matchNo + 1].TeamA.State != match.TeamA.State)
+            {
+                var newTeam = RoundOf16[matchNo + 1].TeamA;
+                RoundOf16[matchNo + 1] = new DoubleMatch(match.TeamA, RoundOf16[matchNo + 1].TeamB);
+                RoundOf16[matchNo] = new DoubleMatch(newTeam, match.TeamB);
+                SimpleLog.Info($"Switched teams in Round of 16 matches {matchNo} and {matchNo+1}");
+            }
+            else return false;
+
+            return true;
+        }
+
+        /// <summary>
+        /// Checks if the teams are from the same state or the same group and returns true if not
+        /// </summary>
+        /// <param name="match">Match</param>
+        private bool IsMatchValid(DoubleMatch match)
+        {
+            if(match.TeamA.State == match.TeamB.State) return false;
+            foreach(var g in Groups)
+            {
+                var valid = g.Teams.Contains(match.TeamA) && g.Teams.Contains(match.TeamB);
+                if(valid) return false;
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// Resets the matches
+        /// </summary>
+        public void ResetRoundOf16Matches()
+        {
+            foreach(var m in RoundOf16)
+                m.ResetMatch();
         }
 
         #endregion
