@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
@@ -22,12 +23,9 @@ namespace Simocracy.CLSim.Football.UAFA
 
         private ObservableCollection<DoubleMatch> _RoundOf16;
         private bool _IsRoundOf16Simulatable;
-        private ObservableCollection<DoubleMatch> _QuarterFinal;
-        private ObservableCollection<DoubleMatch> _SemiFinal;
+        private ObservableCollection<DoubleMatch> _QuarterFinals;
+        private ObservableCollection<DoubleMatch> _SemiFinals;
         private FootballMatch _Final;
-
-        private const int TeamsPerGroup = 5;
-        private const int GroupCount = 8;
 
         #endregion
 
@@ -39,6 +37,7 @@ namespace Simocracy.CLSim.Football.UAFA
         public ChampionsLeague()
         {
             IsGroupsSimulatable = false;
+            IsRoundOf16Simulatable = false;
         }
 
         #endregion
@@ -95,8 +94,10 @@ namespace Simocracy.CLSim.Football.UAFA
                 _RoundOf16 = value;
                 Notify();
             }
-        }        /// <summary>
-        /// True if group drawing was successfully
+        }
+
+        /// <summary>
+        /// True if drawing round of 16 was successfully
         /// </summary>
         public bool IsRoundOf16Simulatable
         {
@@ -109,27 +110,27 @@ namespace Simocracy.CLSim.Football.UAFA
         }
 
         /// <summary>
-        /// Quarter Final
+        /// Quarter Finals
         /// </summary>
-        public ObservableCollection<DoubleMatch> QuarterFinal
+        public ObservableCollection<DoubleMatch> QuarterFinals
         {
-            get => _QuarterFinal;
+            get => _QuarterFinals;
             set
             {
-                _QuarterFinal = value;
+                _QuarterFinals = value;
                 Notify();
             }
         }
 
         /// <summary>
-        /// Semi Final
+        /// Semi Finals
         /// </summary>
-        public ObservableCollection<DoubleMatch> SemiFinal
+        public ObservableCollection<DoubleMatch> SemiFinals
         {
-            get => _SemiFinal;
+            get => _SemiFinals;
             set
             {
-                _SemiFinal = value;
+                _SemiFinals = value;
                 Notify();
             }
         }
@@ -142,7 +143,7 @@ namespace Simocracy.CLSim.Football.UAFA
             get => _Final;
             set
             {
-                Final = value;
+                _Final = value;
                 Notify();
             }
         }
@@ -163,12 +164,12 @@ namespace Simocracy.CLSim.Football.UAFA
                 var ordered = AllTeamsRaw.OrderBy(x => Globals.Random.Next()).ToArray();
 
                 Groups = new ObservableCollection<FootballLeague>();
-                char groupID = 'A';
+                char groupId = 'A';
                 for(int i = 0; i < ordered.Length; i += 5)
                 {
-                    Groups.Add(new FootballLeague(groupID.ToString(), ordered[i], ordered[i + 1],
+                    Groups.Add(new FootballLeague(groupId.ToString(), ordered[i], ordered[i + 1],
                         ordered[i + 2], ordered[i + 3], ordered[i + 4]));
-                    groupID = (char) (groupID + 1);
+                    groupId = (char) (groupId + 1);
                 }
 
                 bool[] isNationValid = ValidateGroups();
@@ -262,43 +263,6 @@ namespace Simocracy.CLSim.Football.UAFA
                 if(group.Teams[i].State == group.Teams[j].State)
                     return true;
             return false;
-        }
-
-        /// <summary>
-        /// Resets the group matches und creates the new match plan
-        /// </summary>
-        public void ResetGroupMatches()
-        {
-            foreach(var g in Groups)
-                g.CreateMatches();
-        }
-
-        #endregion
-
-        #region Group Simulation
-
-        /// <summary>
-        /// Simulates all Groups
-        /// </summary>
-        public void SimulateGroups()
-        {
-            if(IsGroupsSimulatable && Groups != null)
-            {
-                SimpleLog.Info("Simulate all CL groups.");
-                foreach(var group in Groups)
-                {
-                    group.Simulate();
-                    group.CalculateTable();
-                }
-            }
-        }
-
-        /// <summary>
-        /// Simulates all groups async
-        /// </summary>
-        public async void SimulateGroupsAsync()
-        {
-            await Task.Run(() => SimulateGroups());
         }
 
         #endregion
@@ -413,7 +377,59 @@ namespace Simocracy.CLSim.Football.UAFA
         }
 
         /// <summary>
-        /// Resets the matches
+        /// Draws the Quarter finals
+        /// </summary>
+        public void DrawQuarterFinals()
+        {
+            var teams = RoundOf16.Select(m => m.Winner).ToArray();
+            teams = teams.OrderBy(t => Globals.Random.Next()).ToArray();
+
+            QuarterFinals = new ObservableCollection<DoubleMatch>();
+            for(int i = 0; i < teams.Length; i += 2)
+                QuarterFinals.Add(new DoubleMatch(teams[i], teams[i + 1]));
+        }
+
+        /// <summary>
+        /// Draws the Semi Finals
+        /// </summary>
+        public void DrawSemiFinals()
+        {
+            var teams = QuarterFinals.Select(m => m.Winner).ToArray();
+            teams = teams.OrderBy(t => Globals.Random.Next()).ToArray();
+
+            SemiFinals = new ObservableCollection<DoubleMatch>();
+            for(int i = 0; i < teams.Length; i += 2)
+                SemiFinals.Add(new DoubleMatch(teams[i], teams[i + 1]));
+        }
+
+        /// <summary>
+        /// Initializes the Final
+        /// </summary>
+        public void InitFinal(string stadium, string city, DateTime? date = null)
+        {
+            Final = new FootballMatch(SemiFinals[0].Winner, SemiFinals[1].Winner)
+            {
+                Stadium = stadium,
+                City = city,
+                Date = date ?? DateTime.MinValue
+            };
+        }
+
+        #endregion
+
+        #region Simulation
+
+        /// <summary>
+        /// Resets the group matches und creates the new match plan
+        /// </summary>
+        public void ResetGroupMatches()
+        {
+            foreach(var g in Groups)
+                g.CreateMatches();
+        }
+
+        /// <summary>
+        /// Resets the matches of the round of 16
         /// </summary>
         public void ResetRoundOf16Matches()
         {
@@ -422,34 +438,135 @@ namespace Simocracy.CLSim.Football.UAFA
         }
 
         /// <summary>
-        /// Draws the Quarter final
+        /// Resets the matches of the quarter final
         /// </summary>
-        public void DrawQuarterFinal()
+        public void ResetQuarterFinalMatches()
         {
-            var teams = RoundOf16.Select(m => m.Winner).ToArray();
-            teams = teams.OrderBy(t => Globals.Random.Next()).ToArray();
-
-            QuarterFinal = new ObservableCollection<DoubleMatch>();
-            for(int i = 0; i < teams.Length; i += 2)
-                QuarterFinal.Add(new DoubleMatch(teams[i], teams[i + 1]));
+            foreach(var m in QuarterFinals)
+                m.ResetMatch();
         }
 
         /// <summary>
-        /// Draws the Semi Final
+        /// Resets the matches of the semi final
         /// </summary>
-        public void DrawSemiFinal()
+        public void ResetSemiFinalMatches()
         {
-            var teams = QuarterFinal.Select(m => m.Winner).ToArray();
-            teams = teams.OrderBy(t => Globals.Random.Next()).ToArray();
-
-            SemiFinal = new ObservableCollection<DoubleMatch>();
-            for(int i = 0; i < teams.Length; i += 2)
-                SemiFinal.Add(new DoubleMatch(teams[i], teams[i + 1]));
+            foreach(var m in SemiFinals)
+                m.ResetMatch();
         }
 
-        #endregion
+        /// <summary>
+        /// Simulates all Groups
+        /// </summary>
+        public void SimulateGroups()
+        {
+            if(IsGroupsSimulatable && Groups?.Count > 0)
+            {
+                SimpleLog.Info("Simulate all CL groups.");
+                foreach(var group in Groups)
+                {
+                    group.Simulate();
+                    group.CalculateTable();
+                }
+            }
+        }
 
-        #region Simulate KO
+        /// <summary>
+        /// Simulates all groups async
+        /// </summary>
+        public async void SimulateGroupsAsync()
+        {
+            await Task.Run(() => SimulateGroups());
+        }
+
+        /// <summary>
+        /// Simulates the round of 16
+        /// </summary>
+        public void SimulateRoundOf16()
+        {
+            if(IsRoundOf16Simulatable && RoundOf16?.Count > 0)
+            {
+                SimpleLog.Info("Simulate CL Round of 16.");
+                foreach(var match in RoundOf16)
+                {
+                    match.Simulate();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Simulates the round of 16
+        /// </summary>
+        public async void SimulateRoundOf16Async()
+        {
+            await Task.Run(() => SimulateRoundOf16());
+        }
+
+        /// <summary>
+        /// Simulates the quarter finals
+        /// </summary>
+        public void SimulateQuarterFinals()
+        {
+            if(QuarterFinals?.Count > 0)
+            {
+                SimpleLog.Info("Simulate CL Quarter Finals.");
+                foreach(var match in QuarterFinals)
+                {
+                    match.Simulate();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Simulates the quarter finals
+        /// </summary>
+        public async void SimulateQuarterFinalsAsync()
+        {
+            await Task.Run(() => SimulateQuarterFinals());
+        }
+
+        /// <summary>
+        /// Simulates the semi finals
+        /// </summary>
+        public void SimulateSemiFinals()
+        {
+            if(SemiFinals?.Count > 0)
+            {
+                SimpleLog.Info("Simulate CL Semi Finals.");
+                foreach(var match in SemiFinals)
+                {
+                    match.Simulate();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Simulates the semi finals
+        /// </summary>
+        public async void SimulateSemiFinalsAsync()
+        {
+            await Task.Run(() => SimulateSemiFinals());
+        }
+
+        /// <summary>
+        /// Simulates the final
+        /// </summary>
+        public void SimulateFinals()
+        {
+            if(Final != null)
+            {
+                SimpleLog.Info("Simulate CL Final.");
+                Final.Simulate();
+            }
+        }
+
+        /// <summary>
+        /// Simulates the final
+        /// </summary>
+        public async void SimulateFinalsAsync()
+        {
+            await Task.Run(() => SimulateFinals());
+        }
 
         #endregion
 
