@@ -49,9 +49,9 @@ namespace Simocracy.CLSim.Football.Base
         /// <param name="teamB">Team B (Away)</param>
         public FootballMatch(FootballTeam teamA, FootballTeam teamB)
         {
+            AllTeams = new FootballTeam[2];
             TeamA = teamA;
             TeamB = teamB;
-            AllTeams = new[] {TeamA, TeamB};
 
             Reset();
         }
