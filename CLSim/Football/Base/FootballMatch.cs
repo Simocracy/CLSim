@@ -21,7 +21,7 @@ namespace Simocracy.CLSim.Football.Base
         private int _ResultB;
         private DateTime _Date;
         private string _Stadium;
-        private string _Location;
+        private string _City;
 
         private int _Ball;
         private int _MatchTime;
@@ -135,10 +135,10 @@ namespace Simocracy.CLSim.Football.Base
         /// <summary>
         /// Match city (with Flag)
         /// </summary>
-        public string Location
+        public string City
         {
-            get => _Location;
-            set { _Location = value; Notify(); }
+            get => _City;
+            set { _City = value; Notify(); }
         }
 
         /// <summary>
@@ -253,6 +253,8 @@ namespace Simocracy.CLSim.Football.Base
 
             ResultA = resA;
             ResultB = resB;
+
+            SimpleLog.Info($"Match Result: ResultA={ResultA}, ResultB={ResultB}");
         }
 
         private int Turn(int strength1, int strength2)
