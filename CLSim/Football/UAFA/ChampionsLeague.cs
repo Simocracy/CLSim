@@ -22,8 +22,8 @@ namespace Simocracy.CLSim.Football.UAFA
 
         private ObservableCollection<DoubleMatch> _RoundOf16;
         private bool _IsRoundOf16Simulatable;
-        private ObservableCollection<DoubleMatch> _RoundOf8;
-        private ObservableCollection<DoubleMatch> _RoundOf4;
+        private ObservableCollection<DoubleMatch> _QuarterFinal;
+        private ObservableCollection<DoubleMatch> _SemiFinal;
         private FootballMatch _Final;
 
         private const int TeamsPerGroup = 5;
@@ -57,19 +57,6 @@ namespace Simocracy.CLSim.Football.UAFA
                 Notify();
             }
         }
-
-        ///// <summary>
-        ///// All Teams in ordered order
-        ///// </summary>
-        //public ObservableCollection<FootballTeam> AllTeamsOrdered
-        //{
-        //    get => _AllTeamsOrdered;
-        //    private set
-        //    {
-        //        _AllTeamsOrdered = value;
-        //        Notify();
-        //    }
-        //}
 
         /// <summary>
         /// CL Groups from A to H, all groups should have 5 members!
@@ -124,12 +111,12 @@ namespace Simocracy.CLSim.Football.UAFA
         /// <summary>
         /// Quarter Final
         /// </summary>
-        public ObservableCollection<DoubleMatch> RoundOf8
+        public ObservableCollection<DoubleMatch> QuarterFinal
         {
-            get => _RoundOf8;
+            get => _QuarterFinal;
             set
             {
-                _RoundOf8 = value;
+                _QuarterFinal = value;
                 Notify();
             }
         }
@@ -137,12 +124,12 @@ namespace Simocracy.CLSim.Football.UAFA
         /// <summary>
         /// Semi Final
         /// </summary>
-        public ObservableCollection<DoubleMatch> RoundOf4
+        public ObservableCollection<DoubleMatch> SemiFinal
         {
-            get => _RoundOf4;
+            get => _SemiFinal;
             set
             {
-                _RoundOf4 = value;
+                _SemiFinal = value;
                 Notify();
             }
         }
@@ -173,11 +160,11 @@ namespace Simocracy.CLSim.Football.UAFA
         {
             for(int trie = 0; trie < tryCount; trie++)
             {
-                var ordered = AllTeamsRaw.OrderBy(x => Globals.Random.Next()).ToList();
+                var ordered = AllTeamsRaw.OrderBy(x => Globals.Random.Next()).ToArray();
 
                 Groups = new ObservableCollection<FootballLeague>();
                 char groupID = 'A';
-                for(int i = 0; i < ordered.Count; i += 5)
+                for(int i = 0; i < ordered.Length; i += 5)
                 {
                     Groups.Add(new FootballLeague(groupID.ToString(), ordered[i], ordered[i + 1],
                         ordered[i + 2], ordered[i + 3], ordered[i + 4]));
@@ -316,7 +303,7 @@ namespace Simocracy.CLSim.Football.UAFA
 
         #endregion
 
-        #region Round of 16
+        #region Draw KO
 
         /// <summary>
         /// Draw round of 16. If validation not succesfull, <paramref name="tryCount"/> times will be tried.
@@ -326,16 +313,16 @@ namespace Simocracy.CLSim.Football.UAFA
         public void DrawRoundOf16(int tryCount = 5)
         {
             // get group results
-            var firsts = Groups.Select(g => g.Table.Pos1).ToList();
-            var secs = Groups.Select(g => g.Table.Pos2).ToList();
+            var firsts = Groups.Select(g => g.Table.Pos1).ToArray();
+            var secs = Groups.Select(g => g.Table.Pos2).ToArray();
 
             for(int trie = 0; trie < tryCount; trie++)
             {
-                firsts = firsts.OrderBy(x => Globals.Random.Next()).ToList();
-                secs = secs.OrderBy(x => Globals.Random.Next()).ToList();
+                firsts = firsts.OrderBy(x => Globals.Random.Next()).ToArray();
+                secs = secs.OrderBy(x => Globals.Random.Next()).ToArray();
 
                 RoundOf16 = new ObservableCollection<DoubleMatch>();
-                for(int i = 0; i < firsts.Count; i++)
+                for(int i = 0; i < firsts.Length; i++)
                     RoundOf16.Add(new DoubleMatch(secs[i], firsts[i]));
 
                 bool[] isNationValid = ValidateGroupOf16();
@@ -433,6 +420,36 @@ namespace Simocracy.CLSim.Football.UAFA
             foreach(var m in RoundOf16)
                 m.ResetMatch();
         }
+
+        /// <summary>
+        /// Draws the Quarter final
+        /// </summary>
+        public void DrawQuarterFinal()
+        {
+            var teams = RoundOf16.Select(m => m.Winner).ToArray();
+            teams = teams.OrderBy(t => Globals.Random.Next()).ToArray();
+
+            QuarterFinal = new ObservableCollection<DoubleMatch>();
+            for(int i = 0; i < teams.Length; i += 2)
+                QuarterFinal.Add(new DoubleMatch(teams[i], teams[i + 1]));
+        }
+
+        /// <summary>
+        /// Draws the Semi Final
+        /// </summary>
+        public void DrawSemiFinal()
+        {
+            var teams = QuarterFinal.Select(m => m.Winner).ToArray();
+            teams = teams.OrderBy(t => Globals.Random.Next()).ToArray();
+
+            SemiFinal = new ObservableCollection<DoubleMatch>();
+            for(int i = 0; i < teams.Length; i += 2)
+                SemiFinal.Add(new DoubleMatch(teams[i], teams[i + 1]));
+        }
+
+        #endregion
+
+        #region Simulate KO
 
         #endregion
 
