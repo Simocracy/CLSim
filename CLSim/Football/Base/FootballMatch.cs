@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using SimpleLogger;
 
@@ -10,9 +11,17 @@ namespace Simocracy.CLSim.Football.Base
     /// </summary>
     /// <remarks>By Laserdisc, adapted from Simocracy Sport Simulator</remarks>
     [DebuggerDisplay("Match:{" + nameof(Name) + "}")]
-    public class FootballMatch
+    public class FootballMatch : INotifyPropertyChanged
     {
         #region Members
+
+        private FootballTeam _TeamA;
+        private FootballTeam _TeamB;
+        private int _ResultA;
+        private int _ResultB;
+        private DateTime _Date;
+        private string _Stadium;
+        private string _Location;
 
         private int _Ball;
         private int _MatchTime;
@@ -66,37 +75,71 @@ namespace Simocracy.CLSim.Football.Base
         /// <summary>
         /// Team A (Home)
         /// </summary>
-        public FootballTeam TeamA { get; set; }
+        public FootballTeam TeamA
+        {
+            get => _TeamA;
+            set { _TeamA = value;
+                AllTeams[0] = value;
+                Notify();
+            }
+        }
 
         /// <summary>
         /// Team B (Away)
         /// </summary>
-        public FootballTeam TeamB { get; set; }
+        public FootballTeam TeamB
+        {
+            get => _TeamB;
+            set { _TeamB = value;
+                AllTeams[1] = value;
+                Notify();
+            }
+        }
 
         /// <summary>
         /// Result Team A
         /// </summary>
-        public int ResultA { get; set; }
+        public int ResultA
+        {
+            get => _ResultA;
+            set { _ResultA = value; Notify(); }
+        }
 
         /// <summary>
         /// Result Team B
         /// </summary>
-        public int ResultB { get; set; }
+        public int ResultB
+        {
+            get => _ResultB;
+            set { _ResultB = value; Notify(); }
+        }
 
         /// <summary>
         /// Match date
         /// </summary>
-        public DateTime Date { get; set; }
+        public DateTime Date
+        {
+            get => _Date;
+            set { _Date = value; Notify(); }
+        }
 
         /// <summary>
         /// Match stadium
         /// </summary>
-        public string Stadium { get; set; }
+        public string Stadium
+        {
+            get => _Stadium;
+            set { _Stadium = value; Notify(); }
+        }
 
         /// <summary>
         /// Match city (with Flag)
         /// </summary>
-        public string Location { get; set; }
+        public string Location
+        {
+            get => _Location;
+            set { _Location = value; Notify(); }
+        }
 
         /// <summary>
         /// Match name
@@ -253,6 +296,25 @@ namespace Simocracy.CLSim.Football.Base
         }
 
         #endregion
+
+        #region INotifyPropertyChanged
+
+        /// <summary>
+        /// Observer-Event
+        /// </summary>
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        /// <summary>
+        /// Observer
+        /// </summary>
+        /// <param name="propertyName">Property</param>
+        protected void Notify([System.Runtime.CompilerServices.CallerMemberName] string propertyName = "")
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        #endregion
+
 
     }
 }
