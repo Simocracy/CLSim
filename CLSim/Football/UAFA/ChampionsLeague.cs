@@ -16,7 +16,6 @@ namespace Simocracy.CLSim.Football.UAFA
         #region Members
 
         private ObservableCollection<FootballTeam> _AllTeamsRaw;
-        private ObservableCollection<FootballTeam> _AllTeamsOrdered;
 
         private ObservableCollection<FootballLeague> _Groups;
         private bool _IsGroupsSimulatable;
@@ -337,11 +336,11 @@ namespace Simocracy.CLSim.Football.UAFA
 
                 RoundOf16 = new ObservableCollection<DoubleMatch>();
                 for(int i = 0; i < firsts.Count; i++)
-                    RoundOf16.Add(new DoubleMatch(firsts[i], secs[i]));
+                    RoundOf16.Add(new DoubleMatch(secs[i], firsts[i]));
 
                 bool[] isNationValid = ValidateGroupOf16();
 
-                IsRoundOf16Simulatable = isNationValid.Contains(false);
+                IsRoundOf16Simulatable = isNationValid.All(x => x);
 
                 if(IsRoundOf16Simulatable)
                     break;

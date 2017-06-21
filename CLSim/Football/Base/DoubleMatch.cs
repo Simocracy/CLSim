@@ -88,8 +88,8 @@ namespace Simocracy.CLSim.Football.Base
         /// <summary>
         /// Creates a new double match
         /// </summary>
-        /// <param name="teamA"></param>
-        /// <param name="teamB"></param>
+        /// <param name="teamA">Team A (Home in <see cref="FirstLeg"/>, Away in <see cref="SecondLegRegular"/> and <see cref="ExtraTime"/>)</param>
+        /// <param name="teamB">Team B (Away in <see cref="FirstLeg"/>, Home in <see cref="SecondLegRegular"/> and <see cref="ExtraTime"/>)</param>
         public DoubleMatch(FootballTeam teamA, FootballTeam teamB)
         {
             FirstLeg = new FootballMatch(teamA, teamB);
