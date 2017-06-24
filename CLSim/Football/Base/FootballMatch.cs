@@ -9,7 +9,7 @@ namespace Simocracy.CLSim.Football.Base
     /// <summary>
     /// Football Match
     /// </summary>
-    /// <remarks>By Laserdisc, adapted from Simocracy Sport Simulator</remarks>
+    /// <remarks>By Laserdisc/Flux, adapted from Simocracy Sport Simulator</remarks>
     [DebuggerDisplay("Match:{" + nameof(Name) + "}")]
     public class FootballMatch : INotifyPropertyChanged
     {
