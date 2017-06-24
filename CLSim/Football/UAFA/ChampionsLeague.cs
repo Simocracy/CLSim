@@ -159,6 +159,8 @@ namespace Simocracy.CLSim.Football.UAFA
         /// <param name="tryCount">Draw tries</param>
         public void DrawGroups(int tryCount = 5)
         {
+            SimpleLog.Info("Draw CL groups.");
+
             for(int trie = 0; trie < tryCount; trie++)
             {
                 var ordered = AllTeamsRaw.OrderBy(x => Globals.Random.Next()).ToArray();
@@ -181,6 +183,8 @@ namespace Simocracy.CLSim.Football.UAFA
             }
 
             ResetGroupMatches();
+
+            SimpleLog.Info("CL Groups drawed.");
         }
 
         /// <summary>
@@ -189,6 +193,8 @@ namespace Simocracy.CLSim.Football.UAFA
         /// <returns>True for each group if success</returns>
         public bool[] ValidateGroups()
         {
+            SimpleLog.Info("Validate CL Groups.");
+
             bool[] isNationValid = new bool[Groups.Count];
             bool reValidNeeded = false;
             for(int i = 0; i < Groups.Count; i++)
@@ -276,6 +282,8 @@ namespace Simocracy.CLSim.Football.UAFA
         /// <param name="tryCount">Draw tries</param>
         public void DrawRoundOf16(int tryCount = 5)
         {
+            SimpleLog.Info("Draw CL Round of 16.");
+
             // get group results
             var firsts = Groups.Select(g => g.Table.Pos1).ToArray();
             var secs = Groups.Select(g => g.Table.Pos2).ToArray();
@@ -305,6 +313,8 @@ namespace Simocracy.CLSim.Football.UAFA
         /// <returns>True for each match if success</returns>
         public bool[] ValidateGroupOf16()
         {
+            SimpleLog.Info("Validate CL Round of 16.");
+
             bool[] isMatchValid = new bool[RoundOf16.Count];
             bool reValidNeeded = false;
             for(int i = 0; i < RoundOf16.Count; i++)
@@ -381,6 +391,8 @@ namespace Simocracy.CLSim.Football.UAFA
         /// </summary>
         public void DrawQuarterFinals()
         {
+            SimpleLog.Info("Draw CL Quarter Finals.");
+
             var teams = RoundOf16.Select(m => m.Winner).ToArray();
             teams = teams.OrderBy(t => Globals.Random.Next()).ToArray();
 
@@ -394,6 +406,8 @@ namespace Simocracy.CLSim.Football.UAFA
         /// </summary>
         public void DrawSemiFinals()
         {
+            SimpleLog.Info("Draw CL Semi Finals.");
+
             var teams = QuarterFinals.Select(m => m.Winner).ToArray();
             teams = teams.OrderBy(t => Globals.Random.Next()).ToArray();
 
@@ -407,6 +421,8 @@ namespace Simocracy.CLSim.Football.UAFA
         /// </summary>
         public void InitFinal(string stadium, string city, DateTime? date = null)
         {
+            SimpleLog.Info($"Initialize CL Final with Stadium={stadium}, City={city}, Date={date}.");
+
             Final = new FootballMatch(SemiFinals[0].Winner, SemiFinals[1].Winner)
             {
                 Stadium = stadium,
@@ -424,6 +440,8 @@ namespace Simocracy.CLSim.Football.UAFA
         /// </summary>
         public void ResetGroupMatches()
         {
+            SimpleLog.Info("Initialize CL group matches.");
+
             foreach(var g in Groups)
                 g.CreateMatches();
         }
@@ -433,6 +451,8 @@ namespace Simocracy.CLSim.Football.UAFA
         /// </summary>
         public void ResetRoundOf16Matches()
         {
+            SimpleLog.Info("Initialize CL Round of 16 matches.");
+
             foreach(var m in RoundOf16)
                 m.ResetMatch();
         }
@@ -442,6 +462,8 @@ namespace Simocracy.CLSim.Football.UAFA
         /// </summary>
         public void ResetQuarterFinalMatches()
         {
+            SimpleLog.Info("Initialize CL Quarter Finals matches.");
+
             foreach(var m in QuarterFinals)
                 m.ResetMatch();
         }
@@ -451,6 +473,8 @@ namespace Simocracy.CLSim.Football.UAFA
         /// </summary>
         public void ResetSemiFinalMatches()
         {
+            SimpleLog.Info("Initialize CL Semi Finals matches.");
+
             foreach(var m in SemiFinals)
                 m.ResetMatch();
         }

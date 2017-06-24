@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using SimpleLogger;
 
 namespace Simocracy.CLSim.Football.Base
 {
@@ -11,8 +13,15 @@ namespace Simocracy.CLSim.Football.Base
     /// Football Match with 2 legs
     /// </summary>
     [DebuggerDisplay("Match:{" + nameof(Name) + "}")]
-    public class DoubleMatch
+    public class DoubleMatch : INotifyPropertyChanged
     {
+
+        #region Members
+
+        private int _PenaltyTeamA;
+        private int _PenaltyTeamB;
+
+        #endregion
 
         #region Properties
 
@@ -29,17 +38,17 @@ namespace Simocracy.CLSim.Football.Base
         /// <summary>
         /// First leg
         /// </summary>
-        public FootballMatch FirstLeg { get; set; }
+        public FootballMatch FirstLeg { get; }
 
         /// <summary>
         /// Second Leg after 90 min
         /// </summary>
-        public FootballMatch SecondLegRegular { get; set; }
+        public FootballMatch SecondLegRegular { get; }
 
         /// <summary>
         /// Extra time
         /// </summary>
-        public FootballMatch ExtraTime { get; set; }
+        public FootballMatch ExtraTime { get; }
 
         /// <summary>
         /// Full Result Team A
@@ -64,12 +73,20 @@ namespace Simocracy.CLSim.Football.Base
         /// <summary>
         /// Penalty Shootout Result Team A, -1 if none
         /// </summary>
-        public int PenaltyTeamA { get; set; }
+        public int PenaltyTeamA
+        {
+            get => _PenaltyTeamA;
+            set { _PenaltyTeamA = value; Notify(); }
+        }
 
         /// <summary>
         /// Penalty Shootout Result Team B, -1 if none
         /// </summary>
-        public int PenaltyTeamB { get; set; }
+        public int PenaltyTeamB
+        {
+            get => _PenaltyTeamB;
+            set { _PenaltyTeamB = value; Notify(); }
+        }
 
         /// <summary>
         /// Match name
@@ -131,6 +148,8 @@ namespace Simocracy.CLSim.Football.Base
 
             PenaltyTeamA = -1;
             PenaltyTeamB = -1;
+
+            SimpleLog.Info($"{this} initialized.");
         }
 
         /// <summary>
@@ -138,6 +157,8 @@ namespace Simocracy.CLSim.Football.Base
         /// </summary>
         public void SwapTeams()
         {
+            SimpleLog.Info($"Swap teams in {this}");
+
             FirstLeg.SwapTeams();
             SecondLegRegular.SwapTeams();
             ExtraTime.SwapTeams();
@@ -150,7 +171,7 @@ namespace Simocracy.CLSim.Football.Base
         public override string ToString()
         {
             return
-                $"TeamA={TeamA}, TeamB={TeamB}, ResultA={FullResultA}, ResultB={FullResultB}";
+                $"Double Match: TeamA={TeamA}, TeamB={TeamB}, ResultA={FullResultA}, ResultB={FullResultB}";
         }
 
         #endregion
@@ -162,6 +183,8 @@ namespace Simocracy.CLSim.Football.Base
         /// </summary>
         public void Simulate()
         {
+            SimpleLog.Info($"Simulate {this}");
+
             FirstLeg.Simulate();
             SecondLegRegular.Simulate();
 
@@ -176,6 +199,26 @@ namespace Simocracy.CLSim.Football.Base
                     
                 }
             }
+
+            SimpleLog.Info($"{this} simulated.");
+        }
+
+        #endregion
+
+        #region INotifyPropertyChanged
+
+        /// <summary>
+        /// Observer-Event
+        /// </summary>
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        /// <summary>
+        /// Observer
+        /// </summary>
+        /// <param name="propertyName">Property</param>
+        protected void Notify([System.Runtime.CompilerServices.CallerMemberName] string propertyName = "")
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         #endregion

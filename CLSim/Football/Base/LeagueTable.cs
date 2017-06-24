@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using SimpleLogger;
 
 namespace Simocracy.CLSim.Football.Base
 {
@@ -32,6 +33,16 @@ namespace Simocracy.CLSim.Football.Base
         public LeagueTable()
         {
             CreateTable();
+        }
+
+        /// <summary>
+        /// Creates a new table and calculates it
+        /// </summary>
+        /// <param name="teams">The teams of the league</param>
+        /// <param name="matches">The matches of the league</param>
+        public LeagueTable(IEnumerable<FootballTeam> teams, IEnumerable<FootballMatch> matches) : this()
+        {
+            CalculateTable(teams, matches);
         }
 
         #endregion
@@ -74,11 +85,16 @@ namespace Simocracy.CLSim.Football.Base
         /// <param name="matches">The matches of the league</param>
         public void CalculateTable(IEnumerable<FootballTeam> teams, IEnumerable<FootballMatch> matches)
         {
-            var subTable = CalculateSubTable(teams, matches);
+            var footballTeams = teams as FootballTeam[] ?? teams.ToArray();
+            var footballMatches = matches as FootballMatch[] ?? matches.ToArray();
+
+            SimpleLog.Info($"Calculate Table with {footballTeams.Length} teams and {footballMatches.Length} matches.");
+
+            var subTable = CalculateSubTable(footballTeams, footballMatches);
             foreach(DataRow row in subTable)
                 Rows.Add(row);
 
-            SortFootballTable(matches);
+            SortFootballTable(footballMatches);
         }
 
         /// <summary>
@@ -103,20 +119,18 @@ namespace Simocracy.CLSim.Football.Base
         /// <param name="teams">Teams of subtable</param>
         /// <param name="matches">Matches of Subtable</param>
         /// <returns>The subtable</returns>
-        private List<DataRow> CalculateSubTable(IEnumerable<FootballTeam> teams, IEnumerable<FootballMatch> matches)
+        private List<DataRow> CalculateSubTable(FootballTeam[] teams, FootballMatch[] matches)
         {
-            var footballTeams = teams as FootballTeam[] ?? teams.ToArray();
-            var footballMatches = matches as FootballMatch[] ?? matches.ToArray();
-            List<DataRow> rows = new List<DataRow>(footballTeams.Length);
+            List<DataRow> rows = new List<DataRow>(teams.Length);
 
-            foreach(var team in footballTeams)
+            foreach(var team in teams)
             {
                 var row = NewRow();
 
                 int drawn, lose, goalsFor, goalsAgainst;
                 var win = drawn = lose = goalsFor = goalsAgainst = 0;
 
-                foreach(var match in footballMatches)
+                foreach(var match in matches)
                 {
                     if(match.TeamA == team)
                     {
@@ -164,7 +178,7 @@ namespace Simocracy.CLSim.Football.Base
         /// Sorts the Table as a football table from <see cref="FootballLeague"/>
         /// </summary>
         /// <param name="matchList">Original match list of the league</param>
-        private void SortFootballTable(IEnumerable<FootballMatch> matchList)
+        private void SortFootballTable(FootballMatch[] matchList)
         {
             List<DataRow> rows = new List<DataRow>();
             foreach(DataRow row in Rows)
@@ -193,9 +207,9 @@ namespace Simocracy.CLSim.Football.Base
                 if(dGroup.Count() > 1)
                 {
                     // Get matches
-                    var groupTeams = dGroup.Select(t => t.Field<FootballTeam>(TeamRow));
+                    var groupTeams = dGroup.Select(t => t.Field<FootballTeam>(TeamRow)).ToArray();
                     //var matches = matchList.Where(m => groupTeams.All(t => t == m.TeamA || t == m.TeamB));
-                    var matches = matchList.Where(m => m.AllTeams.Intersect(groupTeams).Count() > 1);
+                    var matches = matchList.Where(m => m.AllTeams.Intersect(groupTeams).Count() > 1).ToArray();
 
                     // Get subtable
                     var subTable = CalculateSubTable(groupTeams, matches);

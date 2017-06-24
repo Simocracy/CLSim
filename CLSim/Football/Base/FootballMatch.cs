@@ -165,6 +165,8 @@ namespace Simocracy.CLSim.Football.Base
             _Ball = 0;
             _MatchTime = time;
             _Start = 0;
+
+            SimpleLog.Info($"{this} initialized.");
         }
 
         /// <summary>
@@ -172,6 +174,8 @@ namespace Simocracy.CLSim.Football.Base
         /// </summary>
         public void SwapTeams()
         {
+            SimpleLog.Info($"Swap teams in {this}");
+
             var oldTeamA = TeamA;
             var oldResultA = ResultA;
             TeamA = TeamB;
@@ -183,7 +187,7 @@ namespace Simocracy.CLSim.Football.Base
         public override string ToString()
         {
             return
-                $"TeamA={TeamA}, TeamB={TeamB}, ResultA={ResultA}, ResultB={ResultB}";
+                $"Football Match: TeamA={TeamA}, TeamB={TeamB}, ResultA={ResultA}, ResultB={ResultB}";
         }
 
         #endregion

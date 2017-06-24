@@ -38,7 +38,7 @@ namespace Simocracy.CLSim.Football.Base
             Matches = new ObservableCollection<FootballMatch>();
             CreateMatches();
 
-            SimpleLog.Info($"Football League created with ID={ID}");
+            SimpleLog.Info($"{this} created.");
         }
 
         #endregion
@@ -143,7 +143,7 @@ namespace Simocracy.CLSim.Football.Base
         /// <returns>Objekt als String</returns>
         public sealed override string ToString()
         {
-            return $"ID={ID}, TeamCount={TeamCount}";
+            return $"Football League: ID={ID}, TeamCount={TeamCount}";
         }
 
         #endregion
