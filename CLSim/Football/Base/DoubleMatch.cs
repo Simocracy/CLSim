@@ -183,7 +183,7 @@ namespace Simocracy.CLSim.Football.Base
         /// </summary>
         public void Simulate()
         {
-            SimpleLog.Info($"Simulate {this}");
+            SimpleLog.Info($"Simulate {this}.");
 
             FirstLeg.Simulate();
             SecondLegRegular.Simulate();
@@ -191,16 +191,77 @@ namespace Simocracy.CLSim.Football.Base
             // Extra Time
             if(Winner == null)
             {
+                SimpleLog.Info($"Extra time needed on {this}.");
+
                 ExtraTime.Simulate();
 
                 // Penalty
                 if(Winner == null)
                 {
-                    
+                    SimpleLog.Info($"Penalty Shootout needed on {this}.");
+
+                    PenaltyShootout();
                 }
             }
 
             SimpleLog.Info($"{this} simulated.");
+        }
+
+        /// <summary>
+        /// Simulates a penalty shootout
+        /// </summary>
+        /// <remarks>Based on Algorithm by Laserdisc/Flux</remarks>
+        private void PenaltyShootout()
+        {
+            SimpleLog.Info($"Simulate Penalty Shootout on {this}.");
+
+            //simulates a rudimentary penalty shoot-out
+            //var goals = new int[2,6]; //in the first row the total amount of goals is stored. in the second to sixth row there is stored whether the team scored or not.
+            var goals = new int[2, 5];
+            var totalStrength = TeamA.Strength + TeamB.Strength;
+
+            //goals[0,0] = 0; //set goals for team A to 0
+            //goals[1,0] = 0; //set goals for team B to 0
+            PenaltyTeamA = 0;
+            PenaltyTeamB = 0;
+
+            // first 5 penalties
+            for(int i = 0; i < 5; i++)
+            {
+                var valueA = Globals.Random.Next(0, totalStrength);
+                var valueB = Globals.Random.Next(0, totalStrength);
+
+                if(valueA < TeamA.Strength)
+                {
+                    //goals[0,0]++;
+                    PenaltyTeamA++;
+                    goals[0,i] = 1;
+                }
+                else goals[0,i] = 0;
+
+                if(valueB < TeamB.Strength)
+                {
+                    //goals[1,0]++;
+                    PenaltyTeamB++;
+                    goals[1,i] = 1;
+                }
+                else goals[1,i] = 0;
+
+                // todo: break
+            }
+
+            //if(goals[0,0] > goals[1,0]) "A hat gewonnen, tu irgendwas";
+            //elseif(goals[0,0] < goals[1,0]) "B hat gewonnen, tu irgendwas";
+            if(Winner == null) // todo: convert to while
+            {
+                //additional penalties
+                //var value = Globals.Random.Next(0, totalStrength);
+
+                //if(value < TeamA.Strength) "A hat gewonnen, tu irgendwas";
+                //else "B hat gewonnen, tu irgendwas";
+            }
+
+            SimpleLog.Info($"Penalty Shootout simulated: PenaltyTeamA={PenaltyTeamA}, PenaltyTeamB={PenaltyTeamB}.");
         }
 
         #endregion
