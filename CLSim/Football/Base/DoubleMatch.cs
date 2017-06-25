@@ -263,7 +263,7 @@ namespace Simocracy.CLSim.Football.Base
             // first 5 penalties
             var firstPenalties = 5;
             int remainA = 0, remainB = 0;
-            int neededA = firstPenalties, neededB = firstPenalties;
+            int neededA, neededB;
             int penaltyA = 0, penaltyB = 0;
             for(int i = 0; i < firstPenalties; i++)
             {
@@ -307,27 +307,6 @@ namespace Simocracy.CLSim.Football.Base
 
             SimpleLog.Info($"Penalty Shootout simulated: PenaltyTeamA={PenaltyTeamA}, PenaltyTeamB={PenaltyTeamB}.");
         }
-
-        #region Penalty Pair Inner Class
-
-        /// <summary>
-        /// Helper Class for Penalty Shootout Rounds.
-        /// Saves the goals in one Round.
-        /// </summary>
-        private class PPair
-        {
-            /// <summary>
-            /// Goals of First Team
-            /// </summary>
-            public int First { get; set; } = 0;
-
-            /// <summary>
-            /// Goals of Second Team
-            /// </summary>
-            public int Second { get; set; } = 0;
-        }
-
-        #endregion
 
         #endregion
 
