@@ -210,59 +210,124 @@ namespace Simocracy.CLSim.Football.Base
         /// <summary>
         /// Simulates a penalty shootout
         /// </summary>
-        /// <remarks>Based on Algorithm by Laserdisc/Flux</remarks>
+        /// <remarks>Based on Algorithm by Laserdisc/Flux:
+        /// <code>
+        ///     //simulates a rudimentary penalty shoot-out
+        ///     int[] goals = new int[2][6]; //in the first row the total amount of goals is stored. in the second to sixth row there is stored whether the team scored or not.
+        ///     var round = 0;
+        ///     var totalStrength = TeamA.Strength + TeamB.Strength;
+        ///     
+        ///     goals[0][0] = 0; //set goals for team A to 0
+        ///     goals[1][0] = 0; //set goals for team B to 0
+        ///     
+        ///     for(int i = 1; i &lt;= 5; i++)
+        ///     {
+        ///         var valueA = Random.Next(0, totalStrength);
+        ///         var valueB = Random.Next(0, totalStrength);
+        ///     
+        ///         if(valueA &lt; TeamA.Strength)
+        ///         {
+        ///             goals[0][0]++;
+        ///             goals[0][i] = 1;
+        ///         }
+        ///         else goals[0][i] = 0;
+        ///     
+        ///         if(valueB &lt; TeamB.Strength)
+        ///         {
+        ///             goals[1][0]++;
+        ///             goals[1][i] = 1;
+        ///         }
+        ///         else goals[1][i] = 0;
+        ///     }
+        ///     
+        ///     if(goals[0][0] &gt; goals[1][0]) "A hat gewonnen, tu irgendwas";
+        ///     elseif(goals[0][0] &lt; goals[1][0]) "B hat gewonnen, tu irgendwas";
+        ///     else {
+        ///         //additional penalties
+        ///         var value = Random.Next(0, totalStrength);
+        ///     
+        ///         if(value &lt; TeamA.Strength) "A hat gewonnen, tu irgendwas";
+        ///         else "B hat gewonnen, tu irgendwas";
+        /// </code>
+        /// </remarks>
         private void PenaltyShootout()
         {
             SimpleLog.Info($"Simulate Penalty Shootout on {this}.");
 
-            //simulates a rudimentary penalty shoot-out
-            //var goals = new int[2,6]; //in the first row the total amount of goals is stored. in the second to sixth row there is stored whether the team scored or not.
-            var goals = new int[2, 5];
             var totalStrength = TeamA.Strength + TeamB.Strength;
-
-            //goals[0,0] = 0; //set goals for team A to 0
-            //goals[1,0] = 0; //set goals for team B to 0
-            PenaltyTeamA = 0;
-            PenaltyTeamB = 0;
+            
+            var firVal = Globals.Random.Next(0, 1);
+            var firTeam = firVal == 0 ? TeamA : TeamB;
+            var secTeam = firVal == 1 ? TeamA : TeamB;
 
             // first 5 penalties
-            for(int i = 0; i < 5; i++)
+            var firstPenalties = 5;
+            int remainA = 0, remainB = 0;
+            int neededA = firstPenalties, neededB = firstPenalties;
+            int penaltyA = 0, penaltyB = 0;
+            for(int i = 0; i < firstPenalties; i++)
             {
                 var valueA = Globals.Random.Next(0, totalStrength);
                 var valueB = Globals.Random.Next(0, totalStrength);
 
-                if(valueA < TeamA.Strength)
-                {
-                    //goals[0,0]++;
-                    PenaltyTeamA++;
-                    goals[0,i] = 1;
-                }
-                else goals[0,i] = 0;
+                if(valueA < firTeam.Strength)
+                    penaltyA++;
 
-                if(valueB < TeamB.Strength)
-                {
-                    //goals[1,0]++;
-                    PenaltyTeamB++;
-                    goals[1,i] = 1;
-                }
-                else goals[1,i] = 0;
+                // break
+                remainA = firstPenalties - i;
+                neededB = firstPenalties - penaltyA;
+                if(neededB > remainB) break;
 
-                // todo: break
+                if(valueB < secTeam.Strength)
+                    penaltyB++;
+
+                // break
+                remainB = firstPenalties - i;
+                neededA = firstPenalties - penaltyB;
+                if(neededA > remainA) break;
             }
 
-            //if(goals[0,0] > goals[1,0]) "A hat gewonnen, tu irgendwas";
-            //elseif(goals[0,0] < goals[1,0]) "B hat gewonnen, tu irgendwas";
-            if(Winner == null) // todo: convert to while
-            {
-                //additional penalties
-                //var value = Globals.Random.Next(0, totalStrength);
+            PenaltyTeamA = firVal == 0 ? penaltyA : penaltyB;
+            PenaltyTeamB = firVal == 1 ? penaltyA : penaltyB;
 
-                //if(value < TeamA.Strength) "A hat gewonnen, tu irgendwas";
-                //else "B hat gewonnen, tu irgendwas";
+            // additional penalties
+            while(Winner == null)
+            {
+                var valueA = Globals.Random.Next(0, totalStrength);
+                var valueB = Globals.Random.Next(0, totalStrength);
+
+                if(valueA < firTeam.Strength)
+                    penaltyA++;
+                if(valueB < secTeam.Strength)
+                    penaltyB++;
+
+                PenaltyTeamA = firVal == 0 ? penaltyA : penaltyB;
+                PenaltyTeamB = firVal == 1 ? penaltyA : penaltyB;
             }
 
             SimpleLog.Info($"Penalty Shootout simulated: PenaltyTeamA={PenaltyTeamA}, PenaltyTeamB={PenaltyTeamB}.");
         }
+
+        #region Penalty Pair Inner Class
+
+        /// <summary>
+        /// Helper Class for Penalty Shootout Rounds.
+        /// Saves the goals in one Round.
+        /// </summary>
+        private class PPair
+        {
+            /// <summary>
+            /// Goals of First Team
+            /// </summary>
+            public int First { get; set; } = 0;
+
+            /// <summary>
+            /// Goals of Second Team
+            /// </summary>
+            public int Second { get; set; } = 0;
+        }
+
+        #endregion
 
         #endregion
 
