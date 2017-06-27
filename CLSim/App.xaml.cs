@@ -52,6 +52,7 @@ namespace Simocracy.CLSim
             {
                 //SimpleLog.Error(e.ToString());
                 SimpleLog.Log(e, framesToSkip: 1);
+                Environment.ExitCode = 1;
             }
 
             app.Shutdown();
