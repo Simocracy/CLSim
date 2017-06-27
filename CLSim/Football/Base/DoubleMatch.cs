@@ -254,7 +254,7 @@ namespace Simocracy.CLSim.Football.Base
         {
             SimpleLog.Info($"Simulate Penalty Shootout on {this}.");
 
-            var totalStrength = TeamA.Strength + TeamB.Strength;
+            var totalStrength = TeamA.AvgStrength + TeamB.AvgStrength;
             
             var firVal = Globals.Random.Next(0, 1);
             var firTeam = firVal == 0 ? TeamA : TeamB;
@@ -270,7 +270,7 @@ namespace Simocracy.CLSim.Football.Base
                 var valueA = Globals.Random.Next(0, totalStrength);
                 var valueB = Globals.Random.Next(0, totalStrength);
 
-                if(valueA < firTeam.Strength)
+                if(valueA < firTeam.AvgStrength)
                     penaltyA++;
 
                 // break
@@ -278,7 +278,7 @@ namespace Simocracy.CLSim.Football.Base
                 neededB = firstPenalties - penaltyA;
                 if(neededB > remainB) break;
 
-                if(valueB < secTeam.Strength)
+                if(valueB < secTeam.AvgStrength)
                     penaltyB++;
 
                 // break
@@ -296,9 +296,9 @@ namespace Simocracy.CLSim.Football.Base
                 var valueA = Globals.Random.Next(0, totalStrength);
                 var valueB = Globals.Random.Next(0, totalStrength);
 
-                if(valueA < firTeam.Strength)
+                if(valueA < firTeam.AvgStrength)
                     penaltyA++;
-                if(valueB < secTeam.Strength)
+                if(valueB < secTeam.AvgStrength)
                     penaltyB++;
 
                 PenaltyTeamA = firVal == 0 ? penaltyA : penaltyB;

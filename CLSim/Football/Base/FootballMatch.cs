@@ -221,32 +221,32 @@ namespace Simocracy.CLSim.Football.Base
                 switch(_Ball)
                 {
                     case TorwartA:
-                        _Ball = Turn(TeamA.Strength, TeamB.Strength);
+                        _Ball = Turn(TeamA.AvgStrength, TeamB.AvgStrength);
                         break;
                     case AbwehrA:
-                        _Ball = Turn(TeamA.Strength, TeamB.Strength);
+                        _Ball = Turn(TeamA.AvgStrength, TeamB.AvgStrength);
                         break;
                     case MittelfeldA:
-                        _Ball = Turn(TeamA.Strength, TeamB.Strength);
+                        _Ball = Turn(TeamA.AvgStrength, TeamB.AvgStrength);
                         break;
                     case SturmA:
-                        _Ball = Turn(TeamA.Strength, TeamB.Strength + TeamB.Strength / 2);
+                        _Ball = Turn(TeamA.AvgStrength, TeamB.AvgStrength + TeamB.AvgStrength / 2);
                         break;
                     case TorA:
                         resA++;
                         _Ball = MittelfeldB;
                         break;
                     case TorwartB:
-                        _Ball = Turn(TeamB.Strength, TeamA.Strength);
+                        _Ball = Turn(TeamB.AvgStrength, TeamA.AvgStrength);
                         break;
                     case AbwehrB:
-                        _Ball = Turn(TeamB.Strength, TeamA.Strength);
+                        _Ball = Turn(TeamB.AvgStrength, TeamA.AvgStrength);
                         break;
                     case MittelfeldB:
-                        _Ball = Turn(TeamB.Strength, TeamA.Strength);
+                        _Ball = Turn(TeamB.AvgStrength, TeamA.AvgStrength);
                         break;
                     case SturmB:
-                        _Ball = Turn(TeamB.Strength, TeamA.Strength + TeamA.Strength / 2);
+                        _Ball = Turn(TeamB.AvgStrength, TeamA.AvgStrength + TeamA.AvgStrength / 2);
                         break;
                     case TorB:
                         resB++;

@@ -7,12 +7,12 @@ using SimpleLogger;
 namespace Simocracy.CLSim.Football.Base
 {
 
-    [DebuggerDisplay("Team={" + nameof(FullName) + "}, Strength={" + nameof(Strength) + "}")]
+    [DebuggerDisplay("Team={" + nameof(FullName) + "}, Strength={" + nameof(AvgStrength) + "}")]
     public class FootballTeam : INotifyPropertyChanged
     {
         private string _Name;
         private string _State;
-        private int _Strength;
+        private int _AvgStrength;
 
         #region Properties
 
@@ -37,10 +37,10 @@ namespace Simocracy.CLSim.Football.Base
         /// <summary>
         /// Team strength
         /// </summary>
-        public int Strength
+        public int AvgStrength
         {
-            get => _Strength;
-            set { _Strength = value; Notify(); }
+            get => _AvgStrength;
+            set { _AvgStrength = value; Notify(); }
         }
 
         /// <summary>
@@ -56,20 +56,20 @@ namespace Simocracy.CLSim.Football.Base
         /// Creates a football team
         /// </summary>
         /// <param name="inputStr">Input string with name and state</param>
-        /// <param name="strength">Team strength</param>
-        public FootballTeam(string inputStr, string strength)
+        /// <param name="avgStrength">Team strength</param>
+        public FootballTeam(string inputStr, string avgStrength)
         {
-            SetupTeam(inputStr, Int32.Parse(strength));
+            SetupTeam(inputStr, Int32.Parse(avgStrength));
         }
 
         /// <summary>
         /// Creates a football team
         /// </summary>
         /// <param name="inputStr">Input string with name and state</param>
-        /// <param name="strength">Team strength</param>
-        public FootballTeam(string inputStr, int strength)
+        /// <param name="avgStrength">Team strength</param>
+        public FootballTeam(string inputStr, int avgStrength)
         {
-            SetupTeam(inputStr, strength);
+            SetupTeam(inputStr, avgStrength);
         }
 
         /// <summary>
@@ -77,21 +77,21 @@ namespace Simocracy.CLSim.Football.Base
         /// </summary>
         /// <param name="name">Team name</param>
         /// <param name="state">Association/Nationality/State of Team</param>
-        /// <param name="strength">Team strength</param>
-        public FootballTeam(string name, string state, int strength)
+        /// <param name="avgStrength">Team strength</param>
+        public FootballTeam(string name, string state, int avgStrength)
         {
-            SetupTeam(name, state, strength);
+            SetupTeam(name, state, avgStrength);
         }
 
         /// <summary>
         /// Set ups a football team
         /// </summary>
         /// <param name="inputStr">Input string with name and state</param>
-        /// <param name="strength">Team strength</param>
-        private void SetupTeam(string inputStr, int strength)
+        /// <param name="avgStrength">Team strength</param>
+        private void SetupTeam(string inputStr, int avgStrength)
         {
             var regexMatch = Regex.Match(inputStr, @"(\{\{[^\}]+\}\}) (.+)");
-            SetupTeam(regexMatch.Groups[2].Value, regexMatch.Groups[1].Value, strength);
+            SetupTeam(regexMatch.Groups[2].Value, regexMatch.Groups[1].Value, avgStrength);
         }
 
         /// <summary>
@@ -99,13 +99,13 @@ namespace Simocracy.CLSim.Football.Base
         /// </summary>
         /// <param name="name">Team name</param>
         /// <param name="state">Association/Nationality/State of Team</param>
-        /// <param name="strength">Team strength</param>
+        /// <param name="avgStrength">Team strength</param>
         /// <remarks>Final Setup Method</remarks>
-        private void SetupTeam(string name, string state, int strength)
+        private void SetupTeam(string name, string state, int avgStrength)
         {
             Name = name;
             State = state;
-            Strength = strength;
+            AvgStrength = avgStrength;
 
             SimpleLog.Info($"{this} created.");
         }
@@ -116,7 +116,7 @@ namespace Simocracy.CLSim.Football.Base
 
         public override string ToString()
         {
-            return $"Football Team={FullName}, Strength={Strength}";
+            return $"Football Team={FullName}, AvgStrength={AvgStrength}";
         }
 
         #endregion
