@@ -53,6 +53,16 @@ namespace Simocracy.CLSim.Football.Base
         #region Constructor
 
         /// <summary>
+        /// Creates a football team.
+        /// Scheme of Input String: {{Flag}} Teamname, avgStrength
+        /// </summary>
+        /// <param name="inputStr">Input string</param>
+        public FootballTeam(string inputStr)
+        {
+            SetupTeam(inputStr);
+        }
+
+        /// <summary>
         /// Creates a football team
         /// </summary>
         /// <param name="inputStr">Input string with name and state</param>
@@ -81,6 +91,16 @@ namespace Simocracy.CLSim.Football.Base
         public FootballTeam(string name, string state, int avgStrength)
         {
             SetupTeam(name, state, avgStrength);
+        }
+
+        /// <summary>
+        /// Set ups a football team.
+        /// </summary>
+        /// <param name="inputStr">Input string</param>
+        private void SetupTeam(string inputStr)
+        {
+            var regexMatch = Regex.Match(inputStr, @"(\{\{[^\}]+\}\})\s*([^\,]+),\s*(\d+)");
+            SetupTeam(regexMatch.Groups[2].Value, regexMatch.Groups[1].Value, Int32.Parse(regexMatch.Groups[3].Value));
         }
 
         /// <summary>

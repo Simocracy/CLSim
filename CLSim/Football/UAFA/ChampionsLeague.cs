@@ -27,6 +27,8 @@ namespace Simocracy.CLSim.Football.UAFA
         private ObservableCollection<DoubleMatch> _SemiFinals;
         private FootballMatch _Final;
 
+        private string _Season;
+
         #endregion
 
         #region Constructor
@@ -34,10 +36,13 @@ namespace Simocracy.CLSim.Football.UAFA
         /// <summary>
         /// Creates a new CL instance
         /// </summary>
-        public ChampionsLeague()
+        public ChampionsLeague(string season)
         {
             IsGroupsSimulatable = false;
             IsRoundOf16Simulatable = false;
+            Season = season;
+
+            SimpleLog.Info($"Initialized UAFA CL Season {Season}");
         }
 
         #endregion
@@ -146,6 +151,65 @@ namespace Simocracy.CLSim.Football.UAFA
                 _Final = value;
                 Notify();
             }
+        }
+
+        /// <summary>
+        /// The current season
+        /// </summary>
+        public string Season
+        {
+            get => _Season;
+            private set
+            {
+                _Season = value;
+                Notify();
+            }
+        }
+
+
+        #endregion
+
+        #region IO
+
+        /// <summary>
+        /// Reads the given list and extracts the teams.
+        /// Teams must be seperated by line breaks.
+        /// </summary>
+        /// <param name="list">Teamlist seperated by line breaks</param>
+        public void ReadTeamlist(string list)
+        {
+            SimpleLog.Info("Read CL team input.");
+
+            var strTeams = list.Split(new[] {Environment.NewLine, "\n", "\r"}, StringSplitOptions.RemoveEmptyEntries);
+            AllTeamsRaw = new ObservableCollection<FootballTeam>();
+            foreach(var team in strTeams)
+            {
+                try
+                {
+                    var t = new FootballTeam(team);
+                    AllTeamsRaw.Add(t);
+                    SimpleLog.Info($"Team created: {t}");
+                }
+                catch(Exception e)
+                {
+                    SimpleLog.Error($"Error reading team \"{team}\":{Environment.NewLine}{e}");
+                }
+            }
+
+            SimpleLog.Info($"{AllTeamsRaw.Count} teams readed.");
+        }
+
+        /// <summary>
+        /// Exports the UAFA Coefficient values to the given file
+        /// </summary>
+        /// <param name="fileName">File name</param>
+        public void ExportCoefficient(string fileName)
+        {
+            SimpleLog.Info($"Export UAFA Coefficient of CL season {Season}");
+
+            // todo: calculate
+
+            SimpleLog.Info($"UAFA Coefficient for CL season {Season} exported.");
         }
 
         #endregion
