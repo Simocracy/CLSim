@@ -221,32 +221,32 @@ namespace Simocracy.CLSim.Football.Base
                 switch(_Ball)
                 {
                     case TorwartA:
-                        _Ball = Turn(TeamA.AvgStrength, TeamB.AvgStrength);
+                        _Ball = Turn(TeamA.GoalkeeperStrength, TeamB.ForwardStrength);
                         break;
                     case AbwehrA:
-                        _Ball = Turn(TeamA.AvgStrength, TeamB.AvgStrength);
+                        _Ball = Turn(TeamA.DefenseStrength, TeamB.MidfieldStrength);
                         break;
                     case MittelfeldA:
-                        _Ball = Turn(TeamA.AvgStrength, TeamB.AvgStrength);
+                        _Ball = Turn(TeamA.MidfieldStrength, TeamB.DefenseStrength);
                         break;
                     case SturmA:
-                        _Ball = Turn(TeamA.AvgStrength, TeamB.AvgStrength + TeamB.AvgStrength / 2);
+                        _Ball = Turn(TeamA.ForwardStrength, TeamB.GoalkeeperStrength + TeamB.DefenseStrength / 2);
                         break;
                     case TorA:
                         resA++;
                         _Ball = MittelfeldB;
                         break;
                     case TorwartB:
-                        _Ball = Turn(TeamB.AvgStrength, TeamA.AvgStrength);
+                        _Ball = Turn(TeamB.GoalkeeperStrength, TeamA.ForwardStrength);
                         break;
                     case AbwehrB:
-                        _Ball = Turn(TeamB.AvgStrength, TeamA.AvgStrength);
+                        _Ball = Turn(TeamB.DefenseStrength, TeamA.MidfieldStrength);
                         break;
                     case MittelfeldB:
-                        _Ball = Turn(TeamB.AvgStrength, TeamA.AvgStrength);
+                        _Ball = Turn(TeamB.MidfieldStrength, TeamA.DefenseStrength);
                         break;
                     case SturmB:
-                        _Ball = Turn(TeamB.AvgStrength, TeamA.AvgStrength + TeamA.AvgStrength / 2);
+                        _Ball = Turn(TeamB.ForwardStrength, TeamA.GoalkeeperStrength + TeamA.DefenseStrength / 2);
                         break;
                     case TorB:
                         resB++;

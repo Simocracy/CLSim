@@ -12,7 +12,10 @@ namespace Simocracy.CLSim.Football.Base
     {
         private string _Name;
         private string _State;
-        private int _AvgStrength;
+        private int _GoalkeeperStrength;
+        private int _DefenseStrength;
+        private int _MidfieldStrength;
+        private int _ForwardStrength;
 
         #region Properties
 
@@ -35,12 +38,46 @@ namespace Simocracy.CLSim.Football.Base
         }
 
         /// <summary>
-        /// Team strength
+        /// Average team strength.
+        /// Calculation via 4-4-2 system.
         /// </summary>
-        public int AvgStrength
+        public int AvgStrength => (GoalkeeperStrength + 4 * DefenseStrength + 4 * MidfieldStrength +
+                                   2 * ForwardStrength) / 11;
+
+        /// <summary>
+        /// Goalkeeper strength
+        /// </summary>
+        public int GoalkeeperStrength
         {
-            get => _AvgStrength;
-            set { _AvgStrength = value; Notify(); }
+            get => _GoalkeeperStrength;
+            set { _GoalkeeperStrength = value; Notify(); }
+        }
+
+        /// <summary>
+        /// Defense strength
+        /// </summary>
+        public int DefenseStrength
+        {
+            get => _DefenseStrength;
+            set { _DefenseStrength = value; Notify(); }
+        }
+
+        /// <summary>
+        /// Midfield strength
+        /// </summary>
+        public int MidfieldStrength
+        {
+            get => _MidfieldStrength;
+            set { _MidfieldStrength = value; Notify(); }
+        }
+
+        /// <summary>
+        /// Forward strength
+        /// </summary>
+        public int ForwardStrength
+        {
+            get => _ForwardStrength;
+            set { _ForwardStrength = value; Notify(); }
         }
 
         /// <summary>
@@ -125,7 +162,7 @@ namespace Simocracy.CLSim.Football.Base
         {
             Name = name;
             State = state;
-            AvgStrength = avgStrength;
+            GoalkeeperStrength = DefenseStrength = MidfieldStrength = ForwardStrength = avgStrength;
 
             SimpleLog.Info($"{this} created.");
         }
