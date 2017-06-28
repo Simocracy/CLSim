@@ -168,6 +168,24 @@ namespace Simocracy.CLSim.Football.Base
             PenaltyTeamB = oldPenaltyA;
         }
 
+        /// <summary>
+        /// Returns the full second leg with extra time
+        /// </summary>
+        /// <returns>New <see cref="FootballMatch"/> instance for the second leg</returns>
+        public FootballMatch GetFullSecondLeg()
+        {
+            var secLeg = new FootballMatch(SecondLegRegular.TeamA, SecondLegRegular.TeamB)
+            {
+                ResultA = SecondLegRegular.ResultA + ExtraTime.ResultA,
+                ResultB = SecondLegRegular.ResultB + ExtraTime.ResultB,
+                Date = SecondLegRegular.Date,
+                City = SecondLegRegular.City,
+                Stadium = SecondLegRegular.Stadium
+            };
+
+            return secLeg;
+        }
+
         public override string ToString()
         {
             return
