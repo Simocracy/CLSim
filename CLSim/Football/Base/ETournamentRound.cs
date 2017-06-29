@@ -7,19 +7,19 @@
     {
         // Champions League
         CLQualification = 1,
-        CLGroupStage = 2,
-        CLRoundOf16 = 3,
-        CLQuarterFinals = 4,
-        CLSemiFinals = 5,
-        CLFinal = 6,
+        CLGroupStage = 3,
+        CLRoundOf16 = 6,
+        CLQuarterFinals = 7,
+        CLSemiFinals = 8,
+        CLFinal = 9,
 
         // America League
         ALQualification = 11,
-        ALGroupStage = 12,
-        ALRoundOf32 = 13,
-        ALRoundOf16 = 14,
-        ALQuarterFinals = 15,
-        ALSemiFinals = 16,
-        ALFinal = 17
+        ALGroupStage = 13,
+        ALRoundOf32 = 15,
+        ALRoundOf16 = 16,
+        ALQuarterFinals = 17,
+        ALSemiFinals = 18,
+        ALFinal = 19
     }
 }
