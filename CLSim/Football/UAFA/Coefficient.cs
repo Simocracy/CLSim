@@ -35,6 +35,7 @@ namespace Simocracy.CLSim.Football.UAFA
         public Coefficient(FootballTeam team)
         {
             Team = team;
+            Points = -1;
             RoundsPlayed = new HashSet<ETournamentRound>();
         }
 
@@ -99,11 +100,90 @@ namespace Simocracy.CLSim.Football.UAFA
         /// </summary>
         public int Points
         {
-            get => _Points;
+            get
+            {
+                if(_Points < 0)
+                    CalculatePoints();
+                return _Points;
+            }
             private set
             {
                 _Points = value;
                 Notify();
+            }
+        }
+
+        #endregion
+
+        #region Methods
+
+        /// <summary>
+        /// Returns the latest Champions League round
+        /// </summary>
+        /// <returns>Reached Champions League round</returns>
+        public ETournamentRound GetReachedCLRound()
+        {
+            return RoundsPlayed.Where(r => r.ToString().StartsWith("CL")).Max();
+        }
+
+        /// <summary>
+        /// Returns the latest Champions League round as export string
+        /// </summary>
+        /// <returns>Reached Champions League round as string</returns>
+        public string GetReachedCLRoundStr()
+        {
+            switch(GetReachedCLRound())
+            {
+                case ETournamentRound.CLQualification:
+                    return "Quali";
+                case ETournamentRound.CLGroupStage:
+                    return "Gruppe";
+                case ETournamentRound.CLRoundOf16:
+                    return "Achtelfinale";
+                case ETournamentRound.CLQuarterFinals:
+                    return "Viertelfinale";
+                case ETournamentRound.CLSemiFinals:
+                    return "Halbfinale";
+                case ETournamentRound.CLFinal:
+                    return "Finale";
+                default:
+                    return "–";
+            }
+        }
+
+        /// <summary>
+        /// Returns the latest America League round
+        /// </summary>
+        /// <returns>Reached America League round</returns>
+        public ETournamentRound GetReachedALRound()
+        {
+            return RoundsPlayed.Where(r => r.ToString().StartsWith("AL")).Max();
+        }
+
+        /// <summary>
+        /// Returns the latest America League round as export string
+        /// </summary>
+        /// <returns>Reached America League round as string</returns>
+        public string GetReachedALRoundStr()
+        {
+            switch(GetReachedALRound())
+            {
+                case ETournamentRound.ALQualification:
+                    return "Quali";
+                case ETournamentRound.ALGroupStage:
+                    return "Gruppe";
+                case ETournamentRound.ALRoundOf32:
+                    return "Sechz.final.";
+                case ETournamentRound.ALRoundOf16:
+                    return "Achtelfinale";
+                case ETournamentRound.ALQuarterFinals:
+                    return "Viertelfinale";
+                case ETournamentRound.ALSemiFinals:
+                    return "Halbfinale";
+                case ETournamentRound.ALFinal:
+                    return "Finale";
+                default:
+                    return "–";
             }
         }
 
@@ -185,6 +265,25 @@ namespace Simocracy.CLSim.Football.UAFA
         #endregion
 
         #region Export
+
+        /// <summary>
+        /// Exports the coefficient into a string representing a csv file.
+        /// Format: <see cref="FootballTeam.State"/>; <see cref="FootballTeam.Name"/>; <see cref="Won"/>;
+        ///     <see cref="Drawn"/>; <see cref="GetReachedCLRound"/>; <see cref="GetReachedALRound"/>; <see cref="Points"/>
+        /// </summary>
+        public string ExportAsCSV()
+        {
+            return
+                $"{Team.State}; {Team.Name}; {Won}; {Drawn}; {GetReachedCLRoundStr()}; {GetReachedALRoundStr()}; {Points}";
+        }
+
+        /// <summary>
+        /// Exports the coefficient into the given Excel file
+        /// </summary>
+        public void ExportAsExcelLine()
+        {
+            
+        }
 
         #endregion
 
