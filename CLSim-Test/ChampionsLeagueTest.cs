@@ -16,22 +16,22 @@ namespace Simocracy.CLSim.Test
         public void InitTests()
         {
             Cl = null;
+
+            Cl = new ChampionsLeague("2053/54");
+            var groupA = new FootballLeague("A",
+                new FootballTeam("{{FRC}} BAM", 12),
+                new FootballTeam("{{UNS}} SRFC", 12),
+                new FootballTeam("{{GRA}} SV", 12));
+            var groupB = new FootballLeague("B",
+                new FootballTeam("{{UNS}} Seattle", 12),
+                new FootballTeam("{{MAC}} Tesoro", 12),
+                new FootballTeam("{{GRA}} GS", 12));
+            Cl.Groups = new ObservableCollection<FootballLeague> { groupA, groupB };
         }
 
         [TestMethod]
         public void TestGroupValidation()
         {
-            Cl = new ChampionsLeague();
-            var groupA = new FootballLeague("A",
-                new FootballTeam("{{UNS}} Seattle", 12),
-                new FootballTeam("{{UNS}} SRFC", 12),
-                new FootballTeam("{{GRA}} SV", 12));
-            var groupB = new FootballLeague("B",
-                new FootballTeam("{{FRC}} BAM", 12),
-                new FootballTeam("{{MAC}} Tesoro", 12),
-                new FootballTeam("{{GRA}} GS", 12));
-            Cl.Groups = new ObservableCollection<FootballLeague> { groupA, groupB };
-
             Cl.ValidateGroups();
 
             Assert.AreEqual("BAM", Cl.Groups[0].Teams[0].Name);
@@ -44,16 +44,6 @@ namespace Simocracy.CLSim.Test
         //[TestMethod]
         public void TestRoundOf16Validation()
         {
-            Cl = new ChampionsLeague();
-            var groupA = new FootballLeague("A",
-                new FootballTeam("{{FRC}} BAM", 12),
-                new FootballTeam("{{UNS}} SRFC", 12),
-                new FootballTeam("{{GRA}} SV", 12));
-            var groupB = new FootballLeague("B",
-                new FootballTeam("{{UNS}} Seattle", 12),
-                new FootballTeam("{{MAC}} Tesoro", 12),
-                new FootballTeam("{{GRA}} GS", 12));
-            Cl.Groups = new ObservableCollection<FootballLeague> { groupA, groupB};
             foreach(var g in Cl.Groups)
                 g.CalculateTable();
 
