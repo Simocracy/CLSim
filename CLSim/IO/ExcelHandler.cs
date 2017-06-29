@@ -38,6 +38,16 @@ namespace Simocracy.CLSim.IO
             Init();
         }
 
+        /// <summary>
+        /// Finalizer, release the resources
+        /// </summary>
+        ~ExcelHandler()
+        {
+            ExcelApp = null;
+            Workbook = null;
+            Worksheet = null;
+        }
+
         #endregion
 
         #region Properties
