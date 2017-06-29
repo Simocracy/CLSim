@@ -62,7 +62,7 @@ namespace Simocracy.CLSim.Football.UAFA
         public int Won
         {
             get => _Won;
-            private set
+            set
             {
                 _Won = value;
                 Notify();
@@ -75,7 +75,7 @@ namespace Simocracy.CLSim.Football.UAFA
         public int Drawn
         {
             get => _Drawn;
-            private set
+            set
             {
                 _Drawn = value;
                 Notify();
@@ -88,7 +88,7 @@ namespace Simocracy.CLSim.Football.UAFA
         public HashSet<ETournamentRound> RoundsPlayed
         {
             get => _RoundsPlayed;
-            set
+            private set
             {
                 _RoundsPlayed = value;
                 Notify();
@@ -275,14 +275,6 @@ namespace Simocracy.CLSim.Football.UAFA
         {
             return
                 $"{Team.State}; {Team.Name}; {Won}; {Drawn}; {GetReachedCLRoundStr()}; {GetReachedALRoundStr()}; {Points}";
-        }
-
-        /// <summary>
-        /// Exports the coefficient into the given Excel file
-        /// </summary>
-        public void ExportAsExcelLine()
-        {
-            
         }
 
         #endregion
