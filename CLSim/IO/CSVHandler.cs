@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -25,14 +24,18 @@ namespace Simocracy.CLSim.IO
         /// <param name="season">The season to export</param>
         /// <param name="fileName">The file name</param>
         /// <param name="seperator">Custom csv seperator</param>
-        public static async Task WriteCoefficientCSV(IEnumerable<Coefficient> coefficients, string season, string fileName, string seperator = ";")
+        public static async Task<bool> ExportCoefficient(IEnumerable<Coefficient> coefficients, string season, string fileName, string seperator = ";")
         {
+            var coeffs = coefficients as Coefficient[] ?? coefficients.ToArray();
+
+            SimpleLog.Info($"Export {coeffs.Length} coefficients to csv file \"{fileName}\".");
+
             var contentSb = new StringBuilder();
             contentSb.Append($"Saison {season}{seperator}{seperator}{seperator}{seperator}{seperator}{seperator}");
             contentSb.Append(
                 $"Verein{seperator}{seperator}Anz. Siege{seperator}Anz. Remis{seperator}Champ.League{seperator}Am.League{seperator}Koeff.");
-            contentSb.Append(GenerateCoefficientFile(coefficients));
-            await SaveCSV(fileName, contentSb.ToString());
+            contentSb.Append(GenerateCoefficientFile(coeffs));
+            return await SaveCSV(fileName, contentSb.ToString());
         }
 
         /// <summary>
@@ -43,10 +46,12 @@ namespace Simocracy.CLSim.IO
         /// <returns></returns>
         public static string GenerateCoefficientFile(IEnumerable<Coefficient> coefficients, string seperator = ";")
         {
-            SimpleLog.Info($"Export {coefficients.Count()} coefficients to csv file format.");
+            var coeffs = coefficients as Coefficient[] ?? coefficients.ToArray();
+
+            SimpleLog.Info($"Export {coeffs.Length} coefficients to csv file format.");
 
             var sb = new StringBuilder();
-            foreach(var coeff in coefficients)
+            foreach(var coeff in coeffs)
             {
                 sb.AppendLine(coeff.ExportAsCSV(seperator));
             }
@@ -62,11 +67,13 @@ namespace Simocracy.CLSim.IO
         /// </summary>
         /// <param name="fileName">The file name</param>
         /// <param name="content">The content</param>
-        public static async Task SaveCSV(string fileName, string content)
+        public static async Task<bool> SaveCSV(string fileName, string content)
         {
             if(!fileName.EndsWith(".csv")) fileName += ".csv";
 
-            SimpleLog.Info($"Write csv file {fileName}.");
+            SimpleLog.Info($"Write csv file \"{fileName}\".");
+
+            bool retVal = false;
 
             try
             {
@@ -74,11 +81,18 @@ namespace Simocracy.CLSim.IO
                 {
                     await sw.WriteAsync(content);
                 }
+
+                retVal = true;
+
+                SimpleLog.Info($"CSV file \"{fileName}\" writed.");
             }
             catch(Exception e)
             {
-                SimpleLog.Log($"Error writing file {fileName}.{Environment.NewLine}{e}");
+                SimpleLog.Log($"Error writing file \"{fileName}\".");
+                SimpleLog.Error(e.ToString());
             }
+
+            return retVal;
         }
 
         #endregion

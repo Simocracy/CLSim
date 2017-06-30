@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.Office.Interop.Excel;
 using Simocracy.CLSim.Football.UAFA;
 using SimpleLogger;
@@ -76,7 +79,7 @@ namespace Simocracy.CLSim.IO
 
         #endregion
 
-        #region Methods
+        #region Main Methods
 
         /// <summary>
         /// Initialize a new file
@@ -99,7 +102,75 @@ namespace Simocracy.CLSim.IO
         }
 
         /// <summary>
-        /// Writes the headers to the file
+        /// Saves the file to the fiven file name and returns true, if file saved succesfully.
+        /// </summary>
+        /// <param name="fileName">File name for the file</param>
+        /// <returns>True if file saved successfully</returns>
+        public bool Close(string fileName)
+        {
+            if(!CanUse) return false;
+
+            if(!fileName.EndsWith(".xlsx")) fileName += ".xlsx";
+            bool retVal = false;
+
+            try
+            {
+                SimpleLog.Info($"Save Excel file \"{fileName}\".");
+                Workbook.SaveAs(Filename: fileName);
+                ExcelApp.Quit();
+                retVal = true;
+                SimpleLog.Info($"Excel file \"{fileName}\" saved.");
+            }
+            catch(Exception e)
+            {
+                SimpleLog.Log($"Failed to write file \"{fileName}\".");
+                SimpleLog.Error(e.ToString());
+            }
+            return retVal;
+        }
+
+        #endregion
+
+        #region Coefficient
+
+        /// <summary>
+        /// Exports the given <see cref="Coefficient"/> to the given file name asynchroniously
+        /// </summary>
+        /// <param name="coefficients">The <see cref="Coefficient"/> to export</param>
+        /// <param name="season">The season to export</param>
+        /// <param name="fileName">The file name</param>
+        /// <returns></returns>
+        public static async Task<bool> ExportCoefficientsAsync(IEnumerable<Coefficient> coefficients, string season,
+                                              string fileName)
+        {
+            return await Task.Run(() => ExportCoefficients(coefficients, season, fileName));
+        }
+
+        /// <summary>
+        /// Exports the given <see cref="Coefficient"/> to the given file name
+        /// </summary>
+        /// <param name="coefficients">The <see cref="Coefficient"/> to export</param>
+        /// <param name="season">The season to export</param>
+        /// <param name="fileName">The file name</param>
+        /// <returns></returns>
+        public static bool ExportCoefficients(IEnumerable<Coefficient> coefficients, string season,
+                                              string fileName)
+        {
+            var coeffs = coefficients as Coefficient[] ?? coefficients.ToArray();
+
+            SimpleLog.Info($"Export {coeffs.Length} coefficients to Excel file \"{fileName}\".");
+
+            var handler = new ExcelHandler();
+            if(!handler.CanUse)
+                return false;
+            handler.WriteHeaders(season);
+            foreach(var coeff in coeffs)
+                handler.WriteTeamCoefficientLine(coeff);
+            return handler.Close(fileName);
+        }
+
+        /// <summary>
+        /// Writes the coefficient headers to the file
         /// </summary>
         /// <param name="season">The current season</param>
         public void WriteHeaders(string season)
@@ -136,7 +207,7 @@ namespace Simocracy.CLSim.IO
             SimpleLog.Info($"Add coefficient {coeff} to Excel file.");
 
             var xlRange = (Range)Worksheet.Cells[Worksheet.Rows.Count, 1];
-            long lastRow = (long)xlRange.get_End(XlDirection.xlUp).Row;
+            long lastRow = xlRange.End[XlDirection.xlUp].Row;
             long newRow = lastRow + 1;
 
             Worksheet.Cells[newRow, StateCol] = coeff.Team.State;
@@ -146,26 +217,6 @@ namespace Simocracy.CLSim.IO
             Worksheet.Cells[newRow, CLRoundCol] = coeff.GetReachedCLRoundStr();
             Worksheet.Cells[newRow, ALRoundCol] = coeff.GetReachedALRoundStr();
             Worksheet.Cells[newRow, PointsCol] = coeff.Points;
-        }
-
-        /// <summary>
-        /// Saves the file to the fiven file name
-        /// </summary>
-        /// <param name="fileName">File name for the file</param>
-        public void Close(string fileName)
-        {
-            if(!CanUse) return;
-
-            try
-            {
-                SimpleLog.Info($"Save Excel coefficient file into {fileName}");
-                Workbook.SaveAs(Filename: fileName);
-                ExcelApp.Quit();
-            }
-            catch(Exception e)
-            {
-                SimpleLog.Log($"Failed to write file:{Environment.NewLine}{e}");
-            }
         }
 
         #endregion
