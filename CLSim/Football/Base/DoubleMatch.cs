@@ -98,6 +98,11 @@ namespace Simocracy.CLSim.Football.Base
         /// </summary>
         public FootballTeam Winner => GetWinner();
 
+        /// <summary>
+        /// Array with all teams
+        /// </summary>
+        public FootballTeam[] AllTeams => FirstLeg.AllTeams;
+
         #endregion
 
         #region Constructor
