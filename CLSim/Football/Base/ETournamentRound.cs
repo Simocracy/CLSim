@@ -5,6 +5,8 @@
     /// </summary>
     public enum ETournamentRound
     {
+        None = 0,
+
         // Champions League
         CLQualification = 1,
         CLGroupStage = 3,

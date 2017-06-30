@@ -123,7 +123,9 @@ namespace Simocracy.CLSim.Football.UAFA
         /// <returns>Reached Champions League round</returns>
         public ETournamentRound GetReachedCLRound()
         {
-            return RoundsPlayed.Where(r => r.ToString().StartsWith("CL")).Max();
+            var played = RoundsPlayed.Where(r => r.ToString().StartsWith("CL"));
+            var eTournamentRounds = played as ETournamentRound[] ?? played.ToArray();
+            return eTournamentRounds.Length > 1 ? ETournamentRound.None : eTournamentRounds.Max();
         }
 
         /// <summary>
@@ -147,7 +149,7 @@ namespace Simocracy.CLSim.Football.UAFA
                 case ETournamentRound.CLFinal:
                     return "Finale";
                 default:
-                    return "–";
+                    return "-";
             }
         }
 
@@ -157,7 +159,9 @@ namespace Simocracy.CLSim.Football.UAFA
         /// <returns>Reached America League round</returns>
         public ETournamentRound GetReachedALRound()
         {
-            return RoundsPlayed.Where(r => r.ToString().StartsWith("AL")).Max();
+            var played = RoundsPlayed.Where(r => r.ToString().StartsWith("AL"));
+            var eTournamentRounds = played as ETournamentRound[] ?? played.ToArray();
+            return eTournamentRounds.Length > 1 ? ETournamentRound.None : eTournamentRounds.Max();
         }
 
         /// <summary>
@@ -183,8 +187,13 @@ namespace Simocracy.CLSim.Football.UAFA
                 case ETournamentRound.ALFinal:
                     return "Finale";
                 default:
-                    return "–";
+                    return "-";
             }
+        }
+
+        public override string ToString()
+        {
+            return $"Coefficient: Team={Team.FullName}, Points={Points}";
         }
 
         #endregion

@@ -11,7 +11,8 @@ using System.IO;
 namespace Simocracy.CLSim.IO
 {
     /// <summary>
-    /// Handler for Excel Files for the UAFA Coefficient
+    /// Handler for Excel Files for the UAFA Coefficient.
+    /// Works only if MS Excel is installed on the local machine.
     /// </summary>
     public class ExcelHandler
     {
@@ -39,10 +40,16 @@ namespace Simocracy.CLSim.IO
         }
 
         /// <summary>
-        /// Finalizer, release the resources
+        /// Finalizer, close excel and release the resources
         /// </summary>
         ~ExcelHandler()
         {
+            if(CanUse)
+            {
+                ExcelApp.DisplayAlerts = false;
+                ExcelApp.Quit();
+            }
+
             ExcelApp = null;
             Workbook = null;
             Worksheet = null;
@@ -84,7 +91,8 @@ namespace Simocracy.CLSim.IO
             try
             {       
                 ExcelApp = new Application();
-                ExcelApp.Visible = true;
+                //ExcelApp.Visible = true;
+                ExcelApp.DisplayAlerts = false;
                 Workbook = ExcelApp.Workbooks.Add(1);
                 Worksheet = (Worksheet)Workbook.Sheets[1];
             }
@@ -132,29 +140,32 @@ namespace Simocracy.CLSim.IO
 
             SimpleLog.Info($"Add coefficient {coeff} to Excel file.");
 
-            var fistEmptyLine = Worksheet.Range["A3", "A1000"].End[XlDirection.xlUp].Row;
+            var xlRange = (Range)Worksheet.Cells[Worksheet.Rows.Count, 1];
+            long lastRow = (long)xlRange.get_End(XlDirection.xlUp).Row;
+            long newRow = lastRow + 1;
 
-            Worksheet.Cells[fistEmptyLine, StateCol] = coeff.Team.State;
-            Worksheet.Cells[fistEmptyLine, TeamNameCol] = coeff.Team.Name;
-            Worksheet.Cells[fistEmptyLine, WonCol] = coeff.Won;
-            Worksheet.Cells[fistEmptyLine, DrawnCol] = coeff.Drawn;
-            Worksheet.Cells[fistEmptyLine, CLRoundCol] = coeff.GetReachedCLRoundStr();
-            Worksheet.Cells[fistEmptyLine, ALRoundCol] = coeff.GetReachedALRoundStr();
-            Worksheet.Cells[fistEmptyLine, PointsCol] = coeff.Points;
+            Worksheet.Cells[newRow, StateCol] = coeff.Team.State;
+            Worksheet.Cells[newRow, TeamNameCol] = coeff.Team.Name;
+            Worksheet.Cells[newRow, WonCol] = coeff.Won;
+            Worksheet.Cells[newRow, DrawnCol] = coeff.Drawn;
+            Worksheet.Cells[newRow, CLRoundCol] = coeff.GetReachedCLRoundStr();
+            Worksheet.Cells[newRow, ALRoundCol] = coeff.GetReachedALRoundStr();
+            Worksheet.Cells[newRow, PointsCol] = coeff.Points;
         }
 
         /// <summary>
         /// Saves the file to the fiven file name
         /// </summary>
         /// <param name="fileName">File name for the file</param>
-        public void CloseFile(string fileName)
+        public void Close(string fileName)
         {
             if(!CanUse) return;
 
             try
             {
                 SimpleLog.Info($"Save Excel coefficient file into {fileName}");
-                Workbook.SaveAs(fileName);
+                Workbook.SaveAs(Filename: fileName);
+                ExcelApp.Quit();
             }
             catch(Exception e)
             {
