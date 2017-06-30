@@ -276,14 +276,16 @@ namespace Simocracy.CLSim.Football.UAFA
         #region Export
 
         /// <summary>
-        /// Exports the coefficient into a string representing a csv file.
+        /// Exports the coefficient into a csv string.
         /// Format: <see cref="FootballTeam.State"/>; <see cref="FootballTeam.Name"/>; <see cref="Won"/>;
         ///     <see cref="Drawn"/>; <see cref="GetReachedCLRound"/>; <see cref="GetReachedALRound"/>; <see cref="Points"/>
         /// </summary>
-        public string ExportAsCSV()
+        /// <param name="seperator">CSV seperator</param>
+        public string ExportAsCSV(string seperator = ";")
         {
             return
-                $"{Team.State}; {Team.Name}; {Won}; {Drawn}; {GetReachedCLRoundStr()}; {GetReachedALRoundStr()}; {Points}";
+                $"{Team.State}{seperator} {Team.Name}{seperator} {Won}{seperator} {Drawn}{seperator} " +
+                $"{GetReachedCLRoundStr()}{seperator} {GetReachedALRoundStr()}{seperator} {Points}";
         }
 
         #endregion
