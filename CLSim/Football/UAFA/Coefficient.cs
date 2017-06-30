@@ -125,7 +125,7 @@ namespace Simocracy.CLSim.Football.UAFA
         {
             var played = RoundsPlayed.Where(r => r.ToString().StartsWith("CL"));
             var eTournamentRounds = played as ETournamentRound[] ?? played.ToArray();
-            return eTournamentRounds.Length > 1 ? ETournamentRound.None : eTournamentRounds.Max();
+            return eTournamentRounds.Length < 1 ? ETournamentRound.None : eTournamentRounds.Max();
         }
 
         /// <summary>
@@ -161,7 +161,7 @@ namespace Simocracy.CLSim.Football.UAFA
         {
             var played = RoundsPlayed.Where(r => r.ToString().StartsWith("AL"));
             var eTournamentRounds = played as ETournamentRound[] ?? played.ToArray();
-            return eTournamentRounds.Length > 1 ? ETournamentRound.None : eTournamentRounds.Max();
+            return eTournamentRounds.Length < 1 ? ETournamentRound.None : eTournamentRounds.Max();
         }
 
         /// <summary>
