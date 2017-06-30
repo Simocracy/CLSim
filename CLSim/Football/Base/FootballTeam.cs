@@ -136,7 +136,7 @@ namespace Simocracy.CLSim.Football.Base
         /// <param name="inputStr">Input string</param>
         private void SetupTeam(string inputStr)
         {
-            var regexMatch = Regex.Match(inputStr, @"(\{\{[^\}]+\}\})\s*([^\,]+),\s*(\d+)");
+            var regexMatch = Regex.Match(inputStr, @"\{\{([^\}]+)\}\}\s*([^\,]+),\s*(\d+)");
             SetupTeam(regexMatch.Groups[2].Value, regexMatch.Groups[1].Value, Int32.Parse(regexMatch.Groups[3].Value));
         }
 
@@ -147,7 +147,7 @@ namespace Simocracy.CLSim.Football.Base
         /// <param name="avgStrength">Team strength</param>
         private void SetupTeam(string inputStr, int avgStrength)
         {
-            var regexMatch = Regex.Match(inputStr, @"(\{\{[^\}]+\}\}) (.+)");
+            var regexMatch = Regex.Match(inputStr, @"\{\{([^\}]+)\}\} (.+)");
             SetupTeam(regexMatch.Groups[2].Value, regexMatch.Groups[1].Value, avgStrength);
         }
 
