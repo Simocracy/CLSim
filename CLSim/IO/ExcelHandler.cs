@@ -110,7 +110,7 @@ namespace Simocracy.CLSim.IO
 
             // Season line
             Worksheet.Cells[1, 1] = $"Saison {season}";
-            var headRange = Worksheet.Range["A1", "E1"];
+            var headRange = Worksheet.Range["A1", "G1"];
             headRange.Merge();
 
             // Coefficient Header
