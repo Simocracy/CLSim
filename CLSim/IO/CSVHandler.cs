@@ -22,18 +22,24 @@ namespace Simocracy.CLSim.IO
         /// Exports the given <see cref="Coefficient"/> to the given file name
         /// </summary>
         /// <param name="coefficients">The <see cref="Coefficient"/> to export</param>
+        /// <param name="season">The season to export</param>
         /// <param name="fileName">The file name</param>
-        public static async Task WriteCoefficientCSV(IEnumerable<Coefficient> coefficients, string fileName)
+        /// <param name="seperator">Custom csv seperator</param>
+        public static async Task WriteCoefficientCSV(IEnumerable<Coefficient> coefficients, string season, string fileName, string seperator = ";")
         {
-            var content = GenerateCoefficientFile(coefficients);
-            await SaveCSV(fileName, content);
+            var contentSb = new StringBuilder();
+            contentSb.Append($"Saison {season}{seperator}{seperator}{seperator}{seperator}{seperator}{seperator}");
+            contentSb.Append(
+                $"Verein{seperator}{seperator}Anz. Siege{seperator}Anz. Remis{seperator}Champ.League{seperator}Am.League{seperator}Koeff.");
+            contentSb.Append(GenerateCoefficientFile(coefficients));
+            await SaveCSV(fileName, contentSb.ToString());
         }
 
         /// <summary>
         /// Creates a CSV file string from the given <see cref="Coefficient"/>
         /// </summary>
         /// <param name="coefficients">The coefficients to export</param>
-        /// <param name="seperator">CSV seperator</param>
+        /// <param name="seperator">Custom csv seperator</param>
         /// <returns></returns>
         public static string GenerateCoefficientFile(IEnumerable<Coefficient> coefficients, string seperator = ";")
         {
