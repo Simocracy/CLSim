@@ -76,6 +76,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="External\SimpleLog.cs" />
+    <Compile Include="IO\CSVHandler.cs" />
     <Compile Include="IO\ExcelHandler.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
