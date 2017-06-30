@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Simocracy.CLSim.Football.Base;
+using Simocracy.CLSim.IO;
 using SimpleLogger;
 
 namespace Simocracy.CLSim.Football.UAFA
@@ -17,6 +19,7 @@ namespace Simocracy.CLSim.Football.UAFA
         #region Members
 
         private ObservableCollection<FootballTeam> _AllTeamsRaw;
+        private Dictionary<FootballTeam, Coefficient> _Coefficients;
 
         private ObservableCollection<FootballLeague> _Groups;
         private bool _IsGroupsSimulatable;
@@ -58,6 +61,19 @@ namespace Simocracy.CLSim.Football.UAFA
             set
             {
                 _AllTeamsRaw = value;
+                Notify();
+            }
+        }
+
+        /// <summary>
+        /// UAFA Coefficients
+        /// </summary>
+        public Dictionary<FootballTeam, Coefficient> Coefficients
+        {
+            get => _Coefficients;
+            set
+            {
+                _Coefficients = value;
                 Notify();
             }
         }
@@ -203,13 +219,99 @@ namespace Simocracy.CLSim.Football.UAFA
         /// Exports the UAFA Coefficient values to the given file
         /// </summary>
         /// <param name="fileName">File name</param>
-        public void ExportCoefficient(string fileName)
+        public async Task<bool> ExportCoefficient(string fileName)
         {
-            SimpleLog.Info($"Export UAFA Coefficient of CL season {Season}");
+            SimpleLog.Info($"Export UAFA Coefficient for CL season {Season}.");
 
-            // todo: calculate
+            CalculateCoefficient();
+
+            var coeffs = Coefficients.Values.ToArray();
+
+            // Try export as xlsx
+            var isXlsSuccess = await ExcelHandler.ExportCoefficientsAsync(coeffs, Season, fileName);
+            bool isCsvSucces = false;
+            if(!isXlsSuccess)
+            {
+
+                SimpleLog.Info(
+                    $"Export UAFA Coefficient for CL season {Season} as Excel File failed. Exporting as CSV.");
+
+                if(fileName.EndsWith("xlsx"))
+                    fileName = fileName.Replace(".xlsx", ".csv");
+
+                isCsvSucces = await CSVHandler.ExportCoefficient(coeffs, Season, fileName);
+            }
 
             SimpleLog.Info($"UAFA Coefficient for CL season {Season} exported.");
+
+            return isXlsSuccess || isCsvSucces;
+        }
+
+        #endregion
+
+        #region Coefficient Calculation
+        
+        /// <summary>
+        /// (Re-) Calculates the UAFA Coefficient for all teams
+        /// </summary>
+        public void CalculateCoefficient()
+        {
+            SimpleLog.Info($"Calculate UAFA Coefficient for CL season {Season}.");
+
+            Coefficients = new Dictionary<FootballTeam, Coefficient>(AllTeamsRaw.Count);
+
+            // Qualification
+
+            // Group Matches
+            foreach(var match in Groups.SelectMany(g => g.Matches))
+                AddMatchToCoefficients(ETournamentRound.CLGroupStage, match);
+
+            // Round of 16
+            foreach(var match in RoundOf16)
+                AddMatchToCoefficients(ETournamentRound.CLRoundOf16, match);
+
+            // Quarter Finals
+            foreach(var match in QuarterFinals)
+                AddMatchToCoefficients(ETournamentRound.CLQuarterFinals, match);
+
+            // Semi Finals
+            foreach(var match in SemiFinals)
+                AddMatchToCoefficients(ETournamentRound.CLSemiFinals, match);
+
+            // Final
+            AddMatchToCoefficients(ETournamentRound.CLFinal, Final);
+
+            SimpleLog.Info($"UAFA Coefficient for CL season {Season} calculated.");
+        }
+
+        /// <summary>
+        /// Adds the given <see cref="DoubleMatch"/> from the given <see cref="ETournamentRound"/> to the <see cref="Coefficients"/>
+        /// </summary>
+        /// <param name="round">The <see cref="ETournamentRound"/> of the <see cref="DoubleMatch"/></param>
+        /// <param name="match">The <see cref="DoubleMatch"/> to add</param>
+        public void AddMatchToCoefficients(ETournamentRound round, DoubleMatch match)
+        {
+            foreach(var team in match.AllTeams)
+            {
+                if(!Coefficients.ContainsKey(team))
+                    Coefficients[team] = new Coefficient(team);
+                Coefficients[team].AddMatch(round, match);
+            }
+        }
+
+        /// <summary>
+        /// Adds the given <see cref="FootballMatch"/> from the given <see cref="ETournamentRound"/> to the <see cref="Coefficients"/>
+        /// </summary>
+        /// <param name="round">The <see cref="ETournamentRound"/> of the <see cref="FootballMatch"/></param>
+        /// <param name="match">The <see cref="FootballMatch"/> to add</param>
+        public void AddMatchToCoefficients(ETournamentRound round, FootballMatch match)
+        {
+            foreach(var team in match.AllTeams)
+            {
+                if(!Coefficients.ContainsKey(team))
+                    Coefficients[team] = new Coefficient(team);
+                Coefficients[team].AddMatch(round, match);
+            }
         }
 
         #endregion
