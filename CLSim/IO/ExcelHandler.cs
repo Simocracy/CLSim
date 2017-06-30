@@ -1,12 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.Office.Interop.Excel;
 using Simocracy.CLSim.Football.UAFA;
 using SimpleLogger;
-using System.IO;
 
 namespace Simocracy.CLSim.IO
 {
