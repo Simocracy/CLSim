@@ -41,11 +41,7 @@ namespace Simocracy.CLSim.Test
         [TestCleanup]
         public void Close()
         {
-            if(Handler.CanUse)
-            {
-                Handler.ExcelApp.DisplayAlerts = false;
-                Handler.ExcelApp.Quit();
-            }
+            Handler = null;
         }
 
         [TestMethod]
