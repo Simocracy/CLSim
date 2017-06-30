@@ -10,35 +10,57 @@ namespace Simocracy.CLSim.Test
     [TestClass]
     public class ExcelHandlerTest
     {
-        [TestMethod]
-        public void TestFileCreation()
+        private Coefficient Coeff1;
+        private Coefficient Coeff2;
+        private ExcelHandler Handler;
+
+        [TestInitialize]
+        public void Init()
         {
-            var coeff1 = new Coefficient(new FootballTeam("{{FRC}} BAM", 12))
+            Coeff1 = new Coefficient(new FootballTeam("{{FRC}} BAM", 12))
             {
                 Won = 10,
                 Drawn = 2
             };
-            coeff1.RoundsPlayed.Add(ETournamentRound.CLGroupStage);
-            coeff1.RoundsPlayed.Add(ETournamentRound.CLRoundOf16);
-            coeff1.RoundsPlayed.Add(ETournamentRound.CLQuarterFinals);
+            Coeff1.RoundsPlayed.Add(ETournamentRound.CLGroupStage);
+            Coeff1.RoundsPlayed.Add(ETournamentRound.CLRoundOf16);
+            Coeff1.RoundsPlayed.Add(ETournamentRound.CLQuarterFinals);
 
-            var coeff2 = new Coefficient(new FootballTeam("{{UNAS}} Seattle", 12))
+            Coeff2 = new Coefficient(new FootballTeam("{{UNAS}} Seattle", 12))
             {
                 Won = 9,
                 Drawn = 1
             };
-            coeff2.RoundsPlayed.Add(ETournamentRound.CLGroupStage);
-            coeff2.RoundsPlayed.Add(ETournamentRound.CLRoundOf16);
-            coeff2.RoundsPlayed.Add(ETournamentRound.CLQuarterFinals);
-            coeff2.RoundsPlayed.Add(ETournamentRound.CLSemiFinals);
+            Coeff2.RoundsPlayed.Add(ETournamentRound.CLGroupStage);
+            Coeff2.RoundsPlayed.Add(ETournamentRound.ALRoundOf32);
+            Coeff2.RoundsPlayed.Add(ETournamentRound.ALRoundOf16);
+            Coeff2.RoundsPlayed.Add(ETournamentRound.ALQuarterFinals);
+            Coeff2.RoundsPlayed.Add(ETournamentRound.ALSemiFinals);
+        }
 
-            var excelHandler = new ExcelHandler();
-            excelHandler.WriteHeaders("2053/54");
-            excelHandler.WriteTeamCoefficientLine(coeff1);
-            excelHandler.WriteTeamCoefficientLine(coeff2);
-            excelHandler.CloseFile("testfile.xlsx");
+        [TestCleanup]
+        public void Close()
+        {
+            if(Handler.CanUse)
+            {
+                Handler.ExcelApp.DisplayAlerts = false;
+                Handler.ExcelApp.Quit();
+            }
+        }
 
-            Assert.IsTrue(File.Exists("testfile.xlsx"));
+        [TestMethod]
+        public void TestFileCreation()
+        {
+            Handler = new ExcelHandler();
+            Handler.WriteHeaders("2053/54");
+            Handler.WriteTeamCoefficientLine(Coeff2);
+            Handler.WriteTeamCoefficientLine(Coeff1);
+            var dir = $"{Environment.CurrentDirectory}\\testfile.xlsx";
+            Handler.Close(dir);
+
+            Assert.AreEqual(Coeff1.Points, 33);
+            Assert.AreEqual(Coeff2.Points, 27);
+            Assert.IsTrue(File.Exists(dir));
         }
     }
 }
