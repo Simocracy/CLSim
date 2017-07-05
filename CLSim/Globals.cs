@@ -37,9 +37,58 @@ namespace Simocracy.CLSim
         }
 
         /// <summary>
-        /// Returns the current program name
+        /// Current program name
         /// </summary>
         public static string ProgramName => ((AssemblyTitleAttribute)Assembly.GetExecutingAssembly().GetCustomAttribute(typeof(AssemblyTitleAttribute))).Title;
+
+        #endregion
+
+        #region Credits Infos
+
+        /// <summary>
+        /// Main Developer
+        /// </summary>
+        public static string Developer => "Gobo77";
+
+        /// <summary>
+        /// Link to the current program
+        /// </summary>
+        public static string ProgramLink => "https://github.com/Simocracy/CLSim";
+
+        /// <summary>
+        /// Github name
+        /// </summary>
+        public static string GithubName => "Github";
+
+        /// <summary>
+        /// Current program license
+        /// </summary>
+        public static string ProgramLicense => "MIT-Lizenz";
+
+        /// <summary>
+        /// Link to the full current program license
+        /// </summary>
+        public static string ProgramLicenseLink => "https://github.com/Simocracy/CLSim/blob/master/LICENSE";
+
+        /// <summary>
+        /// IRC channel
+        /// </summary>
+        public static string IrcChannel => "#Simocracy";
+
+        /// <summary>
+        /// Link to the IRC channel
+        /// </summary>
+        public static string IrcChannelLink => "ircs://irc.newerairc.net:6697/Simocracy";
+
+        /// <summary>
+        /// Name of the IRC network
+        /// </summary>
+        public static string IrcNetworkName => "NewEraIRC";
+
+        /// <summary>
+        /// Link to the IRC network
+        /// </summary>
+        public static string IrcNetworkLink => "https://newerairc.net/";
 
         /// <summary>
         /// Name of <see cref="SimpleLogger.SimpleLog"/>
@@ -52,7 +101,7 @@ namespace Simocracy.CLSim
         public static string SimpleLogLink => "http://www.codeproject.com/Tips/585796/Simple-Log";
 
         /// <summary>
-        /// Licence of <see cref="SimpleLogger.SimpleLog"/>
+        /// License of <see cref="SimpleLogger.SimpleLog"/>
         /// </summary>
         public static string SimpleLogLicense => "MIT-Lizenz";
 
@@ -72,7 +121,7 @@ namespace Simocracy.CLSim
         public static string DRechnerLink => "https://github.com/Simocracy/Datumsrechner";
 
         /// <summary>
-        /// Licence of <see cref="Datumsrechner"/>
+        /// License of <see cref="Datumsrechner"/>
         /// </summary>
         public static string DRechnerLicense => "MIT-Lizenz";
 

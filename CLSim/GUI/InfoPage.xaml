@@ -19,10 +19,12 @@
         <Label Content="Credits:" FontWeight="Bold" />
         <TextBlock Style="{StaticResource MarginSideBase}" TextWrapping="Wrap">
             <Run Text="{Binding Source={x:Static clSim:Globals.ProgramVersion}, StringFormat=Version: {0}, Mode=OneTime}" /><LineBreak/>
-            Entwickler: Gobo77<LineBreak/>
-            Hilfe, weitere Informationen sowie der Quellcode sind auf <Hyperlink NavigateUri="https://github.com/Simocracy/CLSim" RequestNavigate="Hyperlink_RequestNavigate">Github</Hyperlink> verfügbar.<LineBreak/>
-            Allg. Kontaktmöglichkeit im IRC-Channel <Hyperlink NavigateUri="ircs://irc.newerairc.net:6697/Simocracy" RequestNavigate="Hyperlink_RequestNavigate">#Simocracy</Hyperlink> im <Hyperlink NavigateUri="https://newerairc.net/" RequestNavigate="Hyperlink_RequestNavigate">NewEraIRC</Hyperlink>.<LineBreak/>
-            <Run Text="{Binding Source={x:Static clSim:Globals.ProgramName}, Mode=OneTime}" /> ist unter der <Hyperlink NavigateUri="https://github.com/Simocracy/CLSim/blob/master/LICENSE" RequestNavigate="Hyperlink_RequestNavigate">MIT-Lizenz</Hyperlink> lizenziert.<LineBreak/>
+            Entwickler: <Run Text="{Binding Source={x:Static clSim:Globals.Developer}, Mode=OneTime}" /><LineBreak/>
+            Hilfe, weitere Informationen sowie der Quellcode sind auf <Hyperlink NavigateUri="{Binding Source={x:Static clSim:Globals.ProgramLink}, Mode=OneTime}" RequestNavigate="Hyperlink_RequestNavigate"><Run Text="{Binding Source={x:Static clSim:Globals.GithubName}, Mode=OneTime}" /></Hyperlink> verfügbar.<LineBreak/>
+            Allg. Kontaktmöglichkeit im IRC-Channel <Hyperlink NavigateUri="{Binding Source={x:Static clSim:Globals.IrcChannelLink}, Mode=OneTime}" RequestNavigate="Hyperlink_RequestNavigate"><Run Text="{Binding Source={x:Static clSim:Globals.IrcChannel}, Mode=OneTime}" /></Hyperlink> im
+                <Hyperlink NavigateUri="{Binding Source={x:Static clSim:Globals.IrcNetworkLink}, Mode=OneTime}" RequestNavigate="Hyperlink_RequestNavigate"><Run Text="{Binding Source={x:Static clSim:Globals.IrcNetworkName}, Mode=OneTime}" /></Hyperlink>.<LineBreak/>
+            <Run Text="{Binding Source={x:Static clSim:Globals.ProgramName}, Mode=OneTime}" /> ist unter der
+                <Hyperlink NavigateUri="{Binding Source={x:Static clSim:Globals.ProgramLicenseLink}, Mode=OneTime}" RequestNavigate="Hyperlink_RequestNavigate"><Run Text="{Binding Source={x:Static clSim:Globals.ProgramLicense}, Mode=OneTime}" /></Hyperlink> lizenziert.<LineBreak/>
             
             <Hyperlink NavigateUri="{Binding Source={x:Static clSim:Globals.SimpleLogLink}, Mode=OneTime}" RequestNavigate="Hyperlink_RequestNavigate"><Run Text="{Binding Source={x:Static clSim:Globals.SimpleLogName}, Mode=OneTime}" /></Hyperlink> ist unter der
                 <Hyperlink NavigateUri="{Binding Source={x:Static clSim:Globals.SimpleLogLicenseLink}, Mode=OneTime}" RequestNavigate="Hyperlink_RequestNavigate"><Run Text="{Binding Source={x:Static clSim:Globals.SimpleLogLicense}, Mode=OneTime}" /></Hyperlink> lizenziert.
