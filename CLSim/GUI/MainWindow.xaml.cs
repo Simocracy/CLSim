@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Simocracy.CLSim
+namespace Simocracy.CLSim.GUI
 {
     /// <summary>
     /// Interaktionslogik für MainWindow.xaml
