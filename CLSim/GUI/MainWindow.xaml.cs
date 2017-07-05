@@ -16,16 +16,25 @@ using System.Windows.Shapes;
 namespace Simocracy.CLSim.GUI
 {
     /// <summary>
-    /// Interaktionslogik für MainWindow.xaml
+    /// Main Window
     /// </summary>
     public partial class MainWindow : Window
     {
+
+        #region Constructor
+
+        /// <summary>
+        /// Creates a new MainWindow
+        /// </summary>
         public MainWindow()
         {
             InitializeComponent();
             DataContext = this;
+
+            MainFrame.Content = new InfoPage();
         }
 
+        #endregion
 
     }
 }

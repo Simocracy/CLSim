@@ -1,0 +1,33 @@
+﻿<Page x:Class="Simocracy.CLSim.GUI.InfoPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:Simocracy.CLSim.GUI"
+      xmlns:clSim="clr-namespace:Simocracy.CLSim"
+      xmlns:drns="clr-namespace:Simocracy"
+      xmlns:properties="clr-namespace:Simocracy.CLSim.Properties"
+      mc:Ignorable="d" 
+      d:DesignHeight="300" d:DesignWidth="300"
+      Title="InfoPage">
+
+    <StackPanel>
+        <Label Content="{Binding Source={x:Static clSim:Globals.ProgramName}}" Style="{StaticResource Title}" />
+
+        <Label Content="{Binding Source={x:Static drns:Datumsrechner.Now}}" ContentStringFormat="Aktuelles Datum: {0:dd.MM.yyyy, HH:MM} Uhr" />
+
+        <Label Content="Credits:" FontWeight="Bold" />
+        <TextBlock Style="{StaticResource MarginSideBase}" TextWrapping="Wrap">
+            <Run Text="{Binding Source={x:Static clSim:Globals.ProgramVersion}, StringFormat=Version: {0}, Mode=OneTime}" /><LineBreak/>
+            Entwickler: Gobo77<LineBreak/>
+            Hilfe, weitere Informationen sowie der Quellcode sind auf <Hyperlink NavigateUri="https://github.com/Simocracy/CLSim" RequestNavigate="Hyperlink_RequestNavigate">Github</Hyperlink> verfügbar.<LineBreak/>
+            Allg. Kontaktmöglichkeit im IRC-Channel <Hyperlink NavigateUri="ircs://irc.newerairc.net:6697/Simocracy" RequestNavigate="Hyperlink_RequestNavigate">#Simocracy</Hyperlink> im <Hyperlink NavigateUri="https://newerairc.net/" RequestNavigate="Hyperlink_RequestNavigate">NewEraIRC</Hyperlink>.<LineBreak/>
+            <Run Text="{Binding Source={x:Static clSim:Globals.ProgramName}, Mode=OneTime}" /> ist unter der <Hyperlink NavigateUri="https://github.com/Simocracy/CLSim/blob/master/LICENSE" RequestNavigate="Hyperlink_RequestNavigate">MIT-Lizenz</Hyperlink> lizenziert.<LineBreak/>
+            
+            <Hyperlink NavigateUri="{Binding Source={x:Static clSim:Globals.SimpleLogLink}, Mode=OneTime}" RequestNavigate="Hyperlink_RequestNavigate"><Run Text="{Binding Source={x:Static clSim:Globals.SimpleLogName}, Mode=OneTime}" /></Hyperlink> ist unter der
+                <Hyperlink NavigateUri="{Binding Source={x:Static clSim:Globals.SimpleLogLicenseLink}, Mode=OneTime}" RequestNavigate="Hyperlink_RequestNavigate"><Run Text="{Binding Source={x:Static clSim:Globals.SimpleLogLicense}, Mode=OneTime}" /></Hyperlink> lizenziert.
+            <Hyperlink NavigateUri="{Binding Source={x:Static clSim:Globals.DRechnerLink}, Mode=OneTime}" RequestNavigate="Hyperlink_RequestNavigate"><Run Text="{Binding Source={x:Static clSim:Globals.DRechnerName}, Mode=OneTime}" /></Hyperlink> ist unter der
+                <Hyperlink NavigateUri="{Binding Source={x:Static clSim:Globals.DRechnerLicenseLink}, Mode=OneTime}" RequestNavigate="Hyperlink_RequestNavigate"><Run Text="{Binding Source={x:Static clSim:Globals.DRechnerLicense}, Mode=OneTime}" /></Hyperlink> lizenziert.
+        </TextBlock>
+    </StackPanel>
+</Page>

@@ -38,6 +38,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
@@ -53,6 +54,7 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="External\Datumsrechner.cs" />
     <Compile Include="Football\Base\DoubleMatch.cs" />
     <Compile Include="Football\Base\ETournamentRound.cs" />
     <Compile Include="Football\Base\FootballLeagueComparer.cs" />
@@ -71,6 +73,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="GUI\InfoPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="GUI\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -81,6 +87,9 @@
     </Compile>
     <Compile Include="External\SimpleLog.cs" />
     <Compile Include="GUI\Converter.cs" />
+    <Compile Include="GUI\InfoPage.xaml.cs">
+      <DependentUpon>InfoPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="IO\CSVHandler.cs" />
     <Compile Include="IO\ExcelHandler.cs" />
     <Compile Include="GUI\MainWindow.xaml.cs">
