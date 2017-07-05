@@ -23,6 +23,9 @@ namespace Simocracy.CLSim.GUI
         public MainWindow()
         {
             InitializeComponent();
+            DataContext = this;
         }
+
+
     }
 }

@@ -4,9 +4,20 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Simocracy.CLSim.GUI"
+        xmlns:clSim="clr-namespace:Simocracy.CLSim"
         mc:Ignorable="d"
-        Title="MainWindow" Height="600" Width="600">
-    <Grid>
-        
-    </Grid>
+        Height="500" Width="525"
+        MinHeight="300" MinWidth="300">
+    
+    <Window.Title>
+        <MultiBinding Converter="{StaticResource TitleConverter}">
+            <Binding Source="{x:Static clSim:Globals.ProgramName}" Mode="OneWay" />
+            <Binding ElementName="MainFrame" Path="Content.Title" Mode="OneWay" />
+        </MultiBinding>
+    </Window.Title>
+    
+    <DockPanel>
+        <!-- Insert Menue here -->
+        <Frame x:Name="MainFrame" DockPanel.Dock="Bottom" NavigationUIVisibility="Hidden" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto" />
+    </DockPanel>
 </Window>

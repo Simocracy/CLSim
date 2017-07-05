@@ -67,6 +67,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="GUI\GuiResources.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="GUI\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -76,6 +80,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="External\SimpleLog.cs" />
+    <Compile Include="GUI\Converter.cs" />
     <Compile Include="IO\CSVHandler.cs" />
     <Compile Include="IO\ExcelHandler.cs" />
     <Compile Include="GUI\MainWindow.xaml.cs">
