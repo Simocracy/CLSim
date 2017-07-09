@@ -1,10 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Threading;
 
 namespace Simocracy.CLSim
 {
-    public static class Globals
+    public static partial class Globals
     {
 
         #region Global Variables
@@ -56,19 +57,25 @@ namespace Simocracy.CLSim
         public static string ProgramLink => "https://github.com/Simocracy/CLSim";
 
         /// <summary>
+        /// Returns the information about the program and all external libs.
+        /// Schema: LibName, Lib URL, License, License URL
+        /// </summary>
+        public static LibInfo[] ProgramInfos => new[]
+        {
+            new LibInfo(ProgramName, ProgramLink, "MIT-Lizenz","https://github.com/Simocracy/CLSim/blob/master/LICENSE"),
+            new LibInfo("SimpleLog", "http://www.codeproject.com/Tips/585796/Simple-Log", "MIT-Lizenz","https://opensource.org/licenses/mit-license.php"),
+            new LibInfo("Simocracy Datumsrechner", "https://github.com/Simocracy/Datumsrechner", "MIT-Lizenz","https://github.com/Simocracy/Datumsrechner/blob/master/LICENSE"),
+        };
+
+        /// <summary>
+        /// The format string for the credits
+        /// </summary>
+        internal static string CreditsFormatStr => "$1";
+
+        /// <summary>
         /// Github name
         /// </summary>
         public static string GithubName => "Github";
-
-        /// <summary>
-        /// Current program license
-        /// </summary>
-        public static string ProgramLicense => "MIT-Lizenz";
-
-        /// <summary>
-        /// Link to the full current program license
-        /// </summary>
-        public static string ProgramLicenseLink => "https://github.com/Simocracy/CLSim/blob/master/LICENSE";
 
         /// <summary>
         /// IRC channel
@@ -89,53 +96,6 @@ namespace Simocracy.CLSim
         /// Link to the IRC network
         /// </summary>
         public static string IrcNetworkLink => "https://newerairc.net/";
-
-        /// <summary>
-        /// Name of <see cref="SimpleLogger.SimpleLog"/>
-        /// </summary>
-        public static string SimpleLogName => "SimpleLog";
-
-        /// <summary>
-        /// Link to <see cref="SimpleLogger.SimpleLog"/>
-        /// </summary>
-        public static string SimpleLogLink => "http://www.codeproject.com/Tips/585796/Simple-Log";
-
-        /// <summary>
-        /// License of <see cref="SimpleLogger.SimpleLog"/>
-        /// </summary>
-        public static string SimpleLogLicense => "MIT-Lizenz";
-
-        /// <summary>
-        /// Link to the full license text of <see cref="SimpleLogger.SimpleLog"/>
-        /// </summary>
-        public static string SimpleLogLicenseLink => "https://opensource.org/licenses/mit-license.php";
-
-        /// <summary>
-        /// Name of <see cref="Datumsrechner"/>
-        /// </summary>
-        public static string DRechnerName => "Simocracy Datumsrechner";
-
-        /// <summary>
-        /// Link to <see cref="Datumsrechner"/>
-        /// </summary>
-        public static string DRechnerLink => "https://github.com/Simocracy/Datumsrechner";
-
-        /// <summary>
-        /// License of <see cref="Datumsrechner"/>
-        /// </summary>
-        public static string DRechnerLicense => "MIT-Lizenz";
-
-        /// <summary>
-        /// Link to the full license text of <see cref="Datumsrechner"/>
-        /// </summary>
-        public static string DRechnerLicenseLink => "https://github.com/Simocracy/Datumsrechner/blob/master/LICENSE";
-
-        ///// <summary>
-        ///// Full credits text
-        ///// </summary>
-        //public static string FullCreditsText =>
-        //    $"<Hyperlink NavigateUri=\"{SimpleLogLink}\" RequestNavigate=\"Hyperlink_RequestNavigate\">{SimpleLogName}</Hyperlink> ist unter der <Hyperlink NavigateUri=\"{SimpleLogLicenseLink}\" RequestNavigate=\"Hyperlink_RequestNavigate\">{SimpleLogLicense}</Hyperlink> lizenziert.{Environment.NewLine}" +
-        //    $"<Hyperlink NavigateUri=\"{DRechnerLink}\" RequestNavigate=\"Hyperlink_RequestNavigate\">{DRechnerName}</Hyperlink> ist unter der <Hyperlink NavigateUri=\"{DRechnerLicenseLink}\" RequestNavigate=\"Hyperlink_RequestNavigate\">{DRechnerLicense}</Hyperlink> lizenziert.";
 
         #endregion
 

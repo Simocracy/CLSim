@@ -6,7 +6,6 @@
       xmlns:local="clr-namespace:Simocracy.CLSim.GUI"
       xmlns:clSim="clr-namespace:Simocracy.CLSim"
       xmlns:drns="clr-namespace:Simocracy"
-      xmlns:properties="clr-namespace:Simocracy.CLSim.Properties"
       mc:Ignorable="d" 
       d:DesignHeight="300" d:DesignWidth="300"
       Title="InfoPage">
@@ -22,14 +21,18 @@
             Entwickler: <Run Text="{Binding Source={x:Static clSim:Globals.Developer}, Mode=OneTime}" /><LineBreak/>
             Hilfe, weitere Informationen sowie der Quellcode sind auf <Hyperlink NavigateUri="{Binding Source={x:Static clSim:Globals.ProgramLink}, Mode=OneTime}" RequestNavigate="Hyperlink_RequestNavigate"><Run Text="{Binding Source={x:Static clSim:Globals.GithubName}, Mode=OneTime}" /></Hyperlink> verfügbar.<LineBreak/>
             Allg. Kontaktmöglichkeit im IRC-Channel <Hyperlink NavigateUri="{Binding Source={x:Static clSim:Globals.IrcChannelLink}, Mode=OneTime}" RequestNavigate="Hyperlink_RequestNavigate"><Run Text="{Binding Source={x:Static clSim:Globals.IrcChannel}, Mode=OneTime}" /></Hyperlink> im
-                <Hyperlink NavigateUri="{Binding Source={x:Static clSim:Globals.IrcNetworkLink}, Mode=OneTime}" RequestNavigate="Hyperlink_RequestNavigate"><Run Text="{Binding Source={x:Static clSim:Globals.IrcNetworkName}, Mode=OneTime}" /></Hyperlink>.<LineBreak/>
-            <Run Text="{Binding Source={x:Static clSim:Globals.ProgramName}, Mode=OneTime}" /> ist unter der
-                <Hyperlink NavigateUri="{Binding Source={x:Static clSim:Globals.ProgramLicenseLink}, Mode=OneTime}" RequestNavigate="Hyperlink_RequestNavigate"><Run Text="{Binding Source={x:Static clSim:Globals.ProgramLicense}, Mode=OneTime}" /></Hyperlink> lizenziert.<LineBreak/>
-            
-            <Hyperlink NavigateUri="{Binding Source={x:Static clSim:Globals.SimpleLogLink}, Mode=OneTime}" RequestNavigate="Hyperlink_RequestNavigate"><Run Text="{Binding Source={x:Static clSim:Globals.SimpleLogName}, Mode=OneTime}" /></Hyperlink> ist unter der
-                <Hyperlink NavigateUri="{Binding Source={x:Static clSim:Globals.SimpleLogLicenseLink}, Mode=OneTime}" RequestNavigate="Hyperlink_RequestNavigate"><Run Text="{Binding Source={x:Static clSim:Globals.SimpleLogLicense}, Mode=OneTime}" /></Hyperlink> lizenziert.
-            <Hyperlink NavigateUri="{Binding Source={x:Static clSim:Globals.DRechnerLink}, Mode=OneTime}" RequestNavigate="Hyperlink_RequestNavigate"><Run Text="{Binding Source={x:Static clSim:Globals.DRechnerName}, Mode=OneTime}" /></Hyperlink> ist unter der
-                <Hyperlink NavigateUri="{Binding Source={x:Static clSim:Globals.DRechnerLicenseLink}, Mode=OneTime}" RequestNavigate="Hyperlink_RequestNavigate"><Run Text="{Binding Source={x:Static clSim:Globals.DRechnerLicense}, Mode=OneTime}" /></Hyperlink> lizenziert.
+                <Hyperlink NavigateUri="{Binding Source={x:Static clSim:Globals.IrcNetworkLink}, Mode=OneTime}" RequestNavigate="Hyperlink_RequestNavigate"><Run Text="{Binding Source={x:Static clSim:Globals.IrcNetworkName}, Mode=OneTime}" /></Hyperlink>.
         </TextBlock>
+
+        <ListView ItemsSource="{Binding Source={x:Static clSim:Globals.ProgramInfos}, Mode=OneTime}" BorderThickness="0" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Disabled" BorderBrush="{x:Null}" HorizontalContentAlignment="Stretch" Background="{x:Null}" Focusable="False" >
+            <ListView.ItemTemplate>
+                <DataTemplate DataType="{x:Type clSim:LibInfo}">
+                    <TextBlock TextWrapping="Wrap">
+                        <Hyperlink NavigateUri="{Binding Url, Mode=OneTime}" RequestNavigate="Hyperlink_RequestNavigate" Style="{StaticResource Hyperlink}"><Run Text="{Binding Name, Mode=OneTime}" /></Hyperlink> ist unter der
+                        <Hyperlink NavigateUri="{Binding LicenseUrl, Mode=OneTime}" RequestNavigate="Hyperlink_RequestNavigate" Style="{StaticResource Hyperlink}"><Run Text="{Binding License, Mode=OneTime}" /></Hyperlink> lizenziert.
+                    </TextBlock>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
     </StackPanel>
 </Page>
