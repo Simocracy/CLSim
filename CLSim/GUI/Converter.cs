@@ -48,7 +48,7 @@ namespace Simocracy.CLSim.GUI
 
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, System.Globalization.CultureInfo culture)
         {
-            throw new NotImplementedException();
+            return null;
         }
 
     }
@@ -70,4 +70,5 @@ namespace Simocracy.CLSim.GUI
             return null;
         }
     }
+
 }
