@@ -17,7 +17,17 @@
     </Window.Title>
     
     <DockPanel>
-        <!-- Insert Menue here -->
+
+        <StackPanel DockPanel.Dock="Top" Background="{DynamicResource {x:Static SystemColors.MenuBarBrushKey}}">
+            <Menu x:Name="MenuSettings" >
+                <MenuItem Header="Verwaltung">
+                    <MenuItem Name="MenuItemCredits" Header="Credits" Click="MenuItemCredits_Click" />
+                </MenuItem>
+                <MenuItem Header="Simulation">
+                    <MenuItem Name="MenuItemUafaClTournament" Header="UAFA Champions League" Click="MenuItemUafaClTournament_Click" />
+                </MenuItem>
+            </Menu>
+        </StackPanel>
         <Frame x:Name="MainFrame" DockPanel.Dock="Bottom" NavigationUIVisibility="Hidden" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto" />
     </DockPanel>
 </Window>

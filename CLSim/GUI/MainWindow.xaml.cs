@@ -31,10 +31,23 @@ namespace Simocracy.CLSim.GUI
             InitializeComponent();
             DataContext = this;
 
-            MainFrame.Content = new InfoPage();
+            MainFrame.Content = new UafaClPage();
         }
 
         #endregion
 
+        #region Menue Handler
+
+        private void MenuItemCredits_Click(object sender, RoutedEventArgs e)
+        {
+            MainFrame.Content = new InfoPage();
+        }
+
+        private void MenuItemUafaClTournament_Click(object sender, RoutedEventArgs e)
+        {
+            MainFrame.Content = new UafaClPage();
+        }
+
+        #endregion
     }
 }

@@ -1,0 +1,241 @@
+﻿<Page x:Class="Simocracy.CLSim.GUI.UafaClPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:Simocracy.CLSim.GUI"
+      mc:Ignorable="d" 
+      d:DesignHeight="300" d:DesignWidth="300"
+      Title="UAFA Champions League">
+
+    <Grid Style="{StaticResource ExpanderGrid}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto" />
+            <RowDefinition Tag="{Binding ElementName=TeamExpander}" />
+            <RowDefinition Tag="{Binding ElementName=MatchExpander}" />
+            <RowDefinition Tag="{Binding ElementName=WikiExpander}" />
+        </Grid.RowDefinitions>
+
+        <Label Content="UAFA Champions League" Grid.Row="0" Style="{StaticResource Title}"/>
+
+        <!-- Teamfilter -->
+        <Expander Grid.Row="1" Header="Generelles" IsExpanded="{Binding SelectedExpander, Mode=TwoWay, Converter={StaticResource ExpanderToBooleanConverter}, ConverterParameter=1}">
+            <Grid >
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                
+                <Label Content="Saison:" Grid.Row="0" Grid.Column="0" />
+                <TextBox x:Name="SeasonTextBox" Grid.Row="0" Grid.Column="1">
+                    <TextBox.Style>
+                        <Style BasedOn="{StaticResource MarginTBHalf}" TargetType="TextBox">
+                            <Style.Setters>
+                                <Setter Property="IsEnabled" Value="False" />
+                            </Style.Setters>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Path=DataContext}" Value="{x:Null}">
+                                    <Setter Property="IsEnabled" Value="True"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBox.Style>
+                </TextBox>
+                <Label Content="Finalort:" Grid.Row="1" Grid.Column="0"/>
+                <TextBox x:Name="FinalCityTextBox" Style="{StaticResource MarginTBHalf}" Grid.Row="1" Grid.Column="1" />
+                <Label Content="Finalstadion:" Grid.Row="2" Grid.Column="0"/>
+                <TextBox x:Name="FinalStadiumTextBox" Style="{StaticResource MarginTBHalf}" Grid.Row="2" Grid.Column="1" />
+
+                <Button Content="Reset" Click="ClInitButton_Click" Grid.Column="0" Grid.Row="3">
+                    <Button.Style>
+                        <Style BasedOn="{StaticResource MarginHalf}" TargetType="Button">
+                            <Style.Setters>
+                                <Setter Property="IsEnabled" Value="True" />
+                            </Style.Setters>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Path=DataContext}" Value="{x:Null}">
+                                    <Setter Property="IsEnabled" Value="False"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
+                <Button Content="Initialisieren" Click="ClInitButton_Click" Grid.Column="1" Grid.Row="3">
+                    <Button.Style>
+                        <Style BasedOn="{StaticResource MarginHalf}" TargetType="Button">
+                            <Style.Setters>
+                                <Setter Property="IsEnabled" Value="False" />
+                            </Style.Setters>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Path=DataContext}" Value="{x:Null}">
+                                    <Setter Property="IsEnabled" Value="True"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
+            </Grid>
+        </Expander>
+
+        <!-- Teamauswahl -->
+        <Expander Name="TeamExpander" Grid.Row="2" Header="Teamauswahl" IsExpanded="{Binding SelectedExpander, Mode=TwoWay, Converter={StaticResource ExpanderToBooleanConverter}, ConverterParameter=2}">
+            <Grid Style="{StaticResource TableGrid}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="120" />
+                    <ColumnDefinition Width="120" />
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal">
+                    <Label Content="Ausgewählt:"/>
+                    <Label Content="{Binding ElementName=FootballTeamsListBox, Path=SelectedItems.Count}" />
+                </StackPanel>
+                <Button Grid.Row="0" Name="SelectAllTeamsButton" Content="Alle auswählen" Grid.Column="1" Click="SelectAllTeamsButton_Click" Margin="0,5,2.5,5" />
+                <Button Grid.Row="0" Name="DiselectAllTeamsButton" Content="Alle abwählen" Grid.Column="2" Click="DiselectAllTeamsButton_Click" Margin="2.5,5,0,5" />
+                <ListBox x:Name="FootballTeamsListBox" Grid.Row="1" Grid.ColumnSpan="3" ItemsSource="{Binding FilteredTeamList}" DisplayMemberPath="Name" SelectionMode="Multiple" />
+            </Grid>
+        </Expander>
+
+        <!-- Matches -->
+        <Expander Name="MatchExpander" Grid.Row="3" Header="Spielplan" IsExpanded="{Binding SelectedExpander, Mode=TwoWay, Converter={StaticResource ExpanderToBooleanConverter}, ConverterParameter=3}">
+            <Expander.Style>
+                <Style>
+                    <Style.Triggers>
+                        <DataTrigger Binding ="{Binding ElementName=FootballTeamsListBox, Path=SelectedItems.Count}" Value="0">
+                            <Setter Property="Expander.IsEnabled" Value="false"/>
+                        </DataTrigger>
+                        <DataTrigger Binding ="{Binding ElementName=FootballTeamsListBox, Path=SelectedItems.Count}" Value="1">
+                            <Setter Property="Expander.IsEnabled" Value="false"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Expander.Style>
+            <Grid Style="{StaticResource MarginBase}">
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <!-- Infos und Einstellungen -->
+                <StackPanel Grid.Row="0" Orientation="Horizontal">
+                    <Label Content="Ligagröße:"/>
+                    <Label Content="{Binding ElementName=FootballTeamsListBox, Path=SelectedItems.Count}" ContentStringFormat="{}{0} Teams" />
+                </StackPanel>
+                <StackPanel Grid.Row="1" Orientation="Horizontal">
+                    <Button Name="GenerateMatchesButton" Content="Erstelle Spielplan" Click="GenerateMatchesButton_Click" Margin="0,0,5,0" />
+                    <Button Name="SimulateButton" Content="Simuliere Liga" Click="SimulateButton_Click" IsEnabled="{Binding League.Matches.Count}">
+                    </Button>
+                </StackPanel>
+
+                <!-- Matchanzeige -->
+                <DataGrid Grid.Row="2" ItemsSource="{Binding League.Matches}" AutoGenerateColumns="False" IsEnabled="{Binding League.Matches.Count}" Style="{StaticResource MarginTBBase}" >
+                    <DataGrid.Resources>
+                        <Style TargetType="DataGridCell">
+                            <Style.Triggers>
+                                <Trigger Property="IsReadOnly" Value="True">
+                                    <Setter Property="IsTabStop" Value="False"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DataGrid.Resources>
+                    <DataGrid.Columns>
+                        <DataGridTemplateColumn Width="100" Header="Datum" IsReadOnly="True">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <DatePicker Text="{Binding Date, Mode=TwoWay, StringFormat=dd.MM.yyyy}" DisplayDateStart="01/01/2020" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTextColumn Width="*" Header="Heim" Binding="{Binding TeamA.Name}" IsReadOnly="True" />
+                        <DataGridTextColumn Width="*" Header="Gast" Binding="{Binding TeamB.Name}" IsReadOnly="True" />
+                        <DataGridTextColumn Width="50" Header="Tore H" Binding="{Binding ResultA}" />
+                        <DataGridTextColumn Width="50" Header="Tore G" Binding="{Binding ResultB}" />
+                        <DataGridTemplateColumn Width="50" IsReadOnly="True">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Name="SwapTeamsButton" Content="Tausch" ToolTip="Tauscht das Heimrecht des Spiels" Click="SwapTeamsButton_Click" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Grid>
+        </Expander>
+
+        <!-- Wikiexport -->
+        <Expander Name="WikiExpander" Grid.Row="4" Header="Export ins Wiki" IsExpanded="{Binding SelectedExpander, Mode=TwoWay, Converter={StaticResource ExpanderToBooleanConverter}, ConverterParameter=4}" IsEnabled="{Binding League.Matches.Count}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <!-- Tabelleneinstellungen -->
+                <GroupBox Name="TableGroupBox" Grid.Row="0" Style="{StaticResource MarginTBHalf}">
+                    <GroupBox.Header>
+                        <CheckBox Name="TableCheckBox" Content="Tabelle" />
+                    </GroupBox.Header>
+                    <Grid IsEnabled="{Binding ElementName=TableCheckBox, Path=IsChecked}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <Label Content="Qual1-Plätze" Grid.Row="0" Grid.Column="0" />
+                        <ComboBox Name="Qual1PlacesComboBox" Grid.Row="0" Grid.Column="1" SelectionChanged="Qual1PlacesComboBox_SelectionChanged" />
+                        <Label Content="Qual2-Plätze" Grid.Row="1" Grid.Column="0" />
+                        <ComboBox Name="Qual2PlacesComboBox" Grid.Row="1" Grid.Column="1" />
+                    </Grid>
+                </GroupBox>
+
+                <!-- Ergebniseinstellungen -->
+                <GroupBox Name="ResultsGroupBox" Grid.Row="1" Style="{StaticResource MarginTBHalf}">
+                    <GroupBox.Header>
+                        <CheckBox Name="ResultsCheckBox" Content="Ergebnisse" />
+                    </GroupBox.Header>
+                    <Grid IsEnabled="{Binding ElementName=ResultsCheckBox, Path=IsChecked}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="auto" />
+                            <RowDefinition Height="auto" />
+                            <RowDefinition Height="auto" />
+                        </Grid.RowDefinitions>
+                        <CheckBox Name="DateCheckBox" Content="Datum" Grid.Row="0" Grid.ColumnSpan="2" Checked="DateCheckBox_Checked" Unchecked="DateCheckBox_Unchecked" />
+                        <CheckBox Name="LocationCheckBox" Content="Spielorte" Grid.Row="1" Grid.ColumnSpan="2" Checked="LocationCheckBox_Checked" Unchecked="LocationCheckBox_Unchecked" />
+                        <Label Content="Vorlage:" Grid.Row="2" Grid.Column="0" />
+                        <ComboBox Name="WikiTemplateComboBox" Grid.Row="2" Grid.Column="1" ItemsSource="{Binding TemplatesComboBoxList}" DisplayMemberPath="Name" />
+                    </Grid>
+                </GroupBox>
+
+                <!-- Generierung und Code -->
+                <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="0,2.5,0,5">
+                    <Button Name="GenerateWikiCodeButton" Content="Wikicode generieren" Click="GenerateWikiCodeButton_Click" Margin="0,0,5,0" />
+                    <Button Name="CopyWikiCodeButton" Content="Kopieren" ToolTip="Kopiert den Wikicode in die Zwischenablage" Click="CopyWikiCodeButton_Click" />
+                </StackPanel>
+                <TextBox Name="WikiCodeTextBox" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Style="{DynamicResource Multiline}" />
+            </Grid>
+        </Expander>
+    </Grid>
+</Page>
