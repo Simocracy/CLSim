@@ -112,6 +112,18 @@
 
         <!-- Teamauswahl -->
         <Expander Name="TeamExpander" Grid.Row="2" Header="Teams" IsExpanded="{Binding SelectedExpander, Mode=TwoWay, Converter={StaticResource ExpanderToBooleanConverter}, ConverterParameter=2}">
+            <Expander.Style>
+                <Style TargetType="Expander">
+                    <Style.Setters>
+                        <Setter Property="IsEnabled" Value="True" />
+                    </Style.Setters>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding Path=DataContext}" Value="{x:Null}">
+                            <Setter Property="IsEnabled" Value="False"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Expander.Style>
             <Grid Style="{StaticResource TableGrid}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="auto" />
@@ -128,7 +140,20 @@
                     <TextBlock Text="Eingegeben: " />
                     <TextBlock Text="{Binding ElementName=TeamInputTextBox, Path=LineCount}" />
                 </StackPanel>
-                <Button Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Name="SaveTeamsButton" Content="Speichern" Click="SaveTeamsButton_Click" Margin="2.5,5,0,5" />
+                <Button Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Name="SaveTeamsButton" Content="Speichern" Click="SaveTeamsButton_Click" Margin="2.5,5,0,5">
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Style.Setters>
+                                <Setter Property="IsEnabled" Value="False" />
+                            </Style.Setters>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding ElementName=TeamInputTextBox, Path=LineCount}" Value="40">
+                                    <Setter Property="IsEnabled" Value="True"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
                 <TextBox Name="TeamInputTextBox" Grid.Row="2" Grid.ColumnSpan="2" Grid.Column="0" Style="{StaticResource Multiline}" VerticalScrollBarVisibility="Visible" />
             </Grid>
         </Expander>
@@ -136,13 +161,13 @@
         <!-- Matches -->
         <Expander Name="MatchExpander" Grid.Row="3" Header="Spielplan" IsExpanded="{Binding SelectedExpander, Mode=TwoWay, Converter={StaticResource ExpanderToBooleanConverter}, ConverterParameter=3}">
             <Expander.Style>
-                <Style>
+                <Style TargetType="Expander">
+                    <Style.Setters>
+                        <Setter Property="IsEnabled" Value="False" />
+                    </Style.Setters>
                     <Style.Triggers>
-                        <DataTrigger Binding ="{Binding ElementName=FootballTeamsListBox, Path=SelectedItems.Count}" Value="0">
-                            <Setter Property="Expander.IsEnabled" Value="false"/>
-                        </DataTrigger>
-                        <DataTrigger Binding ="{Binding ElementName=FootballTeamsListBox, Path=SelectedItems.Count}" Value="1">
-                            <Setter Property="Expander.IsEnabled" Value="false"/>
+                        <DataTrigger Binding="{Binding ElementName=Dat, Path=LineCount}" Value="{x:Null}">
+                            <Setter Property="IsEnabled" Value="False"/>
                         </DataTrigger>
                     </Style.Triggers>
                 </Style>
