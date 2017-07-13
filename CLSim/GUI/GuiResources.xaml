@@ -5,7 +5,7 @@
 
     <!-- General -->
 
-    <BooleanToVisibilityConverter x:Key="CapacityNatOptionalConverter" />
+    <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
     <local:TextInputToVisibilityConverter x:Key="TextInputToVisibilityConverter" />
     <local:ExpanderToBooleanConverter x:Key="ExpanderToBooleanConverter" />
     <local:TitleConverter x:Key="TitleConverter" />
@@ -71,6 +71,17 @@
             </Style>
         </Style.Resources>
     </Style>
+    <Style x:Key="GreyValueInfoTextBlock" TargetType="TextBlock">
+        <Setter Property="Foreground" Value="LightGray" />
+        <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.WindowBrushKey}}" />
+        <Setter Property="Padding" Value="5,0" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="Visibility" Value="{Binding ElementName=InputBox, Path=Text.IsEmpty, Converter={StaticResource BooleanToVisibilityConverter}}" />
+        <Setter Property="Height" Value="{Binding ElementName=InputBox, Path=Height}" />
+    </Style>
+    <Style x:Key="GreyValueInfoTextBox" TargetType="TextBox">
+        <Setter Property="Background" Value="Transparent" />
+    </Style>
 
     <!-- Manager Pages -->
 
@@ -110,8 +121,8 @@
 
     <ControlTemplate x:Key="OptionalInput" TargetType="TextBox">
         <Grid>
-            <TextBlock Text="Optional" Foreground="LightGray" Visibility="{Binding ElementName=InputBox, Path=Text.IsEmpty, Converter={StaticResource CapacityNatOptionalConverter}}" Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}" Height="{Binding ElementName=InputBox, Path=Height}" />
-            <TextBox Name="InputBox" Text="{TemplateBinding Text}" Background="Transparent"/>
+            <TextBlock Text="Optional" Visibility="{Binding ElementName=InputBox, Path=Text.IsEmpty, Converter={StaticResource BooleanToVisibilityConverter}}" Height="{Binding ElementName=InputBox, Path=Height}" Style="{StaticResource GreyValueInfoTextBlock}" />
+            <TextBox Name="InputBox" Text="{TemplateBinding Text}" Style="{StaticResource GreyValueInfoTextBox}"/>
         </Grid>
     </ControlTemplate>
     <ControlTemplate x:Key="ManageSlider" TargetType="Slider">

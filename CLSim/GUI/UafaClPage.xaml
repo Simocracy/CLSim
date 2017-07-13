@@ -5,7 +5,7 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:Simocracy.CLSim.GUI"
       mc:Ignorable="d" 
-      d:DesignHeight="300" d:DesignWidth="300"
+      d:DesignHeight="500" d:DesignWidth="525"
       Title="UAFA Champions League">
 
     <Grid Style="{StaticResource ExpanderGrid}">
@@ -32,7 +32,7 @@
                     <RowDefinition />
                     <RowDefinition />
                 </Grid.RowDefinitions>
-                
+
                 <Label Content="Saison:" Grid.Row="0" Grid.Column="0" />
                 <TextBox x:Name="SeasonTextBox" Grid.Row="0" Grid.Column="1">
                     <TextBox.Style>
@@ -47,13 +47,39 @@
                             </Style.Triggers>
                         </Style>
                     </TextBox.Style>
+                    <TextBox.Template>
+                        <ControlTemplate TargetType="TextBox">
+                            <Grid>
+                                <TextBlock Text="2053/54" Style="{StaticResource GreyValueInfoTextBlock}" />
+                                <TextBox Name="InputBox" Text="{TemplateBinding Text}" Style="{StaticResource GreyValueInfoTextBox}" />
+                            </Grid>
+                        </ControlTemplate>
+                    </TextBox.Template>
                 </TextBox>
                 <Label Content="Finalort:" Grid.Row="1" Grid.Column="0"/>
-                <TextBox x:Name="FinalCityTextBox" Style="{StaticResource MarginTBHalf}" Grid.Row="1" Grid.Column="1" />
+                <TextBox x:Name="FinalCityTextBox" Style="{StaticResource MarginTBHalf}" Grid.Row="1" Grid.Column="1">
+                    <TextBox.Template>
+                        <ControlTemplate TargetType="TextBox">
+                            <Grid>
+                                <TextBlock Text="{}{{GRSI}} Sevi City" Style="{StaticResource GreyValueInfoTextBlock}" />
+                                <TextBox Name="InputBox" Text="{TemplateBinding Text}" Style="{StaticResource GreyValueInfoTextBox}" />
+                            </Grid>
+                        </ControlTemplate>
+                    </TextBox.Template>
+                </TextBox>
                 <Label Content="Finalstadion:" Grid.Row="2" Grid.Column="0"/>
-                <TextBox x:Name="FinalStadiumTextBox" Style="{StaticResource MarginTBHalf}" Grid.Row="2" Grid.Column="1" />
+                <TextBox x:Name="FinalStadiumTextBox" Style="{StaticResource MarginTBHalf}" Grid.Row="2" Grid.Column="1" >
+                    <TextBox.Template>
+                        <ControlTemplate TargetType="TextBox">
+                            <Grid>
+                                <TextBlock Text="King Sevi XXI. Stadium" Style="{StaticResource GreyValueInfoTextBlock}" />
+                                <TextBox Name="InputBox" Text="{TemplateBinding Text}" Style="{StaticResource GreyValueInfoTextBox}" />
+                            </Grid>
+                        </ControlTemplate>
+                    </TextBox.Template>
+                </TextBox>
 
-                <Button Content="Reset" Click="ClInitButton_Click" Grid.Column="0" Grid.Row="3">
+                <Button Content="Reset" Click="ClResetButton_Click" Grid.Column="0" Grid.Row="3">
                     <Button.Style>
                         <Style BasedOn="{StaticResource MarginHalf}" TargetType="Button">
                             <Style.Setters>
@@ -85,24 +111,25 @@
         </Expander>
 
         <!-- Teamauswahl -->
-        <Expander Name="TeamExpander" Grid.Row="2" Header="Teamauswahl" IsExpanded="{Binding SelectedExpander, Mode=TwoWay, Converter={StaticResource ExpanderToBooleanConverter}, ConverterParameter=2}">
+        <Expander Name="TeamExpander" Grid.Row="2" Header="Teams" IsExpanded="{Binding SelectedExpander, Mode=TwoWay, Converter={StaticResource ExpanderToBooleanConverter}, ConverterParameter=2}">
             <Grid Style="{StaticResource TableGrid}">
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="auto" />
                     <RowDefinition Height="auto" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="120" />
-                    <ColumnDefinition Width="120" />
+                    <ColumnDefinition Width="70" />
                 </Grid.ColumnDefinitions>
-                <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal">
-                    <Label Content="Ausgewählt:"/>
-                    <Label Content="{Binding ElementName=FootballTeamsListBox, Path=SelectedItems.Count}" />
+
+                <TextBlock Text="Teams durch Zeilenumbrüche trennen. Erstes Team ist Titelverteidiger." Grid.Row="0" Grid.Column="0" />
+                <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="0">
+                    <TextBlock Text="Eingegeben: " />
+                    <TextBlock Text="{Binding ElementName=TeamInputTextBox, Path=LineCount}" />
                 </StackPanel>
-                <Button Grid.Row="0" Name="SelectAllTeamsButton" Content="Alle auswählen" Grid.Column="1" Click="SelectAllTeamsButton_Click" Margin="0,5,2.5,5" />
-                <Button Grid.Row="0" Name="DiselectAllTeamsButton" Content="Alle abwählen" Grid.Column="2" Click="DiselectAllTeamsButton_Click" Margin="2.5,5,0,5" />
-                <ListBox x:Name="FootballTeamsListBox" Grid.Row="1" Grid.ColumnSpan="3" ItemsSource="{Binding FilteredTeamList}" DisplayMemberPath="Name" SelectionMode="Multiple" />
+                <Button Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Name="SaveTeamsButton" Content="Speichern" Click="SaveTeamsButton_Click" Margin="2.5,5,0,5" />
+                <TextBox Name="TeamInputTextBox" Grid.Row="2" Grid.ColumnSpan="2" Grid.Column="0" Style="{StaticResource Multiline}" VerticalScrollBarVisibility="Visible" />
             </Grid>
         </Expander>
 

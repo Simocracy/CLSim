@@ -34,6 +34,12 @@ namespace Simocracy.CLSim.Football.UAFA
 
         #endregion
 
+        #region Constants
+
+        public const int TournamentTeamCount = 40;
+
+        #endregion
+
         #region Constructor
 
         /// <summary>

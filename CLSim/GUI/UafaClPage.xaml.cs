@@ -42,9 +42,16 @@ namespace Simocracy.CLSim.GUI
 
         #region Properties
 
+        /// <summary>
+        /// The CL instance
+        /// </summary>
+        public ChampionsLeague Cl => DataContext as ChampionsLeague;
+
         #endregion
 
         #region Event Handler
+
+        #region Init
 
         private void ClInitButton_Click(object sender, RoutedEventArgs e)
         {
@@ -53,6 +60,23 @@ namespace Simocracy.CLSim.GUI
                 DataContext = new ChampionsLeague(SeasonTextBox.Text);
             }
         }
+
+        private void ClResetButton_Click(object sender, RoutedEventArgs e)
+        {
+            DataContext = null;
+        }
+
+        #endregion
+
+        #region Team input
+
+        private void SaveTeamsButton_Click(object sender, RoutedEventArgs e)
+        {
+            if(TeamInputTextBox.LineCount == ChampionsLeague.TournamentTeamCount)
+                Cl.ReadTeamlist(TeamInputTextBox.Text);
+        }
+
+        #endregion
 
         #endregion
 
@@ -73,5 +97,6 @@ namespace Simocracy.CLSim.GUI
         }
 
         #endregion
+
     }
 }
