@@ -25,7 +25,7 @@ namespace Simocracy.CLSim.GUI
 
         #region Members
 
-
+        private Object _SelectedExpander;
 
         #endregion
 
@@ -46,6 +46,19 @@ namespace Simocracy.CLSim.GUI
         /// The CL instance
         /// </summary>
         public ChampionsLeague Cl => DataContext as ChampionsLeague;
+
+        /// <summary>
+        /// The opened expander
+        /// </summary>
+        public Object SelectedExpander
+        {
+            get => _SelectedExpander;
+            set
+            {
+                _SelectedExpander = value;
+                Notify();
+            }
+        }
 
         #endregion
 
@@ -72,8 +85,17 @@ namespace Simocracy.CLSim.GUI
 
         private void SaveTeamsButton_Click(object sender, RoutedEventArgs e)
         {
-            if(TeamInputTextBox.LineCount == ChampionsLeague.TournamentTeamCount)
+            if (TeamInputTextBox.LineCount == ChampionsLeague.TournamentTeamCount)
                 Cl.ReadTeamlist(TeamInputTextBox.Text);
+        }
+
+        #endregion
+
+        #region Group Stage
+
+        private void GroupDrawingButton_Click(object sender, RoutedEventArgs e)
+        {
+            Cl.DrawGroups();
         }
 
         #endregion
@@ -97,6 +119,5 @@ namespace Simocracy.CLSim.GUI
         }
 
         #endregion
-
     }
 }

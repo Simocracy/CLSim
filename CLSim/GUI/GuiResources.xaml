@@ -121,7 +121,7 @@
 
     <ControlTemplate x:Key="OptionalInput" TargetType="TextBox">
         <Grid>
-            <TextBlock Text="Optional" Visibility="{Binding ElementName=InputBox, Path=Text.IsEmpty, Converter={StaticResource BooleanToVisibilityConverter}}" Height="{Binding ElementName=InputBox, Path=Height}" Style="{StaticResource GreyValueInfoTextBlock}" />
+            <TextBlock Text="Optional" Style="{StaticResource GreyValueInfoTextBlock}" />
             <TextBox Name="InputBox" Text="{TemplateBinding Text}" Style="{StaticResource GreyValueInfoTextBox}"/>
         </Grid>
     </ControlTemplate>

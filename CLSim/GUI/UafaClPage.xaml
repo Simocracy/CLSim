@@ -20,8 +20,8 @@
         <Label Content="UAFA Champions League" Grid.Row="0" Style="{StaticResource Title}"/>
 
         <!-- Teamfilter -->
-        <Expander Grid.Row="1" Header="Generelles" IsExpanded="{Binding SelectedExpander, Mode=TwoWay, Converter={StaticResource ExpanderToBooleanConverter}, ConverterParameter=1}">
-            <Grid >
+        <Expander Grid.Row="1" Header="Generelles" IsExpanded="{Binding ElementName=UafaClPage, Path=SelectedExpander, Mode=TwoWay, Converter={StaticResource ExpanderToBooleanConverter}, ConverterParameter=1}">
+            <Grid Style="{StaticResource MarginBase}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="auto" />
                     <ColumnDefinition />
@@ -111,7 +111,7 @@
         </Expander>
 
         <!-- Teamauswahl -->
-        <Expander Name="TeamExpander" Grid.Row="2" Header="Teams" IsExpanded="{Binding SelectedExpander, Mode=TwoWay, Converter={StaticResource ExpanderToBooleanConverter}, ConverterParameter=2}">
+        <Expander Name="TeamExpander" Grid.Row="2" Header="Teams" IsExpanded="{Binding ElementName=UafaClPage, Path=SelectedExpander, Mode=TwoWay, Converter={StaticResource ExpanderToBooleanConverter}, ConverterParameter=2}">
             <Expander.Style>
                 <Style TargetType="Expander">
                     <Style.Setters>
@@ -124,7 +124,7 @@
                     </Style.Triggers>
                 </Style>
             </Expander.Style>
-            <Grid Style="{StaticResource TableGrid}">
+            <Grid Style="{StaticResource MarginBase}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="auto" />
                     <RowDefinition Height="auto" />
@@ -159,27 +159,72 @@
         </Expander>
 
         <!-- Matches -->
-        <Expander Name="MatchExpander" Grid.Row="3" Header="Spielplan" IsExpanded="{Binding SelectedExpander, Mode=TwoWay, Converter={StaticResource ExpanderToBooleanConverter}, ConverterParameter=3}">
-            <Expander.Style>
+        <Expander Name="MatchExpander" Grid.Row="3" Header="Gruppenphase" IsExpanded="{Binding ElementName=UafaClPage, Path=SelectedExpander, Mode=TwoWay, Converter={StaticResource ExpanderToBooleanConverter}, ConverterParameter=3}">
+            <!--<Expander.Style>
                 <Style TargetType="Expander">
                     <Style.Setters>
                         <Setter Property="IsEnabled" Value="False" />
                     </Style.Setters>
                     <Style.Triggers>
-                        <DataTrigger Binding="{Binding ElementName=Dat, Path=LineCount}" Value="{x:Null}">
-                            <Setter Property="IsEnabled" Value="False"/>
+                        <DataTrigger Binding="{Binding Path=AllTeamsRaw.Count}" Value="40">
+                            <Setter Property="IsEnabled" Value="True"/>
                         </DataTrigger>
                     </Style.Triggers>
                 </Style>
-            </Expander.Style>
+            </Expander.Style>-->
             <Grid Style="{StaticResource MarginBase}">
                 <Grid.RowDefinitions>
-                    <RowDefinition />
-                    <RowDefinition />
+                    <RowDefinition Height="auto" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
+                <StackPanel Orientation="Horizontal">
+                    <Button Content="Gruppenauslosung" Click="GroupDrawingButton_Click" Width="120" Style="{StaticResource MarginHalf}" />
+                    <Button Content="Simuliere alle Gruppen" Click="GroupDrawingButton_Click" Width="150">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource MarginHalf}">
+                                <Style.Setters>
+                                    <Setter Property="IsEnabled" Value="False" />
+                                </Style.Setters>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Path=IsGroupsSimulatable}" Value="True">
+                                        <Setter Property="IsEnabled" Value="True"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
+                </StackPanel>
+
+                <ListView Grid.Row="1" Background="Transparent" BorderBrush="Transparent">
+                    <ListView.Resources>
+                        <Style TargetType="{x:Type ListViewItem}">
+                            <Setter Property="Background" Value="Transparent" />
+                            <Setter Property="HorizontalAlignment" Value="Stretch" />
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                        </Style>
+                    </ListView.Resources>
+                    <ListViewItem>
+                        <Expander Header="Gruppe A">
+                            <Grid Style="{StaticResource MarginBase}">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition />
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+                                
+                                <TextBlock Text="Teams: " Grid.Column="0" Grid.Row="0" />
+                                <TextBlock Text="..." Grid.Column="1" Grid.Row="0" />
+                            </Grid>
+                        </Expander>
+                    </ListViewItem>
+                </ListView>
+
                 <!-- Infos und Einstellungen -->
+                <!--
                 <StackPanel Grid.Row="0" Orientation="Horizontal">
                     <Label Content="Ligagröße:"/>
                     <Label Content="{Binding ElementName=FootballTeamsListBox, Path=SelectedItems.Count}" ContentStringFormat="{}{0} Teams" />
@@ -190,7 +235,9 @@
                     </Button>
                 </StackPanel>
 
+                -->
                 <!-- Matchanzeige -->
+                <!--
                 <DataGrid Grid.Row="2" ItemsSource="{Binding League.Matches}" AutoGenerateColumns="False" IsEnabled="{Binding League.Matches.Count}" Style="{StaticResource MarginTBBase}" >
                     <DataGrid.Resources>
                         <Style TargetType="DataGridCell">
@@ -221,72 +268,7 @@
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
                     </DataGrid.Columns>
-                </DataGrid>
-            </Grid>
-        </Expander>
-
-        <!-- Wikiexport -->
-        <Expander Name="WikiExpander" Grid.Row="4" Header="Export ins Wiki" IsExpanded="{Binding SelectedExpander, Mode=TwoWay, Converter={StaticResource ExpanderToBooleanConverter}, ConverterParameter=4}" IsEnabled="{Binding League.Matches.Count}">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="auto" />
-                    <RowDefinition Height="auto" />
-                    <RowDefinition Height="auto" />
-                    <RowDefinition Height="*" />
-                </Grid.RowDefinitions>
-
-                <!-- Tabelleneinstellungen -->
-                <GroupBox Name="TableGroupBox" Grid.Row="0" Style="{StaticResource MarginTBHalf}">
-                    <GroupBox.Header>
-                        <CheckBox Name="TableCheckBox" Content="Tabelle" />
-                    </GroupBox.Header>
-                    <Grid IsEnabled="{Binding ElementName=TableCheckBox, Path=IsChecked}">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="auto" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition />
-                            <RowDefinition />
-                        </Grid.RowDefinitions>
-                        <Label Content="Qual1-Plätze" Grid.Row="0" Grid.Column="0" />
-                        <ComboBox Name="Qual1PlacesComboBox" Grid.Row="0" Grid.Column="1" SelectionChanged="Qual1PlacesComboBox_SelectionChanged" />
-                        <Label Content="Qual2-Plätze" Grid.Row="1" Grid.Column="0" />
-                        <ComboBox Name="Qual2PlacesComboBox" Grid.Row="1" Grid.Column="1" />
-                    </Grid>
-                </GroupBox>
-
-                <!-- Ergebniseinstellungen -->
-                <GroupBox Name="ResultsGroupBox" Grid.Row="1" Style="{StaticResource MarginTBHalf}">
-                    <GroupBox.Header>
-                        <CheckBox Name="ResultsCheckBox" Content="Ergebnisse" />
-                    </GroupBox.Header>
-                    <Grid IsEnabled="{Binding ElementName=ResultsCheckBox, Path=IsChecked}">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="auto" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="auto" />
-                            <RowDefinition Height="auto" />
-                            <RowDefinition Height="auto" />
-                        </Grid.RowDefinitions>
-                        <CheckBox Name="DateCheckBox" Content="Datum" Grid.Row="0" Grid.ColumnSpan="2" Checked="DateCheckBox_Checked" Unchecked="DateCheckBox_Unchecked" />
-                        <CheckBox Name="LocationCheckBox" Content="Spielorte" Grid.Row="1" Grid.ColumnSpan="2" Checked="LocationCheckBox_Checked" Unchecked="LocationCheckBox_Unchecked" />
-                        <Label Content="Vorlage:" Grid.Row="2" Grid.Column="0" />
-                        <ComboBox Name="WikiTemplateComboBox" Grid.Row="2" Grid.Column="1" ItemsSource="{Binding TemplatesComboBoxList}" DisplayMemberPath="Name" />
-                    </Grid>
-                </GroupBox>
-
-                <!-- Generierung und Code -->
-                <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="0,2.5,0,5">
-                    <Button Name="GenerateWikiCodeButton" Content="Wikicode generieren" Click="GenerateWikiCodeButton_Click" Margin="0,0,5,0" />
-                    <Button Name="CopyWikiCodeButton" Content="Kopieren" ToolTip="Kopiert den Wikicode in die Zwischenablage" Click="CopyWikiCodeButton_Click" />
-                </StackPanel>
-                <TextBox Name="WikiCodeTextBox" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Style="{DynamicResource Multiline}" />
+                </DataGrid>-->
             </Grid>
         </Expander>
     </Grid>
