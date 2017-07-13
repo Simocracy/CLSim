@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Text;
 using System.Threading.Tasks;
 using SimpleLogger;
 
@@ -18,6 +19,8 @@ namespace Simocracy.CLSim.Football.Base
         private ObservableCollection<FootballTeam> _Teams;
         private ObservableCollection<FootballMatch> _Matches;
         private LeagueTable _Table;
+
+        private string _TeamListStr;
 
         #endregion
 
@@ -82,6 +85,25 @@ namespace Simocracy.CLSim.Football.Base
             private set { _Table = value; Notify(); }
         }
 
+        /// <summary>
+        /// List of all teams as String
+        /// </summary>
+        public string TeamListStr
+        {
+            get
+            {
+                if(_TeamListStr == null)
+                {
+                    var sb = new StringBuilder();
+                    foreach(var team in Teams)
+                        sb.Append($"{team.FullName}, ");
+                    sb.Remove(sb.Length - 2, 2);
+                    _TeamListStr = sb.ToString();
+                }
+                return _TeamListStr;
+            }
+        }
+
         #endregion
 
         #region Simulation
@@ -127,6 +149,9 @@ namespace Simocracy.CLSim.Football.Base
             await Task.Run(() => CalculateTable());
         }
 
+        /// <summary>
+        /// Calculates the table
+        /// </summary>
         public void CalculateTable()
         {
             SimpleLog.Info($"Calculate table in Football League ID={ID}");
