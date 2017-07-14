@@ -6,21 +6,14 @@
       xmlns:local="clr-namespace:Simocracy.CLSim.GUI"
       mc:Ignorable="d" 
       d:DesignHeight="500" d:DesignWidth="525"
-      Title="UAFA Champions League">
+      Title="UAFA Champions League"
+      Name="ClPage">
 
-    <!--<Grid Style="{StaticResource ExpanderGrid}">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="auto"/>
-            <RowDefinition Height="auto" />
-            <RowDefinition Tag="{Binding ElementName=TeamExpander}" />
-            <RowDefinition Tag="{Binding ElementName=MatchExpander}" />
-            <RowDefinition Tag="{Binding ElementName=WikiExpander}" />
-        </Grid.RowDefinitions>-->
-    <StackPanel Name="ExpanderPanel" Orientation="Vertical" Style="{StaticResource MarginBase}">
+        <StackPanel Name="ExpanderPanel" CanVerticallyScroll="True" Style="{StaticResource MarginBase}">
         <Label Content="UAFA Champions League" Style="{StaticResource Title}"/>
 
         <!-- Main CL Stuff -->
-        <Expander Header="Generelles" Expanded="Expander_Expanded" >
+        <Expander Header="Generelles" Expanded="Expander_Expanded">
         <Grid Style="{StaticResource MarginBase}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="auto" />
@@ -41,7 +34,7 @@
                                 <Setter Property="IsEnabled" Value="False" />
                             </Style.Setters>
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Page}}, Path=DataContext}" Value="{x:Null}">
+                                <DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=Page}, Path=DataContext}" Value="{x:Null}">
                                     <Setter Property="IsEnabled" Value="True"/>
                                 </DataTrigger>
                             </Style.Triggers>
@@ -78,7 +71,7 @@
                                 <Setter Property="IsEnabled" Value="True" />
                             </Style.Setters>
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Page}}, Path=DataContext}" Value="{x:Null}">
+                                <DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=Page}, Path=DataContext}" Value="{x:Null}">
                                     <Setter Property="IsEnabled" Value="False"/>
                                 </DataTrigger>
                             </Style.Triggers>
@@ -92,7 +85,7 @@
                                 <Setter Property="IsEnabled" Value="False" />
                             </Style.Setters>
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Page}}, Path=DataContext}" Value="{x:Null}">
+                                <DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=Page}, Path=DataContext}" Value="{x:Null}">
                                     <Setter Property="IsEnabled" Value="True"/>
                                 </DataTrigger>
                             </Style.Triggers>
@@ -110,13 +103,13 @@
                         <Setter Property="IsEnabled" Value="True" />
                     </Style.Setters>
                     <Style.Triggers>
-                        <DataTrigger Binding="{Binding Path=DataContext}" Value="{x:Null}">
+                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=Page}, Path=DataContext}" Value="{x:Null}">
                             <Setter Property="IsEnabled" Value="False"/>
                         </DataTrigger>
                     </Style.Triggers>
                 </Style>
             </Expander.Style>
-            <Grid Style="{StaticResource MarginBase}">
+                <Grid Style="{StaticResource MarginBase}" VerticalAlignment="Stretch">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="auto" />
                     <RowDefinition Height="auto" />
@@ -127,26 +120,27 @@
                     <ColumnDefinition Width="70" />
                 </Grid.ColumnDefinitions>
 
-                <TextBlock Text="Teams durch Zeilenumbrüche trennen. Erstes Team ist Titelverteidiger." Grid.Row="0" Grid.Column="0" />
-                <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="0">
+                <TextBlock Text="Teams durch Zeilenumbrüche trennen. Erstes Team ist Titelverteidiger" Grid.Row="0" Grid.Column="0" />
+                <!--<TextBlock Text="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=Page}, Path=TeamsEntered, StringFormat=Eingegeben: {0}}" Grid.Row="1" Grid.Column="0" />-->
+                <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal">
                     <TextBlock Text="Eingegeben: " />
-                    <TextBlock Text="{Binding ElementName=TeamInputTextBox, Path=LineCount}" />
+                    <TextBlock Name="EnteredTeamsTextBlock" />
                 </StackPanel>
                 <Button Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Name="SaveTeamsButton" Content="Speichern" Click="SaveTeamsButton_Click" Margin="2.5,5,0,5">
-                    <Button.Style>
+                    <!--<Button.Style>
                         <Style TargetType="Button">
                             <Style.Setters>
                                 <Setter Property="IsEnabled" Value="False" />
                             </Style.Setters>
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding ElementName=TeamInputTextBox, Path=LineCount}" Value="40">
+                                <DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=Page}, Path=TeamsEntered}" Value="4">
                                     <Setter Property="IsEnabled" Value="True"/>
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
-                    </Button.Style>
+                    </Button.Style>-->
                 </Button>
-                <TextBox Name="TeamInputTextBox" Grid.Row="2" Grid.ColumnSpan="2" Grid.Column="0" Style="{StaticResource Multiline}" VerticalScrollBarVisibility="Visible" />
+                <TextBox Name="TeamInputTextBox" Grid.Row="2" Grid.ColumnSpan="2" Grid.Column="0" MinLines="4" TextChanged="TeamInputTextBox_TextChanged" Style="{StaticResource Multiline}" />
             </Grid>
         </Expander>
 
@@ -218,6 +212,5 @@
                 
             </Grid>
         </Expander>
-    </StackPanel>
-    <!--</Grid>-->
+        </StackPanel>
 </Page>

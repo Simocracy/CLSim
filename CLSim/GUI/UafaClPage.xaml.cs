@@ -26,6 +26,7 @@ namespace Simocracy.CLSim.GUI
         #region Members
 
         private Object _SelectedExpander;
+        private int _TeamsEntered;
 
         #endregion
 
@@ -56,6 +57,22 @@ namespace Simocracy.CLSim.GUI
             set
             {
                 _SelectedExpander = value;
+                Notify();
+            }
+        }
+
+        /// <summary>
+        /// Line count of entered teams
+        /// </summary>
+        public int TeamsEntered
+        {
+            get => _TeamsEntered;
+            set
+            {
+                _TeamsEntered = value;
+                // Workarounds for not working binding
+                EnteredTeamsTextBlock.Text = _TeamsEntered.ToString();
+                SaveTeamsButton.IsEnabled = (_TeamsEntered == 40);
                 Notify();
             }
         }
@@ -99,8 +116,14 @@ namespace Simocracy.CLSim.GUI
 
         private void SaveTeamsButton_Click(object sender, RoutedEventArgs e)
         {
-            if (TeamInputTextBox.LineCount == ChampionsLeague.TournamentTeamCount)
+            if (TeamsEntered == ChampionsLeague.TournamentTeamCount)
                 Cl.ReadTeamlist(TeamInputTextBox.Text);
+        }
+
+        private void TeamInputTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            TeamsEntered = TeamInputTextBox.Text
+                .Split(new[] {Environment.NewLine, "\n", "\r"}, StringSplitOptions.RemoveEmptyEntries).Length;
         }
 
         #endregion
@@ -143,7 +166,6 @@ namespace Simocracy.CLSim.GUI
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-
 
         #endregion
     }
