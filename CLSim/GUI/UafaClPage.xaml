@@ -8,20 +8,20 @@
       d:DesignHeight="500" d:DesignWidth="525"
       Title="UAFA Champions League">
 
-    <Grid Style="{StaticResource ExpanderGrid}">
+    <!--<Grid Style="{StaticResource ExpanderGrid}">
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="auto" />
             <RowDefinition Tag="{Binding ElementName=TeamExpander}" />
             <RowDefinition Tag="{Binding ElementName=MatchExpander}" />
             <RowDefinition Tag="{Binding ElementName=WikiExpander}" />
-        </Grid.RowDefinitions>
-
-        <Label Content="UAFA Champions League" Grid.Row="0" Style="{StaticResource Title}"/>
+        </Grid.RowDefinitions>-->
+    <StackPanel Name="ExpanderPanel" Orientation="Vertical" Style="{StaticResource MarginBase}">
+        <Label Content="UAFA Champions League" Style="{StaticResource Title}"/>
 
         <!-- Main CL Stuff -->
-        <Expander Grid.Row="1" Header="Generelles" IsExpanded="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Page}}, Path=SelectedExpander, Mode=TwoWay, Converter={StaticResource ExpanderToBooleanConverter}, ConverterParameter=1}">
-            <Grid Style="{StaticResource MarginBase}">
+        <Expander Header="Generelles" Expanded="Expander_Expanded" >
+        <Grid Style="{StaticResource MarginBase}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="auto" />
                     <ColumnDefinition />
@@ -34,28 +34,20 @@
                 </Grid.RowDefinitions>
 
                 <Label Content="Saison:" Grid.Row="0" Grid.Column="0" />
-                <TextBox x:Name="SeasonTextBox" Grid.Row="0" Grid.Column="1">
-                    <TextBox.Style>
-                        <Style BasedOn="{StaticResource MarginTBHalf}" TargetType="TextBox">
+                <local:HintTextBox x:Name="SeasonTextBox" HintText="2053/54" Grid.Row="0" Grid.Column="1">
+                    <local:HintTextBox.Style>
+                        <Style BasedOn="{StaticResource MarginTBHalf}" TargetType="local:HintTextBox">
                             <Style.Setters>
                                 <Setter Property="IsEnabled" Value="False" />
                             </Style.Setters>
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding Path=DataContext}" Value="{x:Null}">
+                                <DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Page}}, Path=DataContext}" Value="{x:Null}">
                                     <Setter Property="IsEnabled" Value="True"/>
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
-                    </TextBox.Style>
-                    <TextBox.Template>
-                        <ControlTemplate TargetType="TextBox">
-                            <Grid>
-                                <TextBlock Text="2053/54" Style="{StaticResource GreyValueInfoTextBlock}" />
-                                <TextBox Name="InputBox" Text="{TemplateBinding Text}" Style="{StaticResource GreyValueInfoTextBox}" />
-                            </Grid>
-                        </ControlTemplate>
-                    </TextBox.Template>
-                </TextBox>
+                    </local:HintTextBox.Style>
+                </local:HintTextBox>
                 <Label Content="Finalort:" Grid.Row="1" Grid.Column="0"/>
                 <TextBox x:Name="FinalCityTextBox" Style="{StaticResource MarginTBHalf}" Grid.Row="1" Grid.Column="1">
                     <TextBox.Template>
@@ -86,7 +78,7 @@
                                 <Setter Property="IsEnabled" Value="True" />
                             </Style.Setters>
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding Path=DataContext}" Value="{x:Null}">
+                                <DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Page}}, Path=DataContext}" Value="{x:Null}">
                                     <Setter Property="IsEnabled" Value="False"/>
                                 </DataTrigger>
                             </Style.Triggers>
@@ -100,7 +92,7 @@
                                 <Setter Property="IsEnabled" Value="False" />
                             </Style.Setters>
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding Path=DataContext}" Value="{x:Null}">
+                                <DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Page}}, Path=DataContext}" Value="{x:Null}">
                                     <Setter Property="IsEnabled" Value="True"/>
                                 </DataTrigger>
                             </Style.Triggers>
@@ -111,7 +103,7 @@
         </Expander>
 
         <!-- Team input -->
-        <Expander Name="TeamExpander" Grid.Row="2" Header="Teams" IsExpanded="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Page}}, Path=SelectedExpander, Mode=TwoWay, Converter={StaticResource ExpanderToBooleanConverter}, ConverterParameter=2}">
+        <Expander Name="TeamExpander" Header="Teams" Expanded="Expander_Expanded">
             <Expander.Style>
                 <Style TargetType="Expander">
                     <Style.Setters>
@@ -159,7 +151,7 @@
         </Expander>
 
         <!-- Group stage -->
-        <Expander Name="MatchExpander" Grid.Row="3" Header="Gruppenphase" IsExpanded="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Page}}, Path=SelectedExpander, Mode=TwoWay, Converter={StaticResource ExpanderToBooleanConverter}, ConverterParameter=3}">
+        <Expander Name="MatchExpander" Header="Gruppenphase" Expanded="Expander_Expanded">
             <!--<Expander.Style>
                 <Style TargetType="Expander">
                     <Style.Setters>
@@ -211,20 +203,21 @@
                 </StackPanel>
 
                 <!-- Group List -->
-                <ListView Grid.Row="1" Background="Transparent" BorderBrush="Transparent" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-                    <ListView.Resources>
+                <ItemsControl Grid.Row="1" Background="Transparent" BorderBrush="Transparent" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                    <ItemsControl.Resources>
                         <Style TargetType="{x:Type ListViewItem}">
                             <Setter Property="Background" Value="Transparent" />
                             <Setter Property="HorizontalAlignment" Value="Stretch" />
                             <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
                         </Style>
-                    </ListView.Resources>
-                    <ListViewItem>
+                    </ItemsControl.Resources>
+                    <ItemsControl.Items>
                         <local:ClGroup />
-                    </ListViewItem>
-                </ListView>
+                    </ItemsControl.Items>
+                </ItemsControl>
                 
             </Grid>
         </Expander>
-    </Grid>
+    </StackPanel>
+    <!--</Grid>-->
 </Page>

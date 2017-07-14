@@ -64,6 +64,20 @@ namespace Simocracy.CLSim.GUI
 
         #region Event Handler
 
+        private void Expander_Expanded(object sender, RoutedEventArgs e)
+        {
+            ExpandExculsively(sender as Expander);
+        }
+
+        private void ExpandExculsively(Expander expander)
+        {
+            foreach (var child in ExpanderPanel.Children)
+            {
+                if (child is Expander && child != expander)
+                    ((Expander)child).IsExpanded = false;
+            }
+        }
+
         #region Init
 
         private void ClInitButton_Click(object sender, RoutedEventArgs e)
