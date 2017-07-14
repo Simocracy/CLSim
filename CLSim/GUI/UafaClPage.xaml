@@ -19,8 +19,8 @@
 
         <Label Content="UAFA Champions League" Grid.Row="0" Style="{StaticResource Title}"/>
 
-        <!-- Teamfilter -->
-        <Expander Grid.Row="1" Header="Generelles" IsExpanded="{Binding ElementName=UafaClPage, Path=SelectedExpander, Mode=TwoWay, Converter={StaticResource ExpanderToBooleanConverter}, ConverterParameter=1}">
+        <!-- Main CL Stuff -->
+        <Expander Grid.Row="1" Header="Generelles" IsExpanded="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Page}}, Path=SelectedExpander, Mode=TwoWay, Converter={StaticResource ExpanderToBooleanConverter}, ConverterParameter=1}">
             <Grid Style="{StaticResource MarginBase}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="auto" />
@@ -79,7 +79,7 @@
                     </TextBox.Template>
                 </TextBox>
 
-                <Button Content="Reset" Click="ClResetButton_Click" Grid.Column="0" Grid.Row="3">
+                <Button Content="Reset" Name="ClResetButton" Click="ClResetButton_Click" Grid.Column="0" Grid.Row="3">
                     <Button.Style>
                         <Style BasedOn="{StaticResource MarginHalf}" TargetType="Button">
                             <Style.Setters>
@@ -93,7 +93,7 @@
                         </Style>
                     </Button.Style>
                 </Button>
-                <Button Content="Initialisieren" Click="ClInitButton_Click" Grid.Column="1" Grid.Row="3">
+                <Button Content="Initialisieren" Name="ClInitButton" Click="ClInitButton_Click" Grid.Column="1" Grid.Row="3">
                     <Button.Style>
                         <Style BasedOn="{StaticResource MarginHalf}" TargetType="Button">
                             <Style.Setters>
@@ -110,8 +110,8 @@
             </Grid>
         </Expander>
 
-        <!-- Teamauswahl -->
-        <Expander Name="TeamExpander" Grid.Row="2" Header="Teams" IsExpanded="{Binding ElementName=UafaClPage, Path=SelectedExpander, Mode=TwoWay, Converter={StaticResource ExpanderToBooleanConverter}, ConverterParameter=2}">
+        <!-- Team input -->
+        <Expander Name="TeamExpander" Grid.Row="2" Header="Teams" IsExpanded="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Page}}, Path=SelectedExpander, Mode=TwoWay, Converter={StaticResource ExpanderToBooleanConverter}, ConverterParameter=2}">
             <Expander.Style>
                 <Style TargetType="Expander">
                     <Style.Setters>
@@ -158,8 +158,8 @@
             </Grid>
         </Expander>
 
-        <!-- Matches -->
-        <Expander Name="MatchExpander" Grid.Row="3" Header="Gruppenphase" IsExpanded="{Binding ElementName=UafaClPage, Path=SelectedExpander, Mode=TwoWay, Converter={StaticResource ExpanderToBooleanConverter}, ConverterParameter=3}">
+        <!-- Group stage -->
+        <Expander Name="MatchExpander" Grid.Row="3" Header="Gruppenphase" IsExpanded="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Page}}, Path=SelectedExpander, Mode=TwoWay, Converter={StaticResource ExpanderToBooleanConverter}, ConverterParameter=3}">
             <!--<Expander.Style>
                 <Style TargetType="Expander">
                     <Style.Setters>
@@ -179,8 +179,22 @@
                 </Grid.RowDefinitions>
 
                 <StackPanel Orientation="Horizontal">
-                    <Button Content="Gruppenauslosung" Click="GroupDrawingButton_Click" Width="120" Style="{StaticResource MarginHalf}" />
-                    <Button Content="Simuliere alle Gruppen" Click="GroupDrawingButton_Click" Width="150">
+                    <Button Content="Gruppenauslosung" Name="GroupDrawingButton" Click="GroupDrawingButton_Click" Width="120" Style="{StaticResource MarginHalf}" />
+                    <Button Content="Simuliere alle Gruppen" Name="SimulateGroupsButton" Click="SimulateGroupsButton_Click" Width="150">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource MarginHalf}">
+                                <Style.Setters>
+                                    <Setter Property="IsEnabled" Value="False" />
+                                </Style.Setters>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Path=IsGroupsSimulatable}" Value="True">
+                                        <Setter Property="IsEnabled" Value="True"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
+                    <Button Content="Berechne alle Tabellen" Name="CalculateTablesButton" Click="CalculateTablesButton_Click" Width="150">
                         <Button.Style>
                             <Style TargetType="Button" BasedOn="{StaticResource MarginHalf}">
                                 <Style.Setters>
@@ -196,7 +210,8 @@
                     </Button>
                 </StackPanel>
 
-                <ListView Grid.Row="1" Background="Transparent" BorderBrush="Transparent">
+                <!-- Group List -->
+                <ListView Grid.Row="1" Background="Transparent" BorderBrush="Transparent" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                     <ListView.Resources>
                         <Style TargetType="{x:Type ListViewItem}">
                             <Setter Property="Background" Value="Transparent" />
@@ -205,70 +220,10 @@
                         </Style>
                     </ListView.Resources>
                     <ListViewItem>
-                        <Expander Header="Gruppe A">
-                            <Grid Style="{StaticResource MarginBase}">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="auto" />
-                                    <ColumnDefinition Width="*" />
-                                </Grid.ColumnDefinitions>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition />
-                                    <RowDefinition />
-                                </Grid.RowDefinitions>
-                                
-                                <TextBlock Text="Teams: " Grid.Column="0" Grid.Row="0" />
-                                <TextBlock Text="..." Grid.Column="1" Grid.Row="0" />
-                            </Grid>
-                        </Expander>
+                        <local:ClGroup />
                     </ListViewItem>
                 </ListView>
-
-                <!-- Infos und Einstellungen -->
-                <!--
-                <StackPanel Grid.Row="0" Orientation="Horizontal">
-                    <Label Content="Ligagröße:"/>
-                    <Label Content="{Binding ElementName=FootballTeamsListBox, Path=SelectedItems.Count}" ContentStringFormat="{}{0} Teams" />
-                </StackPanel>
-                <StackPanel Grid.Row="1" Orientation="Horizontal">
-                    <Button Name="GenerateMatchesButton" Content="Erstelle Spielplan" Click="GenerateMatchesButton_Click" Margin="0,0,5,0" />
-                    <Button Name="SimulateButton" Content="Simuliere Liga" Click="SimulateButton_Click" IsEnabled="{Binding League.Matches.Count}">
-                    </Button>
-                </StackPanel>
-
-                -->
-                <!-- Matchanzeige -->
-                <!--
-                <DataGrid Grid.Row="2" ItemsSource="{Binding League.Matches}" AutoGenerateColumns="False" IsEnabled="{Binding League.Matches.Count}" Style="{StaticResource MarginTBBase}" >
-                    <DataGrid.Resources>
-                        <Style TargetType="DataGridCell">
-                            <Style.Triggers>
-                                <Trigger Property="IsReadOnly" Value="True">
-                                    <Setter Property="IsTabStop" Value="False"/>
-                                </Trigger>
-                            </Style.Triggers>
-                        </Style>
-                    </DataGrid.Resources>
-                    <DataGrid.Columns>
-                        <DataGridTemplateColumn Width="100" Header="Datum" IsReadOnly="True">
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <DatePicker Text="{Binding Date, Mode=TwoWay, StringFormat=dd.MM.yyyy}" DisplayDateStart="01/01/2020" />
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                        </DataGridTemplateColumn>
-                        <DataGridTextColumn Width="*" Header="Heim" Binding="{Binding TeamA.Name}" IsReadOnly="True" />
-                        <DataGridTextColumn Width="*" Header="Gast" Binding="{Binding TeamB.Name}" IsReadOnly="True" />
-                        <DataGridTextColumn Width="50" Header="Tore H" Binding="{Binding ResultA}" />
-                        <DataGridTextColumn Width="50" Header="Tore G" Binding="{Binding ResultB}" />
-                        <DataGridTemplateColumn Width="50" IsReadOnly="True">
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <Button Name="SwapTeamsButton" Content="Tausch" ToolTip="Tauscht das Heimrecht des Spiels" Click="SwapTeamsButton_Click" />
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                        </DataGridTemplateColumn>
-                    </DataGrid.Columns>
-                </DataGrid>-->
+                
             </Grid>
         </Expander>
     </Grid>

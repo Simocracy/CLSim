@@ -98,6 +98,18 @@ namespace Simocracy.CLSim.GUI
             Cl.DrawGroups();
         }
 
+        private async void SimulateGroupsButton_Click(object sender, RoutedEventArgs e)
+        {
+            foreach(var g in Cl.Groups)
+                await g.SimulateAsync();
+        }
+
+        private async void CalculateTablesButton_Click(object sender, RoutedEventArgs e)
+        {
+            foreach(var g in Cl.Groups)
+                await g.CalculateTableAsync();
+        }
+
         #endregion
 
         #endregion
@@ -117,6 +129,7 @@ namespace Simocracy.CLSim.GUI
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
+
 
         #endregion
     }

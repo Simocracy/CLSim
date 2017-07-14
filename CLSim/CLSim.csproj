@@ -72,6 +72,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="GUI\ClGroup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="GUI\GuiResources.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -89,6 +93,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="External\SimpleLog.cs" />
+    <Compile Include="GUI\ClGroup.xaml.cs">
+      <DependentUpon>ClGroup.xaml</DependentUpon>
+    </Compile>
     <Compile Include="GUI\Converter.cs" />
     <Compile Include="GUI\InfoPage.xaml.cs">
       <DependentUpon>InfoPage.xaml</DependentUpon>
