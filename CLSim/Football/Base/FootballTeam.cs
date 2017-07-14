@@ -16,6 +16,7 @@ namespace Simocracy.CLSim.Football.Base
         private int _DefenseStrength;
         private int _MidfieldStrength;
         private int _ForwardStrength;
+        private string _Remark;
 
         #region Properties
 
@@ -81,6 +82,15 @@ namespace Simocracy.CLSim.Football.Base
         }
 
         /// <summary>
+        /// Forward strength
+        /// </summary>
+        public string Remark
+        {
+            get => _Remark;
+            set { _Remark = value; Notify(); }
+        }
+
+        /// <summary>
         /// Full name of the team with state
         /// </summary>
         public string FullName => $"{{{{{State}}}}} {Name}";
@@ -91,7 +101,7 @@ namespace Simocracy.CLSim.Football.Base
 
         /// <summary>
         /// Creates a football team.
-        /// Scheme of Input String: {{Flag}} Teamname, avgStrength
+        /// Scheme of Input String: {{Flag}} Teamname, avgStrength (, Remarks)
         /// </summary>
         /// <param name="inputStr">Input string</param>
         public FootballTeam(string inputStr)
@@ -131,13 +141,13 @@ namespace Simocracy.CLSim.Football.Base
         }
 
         /// <summary>
-        /// Set ups a football team.
+        /// Set ups a football team. Scheme: {{Flag}} Team Name, Strenght (, Remarks)
         /// </summary>
         /// <param name="inputStr">Input string</param>
         private void SetupTeam(string inputStr)
         {
-            var regexMatch = Regex.Match(inputStr, @"\{\{([^\}]+)\}\}\s*([^\,]+),\s*(\d+)");
-            SetupTeam(regexMatch.Groups[2].Value, regexMatch.Groups[1].Value, Int32.Parse(regexMatch.Groups[3].Value));
+            var regexMatch = Regex.Match(inputStr, @"\{\{([^\}]+)\}\}\s*([^\,]+)\s*,\s*(\d+)(\s*,\s*(.*))?");
+            SetupTeam(regexMatch.Groups[2].Value, regexMatch.Groups[1].Value, Int32.Parse(regexMatch.Groups[3].Value), regexMatch.Groups[5].Value);
         }
 
         /// <summary>
@@ -157,12 +167,14 @@ namespace Simocracy.CLSim.Football.Base
         /// <param name="name">Team name</param>
         /// <param name="state">Association/Nationality/State of Team</param>
         /// <param name="avgStrength">Team strength</param>
+        /// <param name="remarks">Remarks</param>
         /// <remarks>Final Setup Method</remarks>
-        private void SetupTeam(string name, string state, int avgStrength)
+        private void SetupTeam(string name, string state, int avgStrength, string remarks = null)
         {
             Name = name;
             State = state;
             GoalkeeperStrength = DefenseStrength = MidfieldStrength = ForwardStrength = avgStrength;
+            Remark = (!String.IsNullOrEmpty(remarks)) ? remarks : String.Empty;
 
             SimpleLog.Info($"{this} created.");
         }
