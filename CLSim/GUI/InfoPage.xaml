@@ -24,15 +24,15 @@
                 <Hyperlink NavigateUri="{Binding Source={x:Static clSim:Globals.IrcNetworkLink}, Mode=OneTime}" RequestNavigate="Hyperlink_RequestNavigate"><Run Text="{Binding Source={x:Static clSim:Globals.IrcNetworkName}, Mode=OneTime}" /></Hyperlink>.
         </TextBlock>
 
-        <ListView ItemsSource="{Binding Source={x:Static clSim:Globals.ProgramInfos}, Mode=OneTime}" BorderThickness="0" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Disabled" BorderBrush="{x:Null}" HorizontalContentAlignment="Stretch" Background="{x:Null}" Focusable="False" >
-            <ListView.ItemTemplate>
+        <ItemsControl ItemsSource="{Binding Source={x:Static clSim:Globals.ProgramInfos}, Mode=OneTime}" BorderThickness="0" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Disabled" BorderBrush="{x:Null}" HorizontalContentAlignment="Stretch" Background="{x:Null}">
+            <ItemsControl.ItemTemplate>
                 <DataTemplate DataType="{x:Type clSim:LibInfo}">
                     <TextBlock TextWrapping="Wrap">
                         <Hyperlink NavigateUri="{Binding Url, Mode=OneTime}" RequestNavigate="Hyperlink_RequestNavigate" Style="{StaticResource Hyperlink}"><Run Text="{Binding Name, Mode=OneTime}" /></Hyperlink> ist unter der
                         <Hyperlink NavigateUri="{Binding LicenseUrl, Mode=OneTime}" RequestNavigate="Hyperlink_RequestNavigate" Style="{StaticResource Hyperlink}"><Run Text="{Binding License, Mode=OneTime}" /></Hyperlink> lizenziert.
                     </TextBlock>
                 </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
     </StackPanel>
 </Page>
