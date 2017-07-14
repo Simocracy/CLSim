@@ -28,6 +28,8 @@
                 </MenuItem>
             </Menu>
         </StackPanel>
-        <Frame x:Name="MainFrame" DockPanel.Dock="Bottom" NavigationUIVisibility="Hidden" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto" />
+        <ScrollViewer>
+            <Frame x:Name="MainFrame" DockPanel.Dock="Bottom" NavigationUIVisibility="Hidden" />
+        </ScrollViewer>
     </DockPanel>
 </Window>
