@@ -1,40 +1,40 @@
-﻿{{MAC}} Athletic Puerto Rio
-{{UNAS}} 1. FC Groß-Staufen
-{{UNAS}} FC Seattle
-{{GRA}} FC St. Valentin
-{{GRA}} SC Grafenberg-Stadt
-{{BOL}} Boyacà Quito
-{{BOL}} Bogotà CF
-{{GRSI}} Chesterfield FC 
-{{GRSI}} FC Sevi City
-{{MAC}} Trinidad CF<sup>1</sup>
-{{MAC}} Palma CF<sup>1</sup>
-{{KLY}} Klavoty United
-{{KLY}} Stormpool FC
-{{MEX}} FC Jesus Mexico City
-{{MEX}} Viva Monterrey
-{{FRC}} Lim Rosario
-{{FRC}} BA City Racers
-{{HYA}} Königlich Hylalia-Stadt
-{{HYA}} AF Finsalt
-{{EMA}} FC Juneborg
-{{EMA}} Ankerhøst FC
-{{RLQ}} FC Eastport
-{{RLQ}} AC Laval
-{{NDL}} FK Kujalleg
-{{NDL}} FK Ræsund
-{{SOW}} Ruquia CF
-{{SOW}} Real Mayor
-{{EDO}} Badwater Badasses
-{{EDO}} FC Pacific Palisades
-{{URS}} Equipo Tropical
-{{URS}} Las Chivas
-{{OB}} FC Trinity
-{{OB}} Port Roger United
-{{NUS}} Lokomotive Simskau
-{{NUS}} Los Tigres de Panama
-{{NLL}} Hallbach FC
-{{NLL}} Impact Montreal
-{{PATA}} FC La Plata
-{{PATA}} Capitalos Santiago
-{{RBS}} FC New Orleans
+﻿{{MAC}} Athletic Puerto Rio, 40
+{{UNAS}} 1. FC Groß-Staufen, 40
+{{UNAS}} FC Seattle, 40
+{{GRA}} FC St. Valentin, 40
+{{GRA}} SC Grafenberg-Stadt, 40
+{{BOL}} Boyacà Quito, 40
+{{BOL}} Bogotà CF, 40
+{{GRSI}} Chesterfield FC , 40
+{{GRSI}} FC Sevi City, 40
+{{MAC}} Trinidad CF, 40, Da Athletic Puerto Rio sowohl Titelverteidiger als auch Meister ist, rückten der Ligazweite und Ligadritte auf.
+{{MAC}} Palma CF, 40, Da Athletic Puerto Rio sowohl Titelverteidiger als auch Meister ist, rückten der Ligazweite und Ligadritte auf.
+{{KLY}} Klavoty United, 40
+{{KLY}} Stormpool FC, 40
+{{MEX}} FC Jesus Mexico City, 40
+{{MEX}} Viva Monterrey, 40
+{{FRC}} Lim Rosario, 40
+{{FRC}} BA City Racers, 40
+{{HYA}} Königlich Hylalia-Stadt, 40
+{{HYA}} AF Finsalt, 40
+{{EMA}} FC Juneborg, 40
+{{EMA}} Ankerhøst FC, 40
+{{RLQ}} FC Eastport, 40
+{{RLQ}} AC Laval, 40
+{{NDL}} FK Kujalleg, 40
+{{NDL}} FK Ræsund, 40
+{{SOW}} Ruquia CF, 40
+{{SOW}} Real Mayor, 40
+{{EDO}} Badwater Badasses, 40
+{{EDO}} FC Pacific Palisades, 40
+{{URS}} Equipo Tropical, 40
+{{URS}} Las Chivas, 40
+{{OB}} FC Trinity, 40
+{{OB}} Port Roger United, 40
+{{NUS}} Lokomotive Simskau, 40
+{{NUS}} Los Tigres de Panama, 40
+{{NLL}} Hallbach FC, 40
+{{NLL}} Impact Montreal, 40
+{{PATA}} FC La Plata, 40
+{{PATA}} Capitalos Santiago, 40
+{{RBS}} FC New Orleans, 40
