@@ -11,7 +11,7 @@ namespace Simocracy.CLSim.Football.Base
     /// <summary>
     /// Football group simulation
     /// </summary>
-    [DebuggerDisplay("TeamCount={" + nameof(TeamCount) + "}")]
+    [DebuggerDisplay("TeamCount={" + nameof(TeamCount) + "}, Teams={" + nameof(TeamListStr) + "}")]
     public class FootballLeague : INotifyPropertyChanged
     {
         #region Members
