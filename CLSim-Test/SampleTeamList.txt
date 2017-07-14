@@ -1,0 +1,40 @@
+﻿{{MAC}} Athletic Puerto Rio
+{{UNAS}} 1. FC Groß-Staufen
+{{UNAS}} FC Seattle
+{{GRA}} FC St. Valentin
+{{GRA}} SC Grafenberg-Stadt
+{{BOL}} Boyacà Quito
+{{BOL}} Bogotà CF
+{{GRSI}} Chesterfield FC 
+{{GRSI}} FC Sevi City
+{{MAC}} Trinidad CF<sup>1</sup>
+{{MAC}} Palma CF<sup>1</sup>
+{{KLY}} Klavoty United
+{{KLY}} Stormpool FC
+{{MEX}} FC Jesus Mexico City
+{{MEX}} Viva Monterrey
+{{FRC}} Lim Rosario
+{{FRC}} BA City Racers
+{{HYA}} Königlich Hylalia-Stadt
+{{HYA}} AF Finsalt
+{{EMA}} FC Juneborg
+{{EMA}} Ankerhøst FC
+{{RLQ}} FC Eastport
+{{RLQ}} AC Laval
+{{NDL}} FK Kujalleg
+{{NDL}} FK Ræsund
+{{SOW}} Ruquia CF
+{{SOW}} Real Mayor
+{{EDO}} Badwater Badasses
+{{EDO}} FC Pacific Palisades
+{{URS}} Equipo Tropical
+{{URS}} Las Chivas
+{{OB}} FC Trinity
+{{OB}} Port Roger United
+{{NUS}} Lokomotive Simskau
+{{NUS}} Los Tigres de Panama
+{{NLL}} Hallbach FC
+{{NLL}} Impact Montreal
+{{PATA}} FC La Plata
+{{PATA}} Capitalos Santiago
+{{RBS}} FC New Orleans
