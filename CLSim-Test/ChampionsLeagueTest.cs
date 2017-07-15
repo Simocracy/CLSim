@@ -18,11 +18,11 @@ namespace Simocracy.CLSim.Test
             Cl = null;
 
             Cl = new ChampionsLeague("2053/54");
-            var groupA = new FootballLeague("A",
+            var groupA = new FootballLeague("A", FootballLeague.EMatchMode.Default,
                 new FootballTeam("{{FRC}} BAM", 12),
                 new FootballTeam("{{UNS}} SRFC", 12),
                 new FootballTeam("{{GRA}} SV", 12));
-            var groupB = new FootballLeague("B",
+            var groupB = new FootballLeague("B", FootballLeague.EMatchMode.Default,
                 new FootballTeam("{{UNS}} Seattle", 12),
                 new FootballTeam("{{MAC}} Tesoro", 12),
                 new FootballTeam("{{GRA}} GS", 12));
