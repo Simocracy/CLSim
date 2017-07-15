@@ -140,13 +140,13 @@
                         </Style>
                     </Button.Style>-->
                 </Button>
-                <TextBox Name="TeamInputTextBox" Grid.Row="2" Grid.ColumnSpan="2" Grid.Column="0" MinLines="4" TextChanged="TeamInputTextBox_TextChanged" Style="{StaticResource Multiline}" />
+                <TextBox Name="TeamInputTextBox" Grid.Row="2" Grid.ColumnSpan="2" Grid.Column="0" MinLines="4" TextChanged="TeamInputTextBox_TextChanged" Style="{StaticResource Multiline}" MaxLines="15" />
             </Grid>
         </Expander>
 
         <!-- Group stage -->
         <Expander Name="MatchExpander" Header="Gruppenphase" Expanded="Expander_Expanded">
-            <!--<Expander.Style>
+            <Expander.Style>
                 <Style TargetType="Expander">
                     <Style.Setters>
                         <Setter Property="IsEnabled" Value="False" />
@@ -157,7 +157,7 @@
                         </DataTrigger>
                     </Style.Triggers>
                 </Style>
-            </Expander.Style>-->
+            </Expander.Style>
             <Grid Style="{StaticResource MarginBase}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="auto" />
@@ -197,7 +197,7 @@
                 </StackPanel>
 
                 <!-- Group List -->
-                <ItemsControl Grid.Row="1" Background="Transparent" BorderBrush="Transparent" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                <ItemsControl Grid.Row="1" ItemsSource="{Binding Groups}">
                     <ItemsControl.Resources>
                         <Style TargetType="{x:Type ListViewItem}">
                             <Setter Property="Background" Value="Transparent" />
@@ -205,9 +205,11 @@
                             <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
                         </Style>
                     </ItemsControl.Resources>
-                    <ItemsControl.Items>
-                        <local:ClGroup />
-                    </ItemsControl.Items>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <local:ClGroup />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
                 </ItemsControl>
                 
             </Grid>

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,7 +14,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Simocracy.CLSim.Football.Base;
 using Simocracy.CLSim.Football.UAFA;
+using SimpleLogger;
 
 namespace Simocracy.CLSim.GUI
 {

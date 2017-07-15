@@ -3,10 +3,10 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:Simocracy.CLSim.GUI"
+             xmlns:fb="clr-namespace:Simocracy.CLSim.Football.Base"
              mc:Ignorable="d" 
              d:DesignHeight="500" d:DesignWidth="525">
-    
+
     <Expander Name="GroupExpander">
         <Expander.Header>
             <Label Content="{Binding ID}" ContentStringFormat="{}Gruppe {0}" />
@@ -21,9 +21,9 @@
             </Grid.RowDefinitions>
 
             <!-- Pre stuff -->
-            <Label Content="{Binding TeamListStr}" ContentStringFormat="{}Teams: {0}" Grid.Row="0"/>
+            <TextBlock Text="{Binding TeamListStr, StringFormat={}Teams: {0}}" TextWrapping="Wrap" Grid.Row="0"/>
             <Label Content="Spiele:" HorizontalAlignment="Stretch" Grid.Row="1" />
-            
+
             <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
                 <Button Content="Simuliere Gruppe" Name="SimulateGroupButton" Width="150" Click="SimulateGroupButton_Click">
                     <Button.Style>
@@ -73,10 +73,11 @@
                     <DataGridTextColumn Width="50" Header="Tore G" Binding="{Binding ResultB}" />
                 </DataGrid.Columns>
             </DataGrid>
-            
+
             <!-- Table -->
             <Label Content="Tabelle:" HorizontalAlignment="Stretch" Grid.Row="3" />
-            <DataGrid Grid.Row="4" Name="TableDataGrid" Style="{StaticResource MarginTBBase}" IsReadOnly="True" />
+            <DataGrid Grid.Row="4" Name="TableDataGrid" ItemsSource="{Binding Path=Table}" Style="{StaticResource MarginTBBase}" IsReadOnly="True"
+                      AutoGenerateColumns="False" CanUserSortColumns="False" Loaded="TableDataGrid_Loaded" LoadingRow="TableDataGrid_LoadingRow" />
         </Grid>
     </Expander>
 </UserControl>
