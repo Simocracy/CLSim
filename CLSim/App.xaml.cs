@@ -20,6 +20,7 @@ namespace Simocracy.CLSim
         #region Members
 
         private static bool _IsLogging = true;
+        private static SimpleLog.Severity _LogLevel = SimpleLog.Severity.Warning;
 
         #endregion
 
@@ -34,7 +35,7 @@ namespace Simocracy.CLSim
             // Setup logger
             if(_IsLogging)
             {
-                SimpleLog.SetLogFile(logDir: "CLSim-Log", writeText: true, check: false);
+                SimpleLog.SetLogFile(logDir: "CLSim-Log", writeText: true, check: false, logLevel: _LogLevel);
                 SimpleLog.Check($"{Globals.ProgramName} {Globals.ProgramVersion} started.");
             }
 
@@ -68,12 +69,35 @@ namespace Simocracy.CLSim
         /// <param name="args">arguments</param>
         public static void SetArgs(params string[] args)
         {
-            foreach(var arg in args)
+            for(int i = 0; i < args.Length; i++)
             {
-                switch(arg.ToLower())
+                switch(args[i].ToLower())
                 {
                     case "-nolog":
+                        // No Logging
                         _IsLogging = false;
+                        break;
+                    case "-loglevel":
+                        // Sets the log level
+                        if(args.Length > i && !String.IsNullOrEmpty(args[i + 1]))
+                        {
+                            switch(args[i + 1].ToLower())
+                            {
+                                case "info":
+                                    _LogLevel = SimpleLog.Severity.Info;
+                                    break;
+                                case "warning":
+                                    _LogLevel = SimpleLog.Severity.Warning;
+                                    break;
+                                case "error":
+                                    _LogLevel = SimpleLog.Severity.Error;
+                                    break;
+                                case "exception":
+                                    _LogLevel = SimpleLog.Severity.Exception;
+                                    break;
+                            }
+                            i++;
+                        }
                         break;
                 }
             }
