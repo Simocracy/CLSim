@@ -20,6 +20,7 @@ namespace Simocracy.CLSim.Football.Base
         public const string LoseCountRow = "Lose";
         public const string GoalsForCountRow = "GoalsFor";
         public const string GoalsAgainstCountRow = "GoalsAgainst";
+        public const string GoalsRow = "Goals";
         public const string GoalDiffRow = "GoalDiff";
         public const string PointsRow = "Points";
 
@@ -109,6 +110,7 @@ namespace Simocracy.CLSim.Football.Base
             Columns.Add(LoseCountRow, typeof(int));
             Columns.Add(GoalsForCountRow, typeof(int));
             Columns.Add(GoalsAgainstCountRow, typeof(int));
+            Columns.Add(GoalsRow, typeof(string));
             Columns.Add(GoalDiffRow, typeof(int));
             Columns.Add(PointsRow, typeof(int));
         }
@@ -165,6 +167,7 @@ namespace Simocracy.CLSim.Football.Base
                 row[LoseCountRow] = lose;
                 row[GoalsForCountRow] = goalsFor;
                 row[GoalsAgainstCountRow] = goalsAgainst;
+                row[GoalsRow] = $"{goalsFor}:{goalsAgainst}";
                 row[GoalDiffRow] = goalsFor - goalsAgainst;
                 row[PointsRow] = win * 3 + drawn;
 
