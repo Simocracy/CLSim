@@ -51,6 +51,13 @@ namespace Simocracy.CLSim.Football.UAFA
             IsRoundOf16Simulatable = false;
             Season = season;
 
+            AllTeamsRaw = new ObservableCollection<FootballTeam>();
+            Coefficients = new Dictionary<FootballTeam, Coefficient>();
+            Groups = new ObservableCollection<FootballLeague>();
+            RoundOf16 = new ObservableCollection<DoubleMatch>();
+            QuarterFinals = new ObservableCollection<DoubleMatch>();
+            SemiFinals = new ObservableCollection<DoubleMatch>();
+
             SimpleLog.Info($"Initialized UAFA CL Season {Season}");
         }
 
@@ -203,7 +210,7 @@ namespace Simocracy.CLSim.Football.UAFA
             SimpleLog.Info("Read CL team input.");
 
             var strTeams = list.Split(new[] {Environment.NewLine, "\n", "\r"}, StringSplitOptions.RemoveEmptyEntries);
-            AllTeamsRaw = new ObservableCollection<FootballTeam>();
+            AllTeamsRaw.Clear();
             foreach(var team in strTeams)
             {
                 try
@@ -264,7 +271,7 @@ namespace Simocracy.CLSim.Football.UAFA
         {
             SimpleLog.Info($"Calculate UAFA Coefficient for CL season {Season}.");
 
-            Coefficients = new Dictionary<FootballTeam, Coefficient>(AllTeamsRaw.Count);
+            Coefficients.Clear();
 
             // Qualification
 
@@ -337,12 +344,12 @@ namespace Simocracy.CLSim.Football.UAFA
             {
                 var ordered = AllTeamsRaw.OrderBy(x => Globals.Random.Next()).ToArray();
 
-                Groups = new ObservableCollection<FootballLeague>();
+                Groups.Clear();
                 char groupId = 'A';
                 for(int i = 0; i < ordered.Length; i += 5)
                 {
-                    Groups.Add(new FootballLeague(groupId.ToString(), ordered[i], ordered[i + 1],
-                        ordered[i + 2], ordered[i + 3], ordered[i + 4]));
+                    Groups.Add(new FootballLeague(groupId.ToString(), FootballLeague.EMatchMode.UafaCl, ordered[i],
+                        ordered[i + 1], ordered[i + 2], ordered[i + 3], ordered[i + 4]));
                     groupId = (char) (groupId + 1);
                 }
 
@@ -465,7 +472,7 @@ namespace Simocracy.CLSim.Football.UAFA
                 firsts = firsts.OrderBy(x => Globals.Random.Next()).ToArray();
                 secs = secs.OrderBy(x => Globals.Random.Next()).ToArray();
 
-                RoundOf16 = new ObservableCollection<DoubleMatch>();
+                RoundOf16.Clear();
                 for(int i = 0; i < firsts.Length; i++)
                     RoundOf16.Add(new DoubleMatch(secs[i], firsts[i]));
 
@@ -568,7 +575,7 @@ namespace Simocracy.CLSim.Football.UAFA
             var teams = RoundOf16.Select(m => m.Winner).ToArray();
             teams = teams.OrderBy(t => Globals.Random.Next()).ToArray();
 
-            QuarterFinals = new ObservableCollection<DoubleMatch>();
+            QuarterFinals.Clear();
             for(int i = 0; i < teams.Length; i += 2)
                 QuarterFinals.Add(new DoubleMatch(teams[i], teams[i + 1]));
         }
@@ -583,8 +590,8 @@ namespace Simocracy.CLSim.Football.UAFA
             var teams = QuarterFinals.Select(m => m.Winner).ToArray();
             teams = teams.OrderBy(t => Globals.Random.Next()).ToArray();
 
-            SemiFinals = new ObservableCollection<DoubleMatch>();
-            for(int i = 0; i < teams.Length; i += 2)
+            SemiFinals.Clear();
+            for (int i = 0; i < teams.Length; i += 2)
                 SemiFinals.Add(new DoubleMatch(teams[i], teams[i + 1]));
         }
 
