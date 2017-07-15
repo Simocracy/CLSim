@@ -160,26 +160,26 @@ namespace Simocracy.CLSim.Football.Base
             else if(MatchMode == EMatchMode.UafaCl)
             {
                 // Based on https://simocracy.de/Vorlage:5er-Gruppe
+                Matches.Add(new FootballMatch(Teams[0], Teams[1]));
+                Matches.Add(new FootballMatch(Teams[2], Teams[3]));
                 Matches.Add(new FootballMatch(Teams[1], Teams[2]));
                 Matches.Add(new FootballMatch(Teams[3], Teams[4]));
-                Matches.Add(new FootballMatch(Teams[2], Teams[3]));
-                Matches.Add(new FootballMatch(Teams[4], Teams[5]));
-                Matches.Add(new FootballMatch(Teams[5], Teams[1]));
-                Matches.Add(new FootballMatch(Teams[4], Teams[2]));
+                Matches.Add(new FootballMatch(Teams[4], Teams[0]));
                 Matches.Add(new FootballMatch(Teams[3], Teams[1]));
-                Matches.Add(new FootballMatch(Teams[2], Teams[5]));
+                Matches.Add(new FootballMatch(Teams[2], Teams[0]));
                 Matches.Add(new FootballMatch(Teams[1], Teams[4]));
-                Matches.Add(new FootballMatch(Teams[5], Teams[3]));
+                Matches.Add(new FootballMatch(Teams[0], Teams[3]));
+                Matches.Add(new FootballMatch(Teams[4], Teams[2]));
+                Matches.Add(new FootballMatch(Teams[1], Teams[0]));
+                Matches.Add(new FootballMatch(Teams[3], Teams[2]));
                 Matches.Add(new FootballMatch(Teams[2], Teams[1]));
                 Matches.Add(new FootballMatch(Teams[4], Teams[3]));
-                Matches.Add(new FootballMatch(Teams[3], Teams[2]));
-                Matches.Add(new FootballMatch(Teams[5], Teams[4]));
-                Matches.Add(new FootballMatch(Teams[1], Teams[5]));
-                Matches.Add(new FootballMatch(Teams[2], Teams[4]));
+                Matches.Add(new FootballMatch(Teams[0], Teams[4]));
                 Matches.Add(new FootballMatch(Teams[1], Teams[3]));
-                Matches.Add(new FootballMatch(Teams[5], Teams[2]));
+                Matches.Add(new FootballMatch(Teams[0], Teams[2]));
                 Matches.Add(new FootballMatch(Teams[4], Teams[1]));
-                Matches.Add(new FootballMatch(Teams[3], Teams[5]));
+                Matches.Add(new FootballMatch(Teams[3], Teams[0]));
+                Matches.Add(new FootballMatch(Teams[2], Teams[4]));
             }
 
             SimpleLog.Info($"Matches Created in Football League ID={ID} with MatchMode={MatchMode}");
