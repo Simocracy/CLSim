@@ -185,7 +185,7 @@ namespace Simocracy.CLSim.Football.Base
 
         public override string ToString()
         {
-            return $"Football Team={FullName}, AvgStrength={AvgStrength}";
+            return FullName;
         }
 
         #endregion
