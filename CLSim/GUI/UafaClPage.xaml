@@ -3,18 +3,19 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
       xmlns:local="clr-namespace:Simocracy.CLSim.GUI"
       mc:Ignorable="d" 
       d:DesignHeight="500" d:DesignWidth="525"
       Title="UAFA Champions League"
       Name="ClPage">
 
-        <StackPanel Name="ExpanderPanel" CanVerticallyScroll="True" Style="{StaticResource MarginBase}">
+    <StackPanel Name="ExpanderPanel" CanVerticallyScroll="True" Style="{StaticResource MarginBase}">
         <Label Content="UAFA Champions League" Style="{StaticResource Title}"/>
 
         <!-- Main CL Stuff -->
         <Expander Header="Generelles" Expanded="Expander_Expanded">
-        <Grid Style="{StaticResource MarginBase}">
+            <Grid Style="{StaticResource MarginBase}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="auto" />
                     <ColumnDefinition />
@@ -109,7 +110,8 @@
                     </Style.Triggers>
                 </Style>
             </Expander.Style>
-                <Grid Style="{StaticResource MarginBase}" VerticalAlignment="Stretch">
+            
+            <Grid Style="{StaticResource MarginBase}" VerticalAlignment="Stretch">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="auto" />
                     <RowDefinition Height="auto" />
@@ -158,12 +160,8 @@
                     </Style.Triggers>
                 </Style>
             </Expander.Style>
-            <Grid Style="{StaticResource MarginBase}">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="auto" />
-                    <RowDefinition Height="*" />
-                </Grid.RowDefinitions>
-
+            
+            <StackPanel Style="{StaticResource MarginBase}">
                 <StackPanel Orientation="Horizontal">
                     <Button Content="Gruppenauslosung" Name="GroupDrawingButton" Click="GroupDrawingButton_Click" Width="120" Style="{StaticResource MarginHalf}" />
                     <Button Content="Simuliere alle Gruppen" Name="SimulateGroupsButton" Click="SimulateGroupsButton_Click" Width="150">
@@ -195,9 +193,26 @@
                         </Button.Style>
                     </Button>
                 </StackPanel>
+                <Label>
+                    <Label.Style>
+                        <Style TargetType="Label" BasedOn="{StaticResource MarginSideHalf}">
+                            <Style.Setters>
+                                <Setter Property="Content" Value="Keine Auslosung durchgeführt." />
+                            </Style.Setters>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Path=IsGroupsSimulatable}" Value="True">
+                                    <Setter Property="Content" Value="Gruppenauslosung erfolgreich, Simulation möglich." />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Path=IsGroupsSimulatable}" Value="False">
+                                    <Setter Property="Content" Value="Ungültige Auslosung, keine Simulation möglich." />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Label.Style>
+                </Label>
 
                 <!-- Group List -->
-                <ItemsControl Grid.Row="1" ItemsSource="{Binding Groups}">
+                <ItemsControl ItemsSource="{Binding Groups}">
                     <ItemsControl.Resources>
                         <Style TargetType="{x:Type ListViewItem}">
                             <Setter Property="Background" Value="Transparent" />
@@ -211,8 +226,25 @@
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
-                
-            </Grid>
+
+            </StackPanel>
         </Expander>
-        </StackPanel>
+        
+        <!-- Round of 16 -->
+        <Expander Name="RoundOf16Expander" Header="Achtelfinale" Expanded="Expander_Expanded">
+            <!--<Expander.Style>
+                <Style TargetType="Expander">
+                    <Style.Setters>
+                        <Setter Property="IsEnabled" Value="False" />
+                    </Style.Setters>
+                </Style>
+            </Expander.Style>-->
+            <!--<i:Interaction.Triggers>
+                <i:EventTrigger EventName="GroupsCalculatedEnabling">
+                    <local:PropertyManager Binding="{Binding Path=IsAllGroupTablesCalculated, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" SourceProperty="IsEnabled" />
+                </i:EventTrigger>
+            </i:Interaction.Triggers>-->
+            
+        </Expander>
+    </StackPanel>
 </Page>
