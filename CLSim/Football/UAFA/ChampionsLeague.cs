@@ -22,10 +22,10 @@ namespace Simocracy.CLSim.Football.UAFA
         private Dictionary<FootballTeam, Coefficient> _Coefficients;
 
         private ObservableCollection<FootballLeague> _Groups;
-        private bool _IsGroupsSimulatable;
+        private bool? _IsGroupsSimulatable;
 
         private ObservableCollection<DoubleMatch> _RoundOf16;
-        private bool _IsRoundOf16Simulatable;
+        private bool? _IsRoundOf16Simulatable;
         private ObservableCollection<DoubleMatch> _QuarterFinals;
         private ObservableCollection<DoubleMatch> _SemiFinals;
         private FootballMatch _Final;
@@ -47,8 +47,8 @@ namespace Simocracy.CLSim.Football.UAFA
         /// </summary>
         public ChampionsLeague(string season)
         {
-            IsGroupsSimulatable = false;
-            IsRoundOf16Simulatable = false;
+            IsGroupsSimulatable = null;
+            IsRoundOf16Simulatable = null;
             Season = season;
 
             AllTeamsRaw = new ObservableCollection<FootballTeam>();
@@ -105,9 +105,9 @@ namespace Simocracy.CLSim.Football.UAFA
         }
 
         /// <summary>
-        /// True if group drawing was successfully
+        /// True if group drawing was successfully, null if no drawing executed
         /// </summary>
-        public bool IsGroupsSimulatable
+        public bool? IsGroupsSimulatable
         {
             get => _IsGroupsSimulatable;
             private set
@@ -116,6 +116,16 @@ namespace Simocracy.CLSim.Football.UAFA
                 Notify();
             }
         }
+
+        /// <summary>
+        /// True if all group matches are simulated
+        /// </summary>
+        public bool IsAllGroupsSimulated => (Groups != null && Groups.Count > 0) && Groups.All(g => g.IsAllMatchesSimulated);
+
+        /// <summary>
+        /// True if all group tables are calculated
+        /// </summary>
+        public bool IsAllGroupTablesCalculated => (Groups != null && Groups.Count > 0) && Groups.All(g => g.IsTableCalculated);
 
         /// <summary>
         /// Round of 16
@@ -131,9 +141,9 @@ namespace Simocracy.CLSim.Football.UAFA
         }
 
         /// <summary>
-        /// True if drawing round of 16 was successfully
+        /// True if drawing round of 16 was successfully, null if no drawing executed
         /// </summary>
-        public bool IsRoundOf16Simulatable
+        public bool? IsRoundOf16Simulatable
         {
             get => _IsRoundOf16Simulatable;
             private set
@@ -194,7 +204,6 @@ namespace Simocracy.CLSim.Football.UAFA
                 Notify();
             }
         }
-
 
         #endregion
 
@@ -357,7 +366,7 @@ namespace Simocracy.CLSim.Football.UAFA
 
                 IsGroupsSimulatable = isNationValid.Contains(false);
 
-                if(IsGroupsSimulatable)
+                if(IsGroupsSimulatable == true)
                     break;
             }
 
@@ -480,7 +489,7 @@ namespace Simocracy.CLSim.Football.UAFA
 
                 IsRoundOf16Simulatable = isNationValid.All(x => x);
 
-                if(IsRoundOf16Simulatable)
+                if(IsRoundOf16Simulatable == true)
                     break;
             }
         }
@@ -663,7 +672,7 @@ namespace Simocracy.CLSim.Football.UAFA
         /// </summary>
         public void SimulateGroups()
         {
-            if(IsGroupsSimulatable && Groups?.Count > 0)
+            if(IsGroupsSimulatable == true && Groups?.Count > 0)
             {
                 SimpleLog.Info("Simulate all CL groups.");
                 foreach(var group in Groups)
@@ -687,7 +696,7 @@ namespace Simocracy.CLSim.Football.UAFA
         /// </summary>
         public void SimulateRoundOf16()
         {
-            if(IsRoundOf16Simulatable && RoundOf16?.Count > 0)
+            if(IsRoundOf16Simulatable == true && RoundOf16?.Count > 0)
             {
                 SimpleLog.Info("Simulate CL Round of 16.");
                 foreach(var match in RoundOf16)
