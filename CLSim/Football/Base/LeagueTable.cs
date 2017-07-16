@@ -53,27 +53,32 @@ namespace Simocracy.CLSim.Football.Base
         /// <summary>
         /// Team on Position 1
         /// </summary>
-        public FootballTeam Pos1 => Rows[0][TeamRow] as FootballTeam;
+        public FootballTeam Pos1 => Rows.Count > 0 ? Rows[0][TeamRow] as FootballTeam : null;
 
         /// <summary>
         /// Team on Position 2
         /// </summary>
-        public FootballTeam Pos2 => Rows[1][TeamRow] as FootballTeam;
+        public FootballTeam Pos2 => Rows.Count > 1 ? Rows[1][TeamRow] as FootballTeam : null;
 
         /// <summary>
         /// Team on Position 3
         /// </summary>
-        public FootballTeam Pos3 => Rows[2][TeamRow] as FootballTeam;
+        public FootballTeam Pos3 => Rows.Count > 2 ? Rows[2][TeamRow] as FootballTeam : null;
 
         /// <summary>
         /// Team on Position 4
         /// </summary>
-        public FootballTeam Pos4 => Rows[3][TeamRow] as FootballTeam;
+        public FootballTeam Pos4 => Rows.Count > 3 ? Rows[3][TeamRow] as FootballTeam : null;
 
         /// <summary>
         /// Team on Position 5
         /// </summary>
-        public FootballTeam Pos5 => Rows[4][TeamRow] as FootballTeam;
+        public FootballTeam Pos5 => Rows.Count > 4 ? Rows[4][TeamRow] as FootballTeam : null;
+
+        /// <summary>
+        /// True if table is calculated
+        /// </summary>
+        public bool IsTableCalculated => Pos1 != null;
 
         #endregion
 
@@ -96,6 +101,8 @@ namespace Simocracy.CLSim.Football.Base
                 Rows.Add(row);
 
             SortFootballTable(footballMatches);
+
+            SimpleLog.Info($"Table with {footballTeams.Length} teams and {footballMatches.Length} matches calculated.");
         }
 
         /// <summary>

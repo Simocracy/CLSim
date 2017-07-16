@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using SimpleLogger;
@@ -118,6 +119,16 @@ namespace Simocracy.CLSim.Football.Base
             get => _MatchMode;
             private set { _MatchMode = value; Notify(); }
         }
+
+        /// <summary>
+        /// True if all matches are simulated
+        /// </summary>
+        public bool IsAllMatchesSimulated => (Matches != null && Matches.Count > 0) && Matches.All(g => g.IsSimulated);
+
+        /// <summary>
+        /// True if table is calculated
+        /// </summary>
+        public bool IsTableCalculated => Table?.IsTableCalculated ?? false;
 
         /// <summary>
         /// List of all teams as String

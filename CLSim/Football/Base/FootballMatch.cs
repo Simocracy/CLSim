@@ -142,6 +142,11 @@ namespace Simocracy.CLSim.Football.Base
         }
 
         /// <summary>
+        /// True if the match is simulated
+        /// </summary>
+        public bool IsSimulated => ResultA > -1 && ResultB > -1;
+
+        /// <summary>
         /// Match name
         /// </summary>
         public string Name => $"{TeamA.FullName} vs. {TeamB.FullName}";
@@ -160,8 +165,8 @@ namespace Simocracy.CLSim.Football.Base
         /// </summary>
         public void Reset(int time = 0)
         {
-            ResultA = 0;
-            ResultB = 0;
+            ResultA = -1;
+            ResultB = -1;
             _Ball = 0;
             _MatchTime = time;
             _Start = 0;
@@ -186,8 +191,7 @@ namespace Simocracy.CLSim.Football.Base
 
         public override string ToString()
         {
-            return
-                $"Football Match: TeamA={TeamA}, TeamB={TeamB}, ResultA={ResultA}, ResultB={ResultB}";
+            return $"{TeamA} {ResultA}:{ResultB} {TeamB}";
         }
 
         #endregion
