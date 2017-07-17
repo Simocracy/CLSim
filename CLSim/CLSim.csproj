@@ -69,6 +69,7 @@
     <Compile Include="Football\Base\FootballMatch.cs" />
     <Compile Include="Football\Base\FootballTeam.cs" />
     <Compile Include="Football\Base\LeagueTable.cs" />
+    <Compile Include="PropertyChangedPropagator.cs" />
     <Page Include="App.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
