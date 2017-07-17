@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
 using System.Linq;
 using SimpleLogger;
@@ -8,8 +9,8 @@ namespace Simocracy.CLSim.Football.Base
     /// <summary>
     /// Table of <see cref="FootballLeague"/>
     /// </summary>
-    [System.ComponentModel.DesignerCategory("Code")]
-    public class LeagueTable : DataTable
+    //[DesignerCategory("Code")]
+    public class LeagueTable : DataTable, INotifyPropertyChanged
     {
         #region Constants
 
@@ -26,6 +27,12 @@ namespace Simocracy.CLSim.Football.Base
 
         #endregion
 
+        #region Members
+
+        private bool _IsTableCalculated;
+
+#endregion
+
         #region Constructor
 
         /// <summary>
@@ -34,6 +41,7 @@ namespace Simocracy.CLSim.Football.Base
         public LeagueTable()
         {
             CreateTable();
+            IsTableCalculated = false;
         }
 
         /// <summary>
@@ -44,6 +52,7 @@ namespace Simocracy.CLSim.Football.Base
         public LeagueTable(IEnumerable<FootballTeam> teams, IEnumerable<FootballMatch> matches) : this()
         {
             CalculateTable(teams, matches);
+            IsTableCalculated = true;
         }
 
         #endregion
@@ -78,7 +87,11 @@ namespace Simocracy.CLSim.Football.Base
         /// <summary>
         /// True if table is calculated
         /// </summary>
-        public bool IsTableCalculated => Pos1 != null;
+        public bool IsTableCalculated
+        {
+            get => _IsTableCalculated;
+            set { _IsTableCalculated = value; Notify(); }
+        }
 
         #endregion
 
@@ -101,6 +114,8 @@ namespace Simocracy.CLSim.Football.Base
                 Rows.Add(row);
 
             SortFootballTable(footballMatches);
+
+            IsTableCalculated = true;
 
             SimpleLog.Info($"Table with {footballTeams.Length} teams and {footballMatches.Length} matches calculated.");
         }
@@ -243,6 +258,24 @@ namespace Simocracy.CLSim.Football.Base
             Rows.Clear();
             foreach(DataRow row in finalTable)
                 Rows.Add(row);
+        }
+
+        #endregion
+
+        #region INotifyPropertyChanged
+
+        /// <summary>
+        /// Observer-Event
+        /// </summary>
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        /// <summary>
+        /// Observer
+        /// </summary>
+        /// <param name="propertyName">Property</param>
+        protected void Notify([System.Runtime.CompilerServices.CallerMemberName] string propertyName = "")
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         #endregion

@@ -185,7 +185,7 @@
                                     <Setter Property="IsEnabled" Value="False" />
                                 </Style.Setters>
                                 <Style.Triggers>
-                                    <DataTrigger Binding="{Binding Path=IsGroupsSimulatable}" Value="True">
+                                    <DataTrigger Binding="{Binding Path=IsAllMatchesSimulated}" Value="True">
                                         <Setter Property="IsEnabled" Value="True"/>
                                     </DataTrigger>
                                 </Style.Triggers>
@@ -232,19 +232,19 @@
         
         <!-- Round of 16 -->
         <Expander Name="RoundOf16Expander" Header="Achtelfinale" Expanded="Expander_Expanded">
-            <!--<Expander.Style>
+            <Expander.Style>
                 <Style TargetType="Expander">
                     <Style.Setters>
                         <Setter Property="IsEnabled" Value="False" />
                     </Style.Setters>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsAllGroupTablesCalculated}" Value="True">
+                            <Setter Property="IsEnabled" Value="True"/>
+                        </DataTrigger>
+                    </Style.Triggers>
                 </Style>
-            </Expander.Style>-->
-            <!--<i:Interaction.Triggers>
-                <i:EventTrigger EventName="GroupsCalculatedEnabling">
-                    <local:PropertyManager Binding="{Binding Path=IsAllGroupTablesCalculated, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" SourceProperty="IsEnabled" />
-                </i:EventTrigger>
-            </i:Interaction.Triggers>-->
-            
+            </Expander.Style>
+
         </Expander>
     </StackPanel>
 </Page>

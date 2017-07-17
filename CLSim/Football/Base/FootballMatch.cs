@@ -23,6 +23,8 @@ namespace Simocracy.CLSim.Football.Base
         private string _Stadium;
         private string _City;
 
+        private bool _IsSimulated;
+
         private int _Ball;
         private int _MatchTime;
         private int _Start;
@@ -102,7 +104,12 @@ namespace Simocracy.CLSim.Football.Base
         public int ResultA
         {
             get => _ResultA;
-            set { _ResultA = value; Notify(); }
+            set
+            {
+                _ResultA = value;
+                Notify();
+                if(ResultA >= 0) IsSimulated = true;
+            }
         }
 
         /// <summary>
@@ -111,7 +118,12 @@ namespace Simocracy.CLSim.Football.Base
         public int ResultB
         {
             get => _ResultB;
-            set { _ResultB = value; Notify(); }
+            set
+            {
+                _ResultB = value;
+                Notify();
+                if (_ResultB >= 0) IsSimulated = true;
+            }
         }
 
         /// <summary>
@@ -144,7 +156,11 @@ namespace Simocracy.CLSim.Football.Base
         /// <summary>
         /// True if the match is simulated
         /// </summary>
-        public bool IsSimulated => ResultA > -1 && ResultB > -1;
+        public bool IsSimulated
+        {
+            get => _IsSimulated;
+            set { _IsSimulated = value; Notify(); }
+        }
 
         /// <summary>
         /// Match name
@@ -170,8 +186,9 @@ namespace Simocracy.CLSim.Football.Base
             _Ball = 0;
             _MatchTime = time;
             _Start = 0;
+            _IsSimulated = false;
 
-            SimpleLog.Info($"{this} initialized.");
+            SimpleLog.Info($"Football Match {TeamA} vs. {TeamB} initialized.");
         }
 
         /// <summary>
@@ -179,7 +196,7 @@ namespace Simocracy.CLSim.Football.Base
         /// </summary>
         public void SwapTeams()
         {
-            SimpleLog.Info($"Swap teams in {this}");
+            SimpleLog.Info($"Swap teams in Football Match {TeamA} vs. {TeamB}");
 
             var oldTeamA = TeamA;
             var oldResultA = ResultA;

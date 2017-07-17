@@ -142,6 +142,8 @@ namespace Simocracy.CLSim.GUI
         {
             foreach(var g in Cl.Groups)
                 await g.SimulateAsync();
+
+            if (Cl.IsAllGroupsSimulated) CalculateTablesButton.IsEnabled = true;
         }
 
         private async void CalculateTablesButton_Click(object sender, RoutedEventArgs e)

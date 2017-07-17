@@ -67,7 +67,7 @@ namespace Simocracy.CLSim.Football.Base
             MatchMode = matchMode;
             CreateMatches();
 
-            SimpleLog.Info($"{this} created.");
+            SimpleLog.Info($"Football League {this} created.");
         }
 
         #endregion
@@ -193,6 +193,11 @@ namespace Simocracy.CLSim.Football.Base
                 Matches.Add(new FootballMatch(Teams[2], Teams[4]));
             }
 
+            // Notify IsSimulated
+            foreach(var m in Matches)
+                m.PropertyChanged += PropertyChangedPropagator.Create(nameof(FootballMatch.IsSimulated),
+                    nameof(IsAllMatchesSimulated), Notify);
+
             SimpleLog.Info($"Matches Created in Football League ID={ID} with MatchMode={MatchMode}");
         }
 
@@ -231,6 +236,8 @@ namespace Simocracy.CLSim.Football.Base
             SimpleLog.Info($"Calculate table in Football League ID={ID}");
 
             Table = new LeagueTable();
+            Table.PropertyChanged += PropertyChangedPropagator.Create(nameof(LeagueTable.IsTableCalculated),
+                nameof(IsTableCalculated), Notify);
             Table.CalculateTable(Teams, Matches);
 
             SimpleLog.Info($"Finished calculating table in Football League ID={ID}");
@@ -242,7 +249,7 @@ namespace Simocracy.CLSim.Football.Base
         /// <returns>Objekt als String</returns>
         public sealed override string ToString()
         {
-            return $"Football League: ID={ID}, TeamCount={TeamCount}";
+            return $"Group {ID}";
         }
 
         #endregion

@@ -46,7 +46,7 @@
                                 <Setter Property="IsEnabled" Value="False" />
                             </Style.Setters>
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Page}}, Path=DataContext.IsGroupsSimulatable}" Value="True">
+                                <DataTrigger Binding="{Binding IsAllMatchesSimulated}" Value="True">
                                     <Setter Property="IsEnabled" Value="True"/>
                                 </DataTrigger>
                             </Style.Triggers>

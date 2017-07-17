@@ -357,8 +357,16 @@ namespace Simocracy.CLSim.Football.UAFA
                 char groupId = 'A';
                 for(int i = 0; i < ordered.Length; i += 5)
                 {
-                    Groups.Add(new FootballLeague(groupId.ToString(), FootballLeague.EMatchMode.UafaCl, ordered[i],
-                        ordered[i + 1], ordered[i + 2], ordered[i + 3], ordered[i + 4]));
+                    var group = new FootballLeague(groupId.ToString(), FootballLeague.EMatchMode.UafaCl, ordered[i],
+                        ordered[i + 1], ordered[i + 2], ordered[i + 3], ordered[i + 4]);
+                    group.PropertyChanged +=
+                        PropertyChangedPropagator.Create(nameof(FootballLeague.IsAllMatchesSimulated),
+                            nameof(IsAllGroupsSimulated), Notify);
+                    group.PropertyChanged +=
+                        PropertyChangedPropagator.Create(nameof(FootballLeague.IsTableCalculated),
+                            nameof(IsAllGroupTablesCalculated), Notify);
+
+                    Groups.Add(group);
                     groupId = (char) (groupId + 1);
                 }
 
