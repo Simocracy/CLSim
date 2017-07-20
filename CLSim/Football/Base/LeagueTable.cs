@@ -9,7 +9,7 @@ namespace Simocracy.CLSim.Football.Base
     /// <summary>
     /// Table of <see cref="FootballLeague"/>
     /// </summary>
-    //[DesignerCategory("Code")]
+    [DesignerCategory("Code")]
     public class LeagueTable : DataTable, INotifyPropertyChanged
     {
         #region Constants
@@ -31,7 +31,7 @@ namespace Simocracy.CLSim.Football.Base
 
         private bool _IsTableCalculated;
 
-#endregion
+        #endregion
 
         #region Constructor
 
