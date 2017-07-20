@@ -245,6 +245,62 @@
                 </Style>
             </Expander.Style>
 
+
+
+            <StackPanel Style="{StaticResource MarginBase}">
+                <StackPanel Orientation="Horizontal">
+                    <Button Content="Auslosung" Name="RoundOf16DrawingButton" Click="GroupDrawingButton_Click" Width="120" Style="{StaticResource MarginHalf}" />
+                    <Button Content="Simuliere alle Spiele" Name="SimulateRoundOf16Button" Click="SimulateGroupsButton_Click" Width="150">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource MarginHalf}">
+                                <Style.Setters>
+                                    <Setter Property="IsEnabled" Value="False" />
+                                </Style.Setters>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Path=IsGroupsSimulatable}" Value="True">
+                                        <Setter Property="IsEnabled" Value="True"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
+                </StackPanel>
+                <Label>
+                    <Label.Style>
+                        <Style TargetType="Label" BasedOn="{StaticResource MarginSideHalf}">
+                            <Style.Setters>
+                                <Setter Property="Content" Value="Keine Auslosung durchgeführt." />
+                            </Style.Setters>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Path=IsRoundOf16Simulatable}" Value="True">
+                                    <Setter Property="Content" Value="Gruppenauslosung erfolgreich, Simulation möglich." />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Path=IsRoundOf16Simulatable}" Value="False">
+                                    <Setter Property="Content" Value="Ungültige Auslosung, keine Simulation möglich." />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Label.Style>
+                </Label>
+
+                <!-- Match List -->
+                <ItemsControl ItemsSource="{Binding RoundOf16}">
+                    <ItemsControl.Resources>
+                        <Style TargetType="{x:Type ListViewItem}">
+                            <Setter Property="Background" Value="Transparent" />
+                            <Setter Property="HorizontalAlignment" Value="Stretch" />
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                        </Style>
+                    </ItemsControl.Resources>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <local:ClKoMatch />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+            </StackPanel>
+
         </Expander>
     </StackPanel>
 </Page>

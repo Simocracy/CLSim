@@ -66,12 +66,19 @@
     <Compile Include="Football\Base\FootballMatch.cs" />
     <Compile Include="Football\Base\FootballTeam.cs" />
     <Compile Include="Football\Base\LeagueTable.cs" />
+    <Compile Include="GUI\ClKoMatch.xaml.cs">
+      <DependentUpon>ClKoMatch.xaml</DependentUpon>
+    </Compile>
     <Compile Include="PropertyChangedPropagator.cs" />
     <Page Include="App.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
     <Page Include="GUI\ClGroup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="GUI\ClKoMatch.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
