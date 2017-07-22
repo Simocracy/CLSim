@@ -12,17 +12,37 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Simocracy.CLSim.Football.Base;
+using SimpleLogger;
 
 namespace Simocracy.CLSim.GUI
 {
     /// <summary>
-    /// Interaktionslogik für ClKoMatch.xaml
+    /// User control for CL KO Match
     /// </summary>
     public partial class ClKoMatch : UserControl
     {
+
         public ClKoMatch()
         {
             InitializeComponent();
+        }
+
+        private void IsExtraTimeCheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            var g = (sender as CheckBox)?.DataContext as DoubleMatch;
+            if (g == null)
+            {
+                SimpleLog.Error("Error in DataContext while enabling extra time in KO match.");
+                return;
+            }
+
+            if(g.Winner == null) PenaltyTextBlock.Visibility = Visibility.Visible;
+        }
+
+        private void IsExtraTimeCheckBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

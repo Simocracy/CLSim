@@ -108,7 +108,7 @@ namespace Simocracy.CLSim.Football.Base
             {
                 _ResultA = value;
                 Notify();
-                if(ResultA >= 0) IsSimulated = true;
+                if(value >= 0) IsSimulated = true;
             }
         }
 
@@ -122,7 +122,7 @@ namespace Simocracy.CLSim.Football.Base
             {
                 _ResultB = value;
                 Notify();
-                if (_ResultB >= 0) IsSimulated = true;
+                if (value >= 0) IsSimulated = true;
             }
         }
 

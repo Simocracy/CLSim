@@ -16,10 +16,27 @@ namespace Simocracy.CLSim.Football.Base
     public class DoubleMatch : INotifyPropertyChanged
     {
 
+        #region EDoubleMatchState
+
+        /// <summary>
+        /// Enum for match state, when the winner team won
+        /// </summary>
+        public enum EDoubleMatchState
+        {
+            None,
+            Regular,
+            ExtraTime,
+            Penalty
+        }
+
+        #endregion
+
         #region Members
 
         private int _PenaltyTeamA;
         private int _PenaltyTeamB;
+
+        private EDoubleMatchState _MatchState;
 
         #endregion
 
@@ -49,6 +66,11 @@ namespace Simocracy.CLSim.Football.Base
         /// Extra time
         /// </summary>
         public FootballMatch ExtraTime { get; }
+
+        /// <summary>
+        /// Gets a new <see cref="FootballMatch"/> instance with the full second leg
+        /// </summary>
+        public FootballMatch FullSecondLeg => GetFullSecondLeg();
 
         /// <summary>
         /// Full Result Team A
@@ -99,6 +121,15 @@ namespace Simocracy.CLSim.Football.Base
         public FootballTeam Winner => GetWinner();
 
         /// <summary>
+        /// Match state, when the winner team won
+        /// </summary>
+        public EDoubleMatchState MatchState
+        {
+            get => _MatchState;
+            set { _MatchState = value; Notify(); }
+        }
+
+        /// <summary>
         /// Array with all teams
         /// </summary>
         public FootballTeam[] AllTeams => FirstLeg.AllTeams;
@@ -118,6 +149,13 @@ namespace Simocracy.CLSim.Football.Base
             SecondLegRegular = new FootballMatch(teamB, teamA);
             ExtraTime = new FootballMatch(teamB, teamA, 30);
 
+            FirstLeg.PropertyChanged += PropertyChangedPropagator.Create(nameof(FootballMatch.IsSimulated), nameof(Winner), Notify);
+            SecondLegRegular.PropertyChanged += PropertyChangedPropagator.Create(nameof(FootballMatch.IsSimulated), nameof(Winner), Notify);
+            ExtraTime.PropertyChanged += PropertyChangedPropagator.Create(nameof(FootballMatch.IsSimulated), nameof(Winner), Notify);
+
+            SecondLegRegular.PropertyChanged += PropertyChangedPropagator.Create(nameof(FootballMatch.IsSimulated), nameof(MatchState), Notify);
+            ExtraTime.PropertyChanged += PropertyChangedPropagator.Create(nameof(FootballMatch.IsSimulated), nameof(MatchState), Notify);
+
             ResetMatch();
         }
 
@@ -130,15 +168,19 @@ namespace Simocracy.CLSim.Football.Base
         /// </summary>
         private FootballTeam GetWinner()
         {
+            MatchState = (ExtraTime.IsSimulated) ? EDoubleMatchState.ExtraTime : EDoubleMatchState.Regular;
+
             if(FullResultA > FullResultB) return TeamA;
             if(FullResultB > FullResultA) return TeamB;
 
             if(AwayGoalsA > AwayGoalsB) return TeamA;
             if(AwayGoalsB > AwayGoalsA) return TeamB;
 
+            MatchState = EDoubleMatchState.Penalty;
             if(PenaltyTeamA > PenaltyTeamB) return TeamA;
             if(PenaltyTeamB > PenaltyTeamA) return TeamB;
 
+            MatchState = EDoubleMatchState.None;
             return null;
         }
 
@@ -153,6 +195,8 @@ namespace Simocracy.CLSim.Football.Base
 
             PenaltyTeamA = -1;
             PenaltyTeamB = -1;
+
+            MatchState = EDoubleMatchState.None;
 
             SimpleLog.Info($"{this} initialized.");
         }
@@ -193,8 +237,7 @@ namespace Simocracy.CLSim.Football.Base
 
         public override string ToString()
         {
-            return
-                $"Double Match: TeamA={TeamA}, TeamB={TeamB}, ResultA={FullResultA}, ResultB={FullResultB}";
+            return $"Double Match {Name}";
         }
 
         #endregion
@@ -210,6 +253,7 @@ namespace Simocracy.CLSim.Football.Base
 
             FirstLeg.Simulate();
             SecondLegRegular.Simulate();
+            MatchState = EDoubleMatchState.Regular;
 
             // Extra Time
             if(Winner == null)
@@ -217,13 +261,15 @@ namespace Simocracy.CLSim.Football.Base
                 SimpleLog.Info($"Extra time needed on {this}.");
 
                 ExtraTime.Simulate();
+                MatchState = EDoubleMatchState.ExtraTime;
 
                 // Penalty
-                if(Winner == null)
+                if (Winner == null)
                 {
                     SimpleLog.Info($"Penalty Shootout needed on {this}.");
 
                     PenaltyShootout();
+                    MatchState = EDoubleMatchState.Penalty;
                 }
             }
 
