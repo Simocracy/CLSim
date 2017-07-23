@@ -717,7 +717,7 @@ namespace Simocracy.CLSim.Football.UAFA
         /// <summary>
         /// Simulates the round of 16
         /// </summary>
-        public async void SimulateRoundOf16Async()
+        public async Task SimulateRoundOf16Async()
         {
             await Task.Run(() => SimulateRoundOf16());
         }
@@ -740,7 +740,7 @@ namespace Simocracy.CLSim.Football.UAFA
         /// <summary>
         /// Simulates the quarter finals
         /// </summary>
-        public async void SimulateQuarterFinalsAsync()
+        public async Task SimulateQuarterFinalsAsync()
         {
             await Task.Run(() => SimulateQuarterFinals());
         }
@@ -763,7 +763,7 @@ namespace Simocracy.CLSim.Football.UAFA
         /// <summary>
         /// Simulates the semi finals
         /// </summary>
-        public async void SimulateSemiFinalsAsync()
+        public async Task SimulateSemiFinalsAsync()
         {
             await Task.Run(() => SimulateSemiFinals());
         }
@@ -783,7 +783,7 @@ namespace Simocracy.CLSim.Football.UAFA
         /// <summary>
         /// Simulates the final
         /// </summary>
-        public async void SimulateFinalsAsync()
+        public async Task SimulateFinalsAsync()
         {
             await Task.Run(() => SimulateFinals());
         }
