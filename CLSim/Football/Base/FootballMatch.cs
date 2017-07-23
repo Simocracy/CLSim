@@ -17,8 +17,8 @@ namespace Simocracy.CLSim.Football.Base
 
         private FootballTeam _TeamA;
         private FootballTeam _TeamB;
-        private int _ResultA;
-        private int _ResultB;
+        private int? _ResultA;
+        private int? _ResultB;
         private DateTime _Date;
         private string _Stadium;
         private string _City;
@@ -101,7 +101,7 @@ namespace Simocracy.CLSim.Football.Base
         /// <summary>
         /// Result Team A
         /// </summary>
-        public int ResultA
+        public int? ResultA
         {
             get => _ResultA;
             set
@@ -115,7 +115,7 @@ namespace Simocracy.CLSim.Football.Base
         /// <summary>
         /// Result Team B
         /// </summary>
-        public int ResultB
+        public int? ResultB
         {
             get => _ResultB;
             set
@@ -181,8 +181,8 @@ namespace Simocracy.CLSim.Football.Base
         /// </summary>
         public void Reset(int time = 0)
         {
-            ResultA = -1;
-            ResultB = -1;
+            ResultA = null;
+            ResultB = null;
             _Ball = 0;
             _MatchTime = time;
             _Start = 0;

@@ -76,27 +76,27 @@ namespace Simocracy.CLSim.Football.Base
         /// <summary>
         /// Full Result Team A
         /// </summary>
-        public int FullResultA => ((FirstLeg.ResultA >= 0) ? FirstLeg.ResultA : 0) +
-                                  ((SecondLegRegular.ResultB >= 0) ? SecondLegRegular.ResultB : 0) +
-                                  ((ExtraTime.ResultB >= 0) ? ExtraTime.ResultB : 0);
+        public int FullResultA => FirstLeg.ResultA.GetValueOrDefault() +
+                                  SecondLegRegular.ResultB.GetValueOrDefault() +
+                                  ExtraTime.ResultB.GetValueOrDefault();
 
         /// <summary>
         /// Away goals Team A
         /// </summary>
-        public int AwayGoalsA => ((SecondLegRegular.ResultA >= 0) ? SecondLegRegular.ResultA : 0) +
-                                 ((ExtraTime.ResultA >= 0) ? ExtraTime.ResultA : 0);
+        public int AwayGoalsA => SecondLegRegular.ResultA.GetValueOrDefault() +
+                                 ExtraTime.ResultA.GetValueOrDefault();
 
         /// <summary>
         /// Full Result Team B
         /// </summary>
-        public int FullResultB => ((FirstLeg.ResultB >= 0) ? FirstLeg.ResultB : 0) +
-                                  ((SecondLegRegular.ResultA >= 0) ? SecondLegRegular.ResultA : 0) +
-                                  ((ExtraTime.ResultA >= 0) ? ExtraTime.ResultA : 0);
+        public int FullResultB => FirstLeg.ResultB.GetValueOrDefault() +
+                                  SecondLegRegular.ResultA.GetValueOrDefault() +
+                                  ExtraTime.ResultA.GetValueOrDefault();
 
         /// <summary>
         /// Away goals Team B
         /// </summary>
-        public int AwayGoalsB => (FirstLeg.ResultB >= 0) ? FirstLeg.ResultB : 0;
+        public int AwayGoalsB => FirstLeg.ResultB.GetValueOrDefault();
 
         /// <summary>
         /// Penalty Shootout Result Team A, -1 if none
@@ -231,10 +231,10 @@ namespace Simocracy.CLSim.Football.Base
         {
             var secLeg = new FootballMatch(SecondLegRegular.TeamA, SecondLegRegular.TeamB)
             {
-                ResultA = ((SecondLegRegular.ResultA >= 0) ? SecondLegRegular.ResultA : 0) +
-                          ((ExtraTime.ResultA >= 0) ? ExtraTime.ResultA : 0),
-                ResultB = ((SecondLegRegular.ResultB >= 0) ? SecondLegRegular.ResultB : 0) +
-                          ((ExtraTime.ResultB >= 0) ? ExtraTime.ResultB : 0),
+                ResultA = SecondLegRegular.ResultA.GetValueOrDefault() +
+                          ExtraTime.ResultA.GetValueOrDefault(),
+                ResultB = SecondLegRegular.ResultB.GetValueOrDefault() +
+                          ExtraTime.ResultB.GetValueOrDefault(),
                 Date = SecondLegRegular.Date,
                 City = SecondLegRegular.City,
                 Stadium = SecondLegRegular.Stadium

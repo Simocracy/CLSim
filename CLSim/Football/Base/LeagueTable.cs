@@ -165,8 +165,8 @@ namespace Simocracy.CLSim.Football.Base
                         else
                             lose++;
 
-                        goalsFor += match.ResultA;
-                        goalsAgainst += match.ResultB;
+                        goalsFor += match.ResultA.GetValueOrDefault();
+                        goalsAgainst += match.ResultB.GetValueOrDefault();
                     }
                     else if(match.TeamB == team)
                     {
@@ -177,8 +177,8 @@ namespace Simocracy.CLSim.Football.Base
                         else
                             lose++;
 
-                        goalsFor += match.ResultB;
-                        goalsAgainst += match.ResultA;
+                        goalsFor += match.ResultB.GetValueOrDefault();
+                        goalsAgainst += match.ResultA.GetValueOrDefault();
                     }
                 }
 
