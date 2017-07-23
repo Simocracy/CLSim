@@ -249,15 +249,15 @@
 
             <StackPanel Style="{StaticResource MarginBase}">
                 <StackPanel Orientation="Horizontal">
-                    <Button Content="Auslosung" Name="RoundOf16DrawingButton" Click="GroupDrawingButton_Click" Width="120" Style="{StaticResource MarginHalf}" />
-                    <Button Content="Simuliere alle Spiele" Name="SimulateRoundOf16Button" Click="SimulateGroupsButton_Click" Width="150">
+                    <Button Content="Auslosung" Name="RoundOf16DrawingButton" Click="RoundOf16DrawingButton_Click" Width="120" Style="{StaticResource MarginHalf}" />
+                    <Button Content="Simuliere alle Spiele" Name="SimulateRoundOf16Button" Click="SimulateRoundOf16Button_Click" Width="150">
                         <Button.Style>
                             <Style TargetType="Button" BasedOn="{StaticResource MarginHalf}">
                                 <Style.Setters>
                                     <Setter Property="IsEnabled" Value="False" />
                                 </Style.Setters>
                                 <Style.Triggers>
-                                    <DataTrigger Binding="{Binding Path=IsGroupsSimulatable}" Value="True">
+                                    <DataTrigger Binding="{Binding Path=IsRoundOf16Simulatable}" Value="True">
                                         <Setter Property="IsEnabled" Value="True"/>
                                     </DataTrigger>
                                 </Style.Triggers>

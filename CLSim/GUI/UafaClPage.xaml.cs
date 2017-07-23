@@ -154,6 +154,20 @@ namespace Simocracy.CLSim.GUI
 
         #endregion
 
+        #region Round of 16
+
+        private async void SimulateRoundOf16Button_Click(object sender, RoutedEventArgs e)
+        {
+            await Cl.SimulateRoundOf16Async();
+        }
+
+        private void RoundOf16DrawingButton_Click(object sender, RoutedEventArgs e)
+        {
+            Cl.DrawRoundOf16();
+        }
+
+        #endregion
+
         #endregion
 
         #region INotifyPropertyChanged
