@@ -33,8 +33,8 @@ namespace Simocracy.CLSim.Football.Base
 
         #region Members
 
-        private int _PenaltyTeamA;
-        private int _PenaltyTeamB;
+        private int? _PenaltyTeamA;
+        private int? _PenaltyTeamB;
 
         private EDoubleMatchState _MatchState;
 
@@ -101,7 +101,7 @@ namespace Simocracy.CLSim.Football.Base
         /// <summary>
         /// Penalty Shootout Result Team A, -1 if none
         /// </summary>
-        public int PenaltyTeamA
+        public int? PenaltyTeamA
         {
             get => _PenaltyTeamA;
             set { _PenaltyTeamA = value; Notify(); }
@@ -110,7 +110,7 @@ namespace Simocracy.CLSim.Football.Base
         /// <summary>
         /// Penalty Shootout Result Team B, -1 if none
         /// </summary>
-        public int PenaltyTeamB
+        public int? PenaltyTeamB
         {
             get => _PenaltyTeamB;
             set { _PenaltyTeamB = value; Notify(); }
@@ -176,14 +176,14 @@ namespace Simocracy.CLSim.Football.Base
         {
             MatchState = (ExtraTime.IsSimulated) ? EDoubleMatchState.ExtraTime : EDoubleMatchState.Regular;
 
-            if(FullResultA > FullResultB) return TeamA;
+            if (FullResultA > FullResultB) return TeamA;
             if(FullResultB > FullResultA) return TeamB;
 
             if(AwayGoalsA > AwayGoalsB) return TeamA;
             if(AwayGoalsB > AwayGoalsA) return TeamB;
 
             MatchState = EDoubleMatchState.Penalty;
-            if(PenaltyTeamA > PenaltyTeamB) return TeamA;
+            if (PenaltyTeamA > PenaltyTeamB) return TeamA;
             if(PenaltyTeamB > PenaltyTeamA) return TeamB;
 
             MatchState = EDoubleMatchState.None;
@@ -199,8 +199,8 @@ namespace Simocracy.CLSim.Football.Base
             SecondLegRegular.Reset();
             ExtraTime.Reset(30);
 
-            PenaltyTeamA = -1;
-            PenaltyTeamB = -1;
+            PenaltyTeamA = null;
+            PenaltyTeamB = null;
 
             MatchState = EDoubleMatchState.None;
 
@@ -372,11 +372,8 @@ namespace Simocracy.CLSim.Football.Base
                 if(neededA > remainA) break;
             }
 
-            PenaltyTeamA = firVal == 0 ? penaltyA : penaltyB;
-            PenaltyTeamB = firVal == 1 ? penaltyA : penaltyB;
-
             // additional penalties
-            while(Winner == null)
+            while(penaltyA == penaltyB)
             {
                 var valueA = Globals.Random.Next(0, totalStrength);
                 var valueB = Globals.Random.Next(0, totalStrength);
@@ -385,10 +382,10 @@ namespace Simocracy.CLSim.Football.Base
                     penaltyA++;
                 if(valueB < secTeam.AvgStrength)
                     penaltyB++;
-
-                PenaltyTeamA = firVal == 0 ? penaltyA : penaltyB;
-                PenaltyTeamB = firVal == 1 ? penaltyA : penaltyB;
             }
+
+            PenaltyTeamA = firVal == 0 ? penaltyA : penaltyB;
+            PenaltyTeamB = firVal == 1 ? penaltyA : penaltyB;
 
             SimpleLog.Info($"Penalty Shootout simulated: PenaltyTeamA={PenaltyTeamA}, PenaltyTeamB={PenaltyTeamB}.");
         }

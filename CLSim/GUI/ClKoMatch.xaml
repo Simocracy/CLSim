@@ -24,14 +24,8 @@
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
         </Grid.RowDefinitions>
-        
-        <Label TextBlock.FontWeight="Bold" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="7">
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="{Binding TeamA}" />
-                <TextBlock Text=" vs." Style="{StaticResource MarginSideHalf}" />
-                <TextBlock Text="{Binding TeamB}" />
-            </StackPanel>
-        </Label>
+
+        <Label Content="{Binding Name}" FontWeight="Bold" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="7" />
 
         <Button Content="Simuliere Begegnung" Name="SimulateDoubleMatch" Width="150" HorizontalAlignment="Right"
                 Click="SimulateDoubleMatch_Click" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="7">
@@ -73,7 +67,7 @@
                 <Style TargetType="TextBlock" BasedOn="{StaticResource MarginSideHalf}">
                     <Setter Property="Visibility" Value="Collapsed" />
                     <Style.Triggers>
-                        <DataTrigger Binding="{Binding MatchMode}" Value="Penalty">
+                        <DataTrigger Binding="{Binding MatchState}" Value="Penalty">
                             <Setter Property="Visibility" Value="Visible" />
                         </DataTrigger>
                     </Style.Triggers>
