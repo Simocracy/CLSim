@@ -58,12 +58,13 @@ namespace Simocracy.CLSim.Football.Base
         public FootballMatch FirstLeg { get; }
 
         /// <summary>
-        /// Second Leg after 90 min
+        /// If simulated: Second Leg after 90 min.
+        /// If inputted: Full Second Leg
         /// </summary>
         public FootballMatch SecondLegRegular { get; }
 
         /// <summary>
-        /// Extra time
+        /// Extra time, only if simulated
         /// </summary>
         public FootballMatch ExtraTime { get; }
 
@@ -75,22 +76,27 @@ namespace Simocracy.CLSim.Football.Base
         /// <summary>
         /// Full Result Team A
         /// </summary>
-        public int FullResultA => FirstLeg.ResultA + SecondLegRegular.ResultB + ExtraTime.ResultB;
+        public int FullResultA => ((FirstLeg.ResultA >= 0) ? FirstLeg.ResultA : 0) +
+                                  ((SecondLegRegular.ResultB >= 0) ? SecondLegRegular.ResultB : 0) +
+                                  ((ExtraTime.ResultB >= 0) ? ExtraTime.ResultB : 0);
 
         /// <summary>
         /// Away goals Team A
         /// </summary>
-        public int AwayGoalsA => SecondLegRegular.ResultB + ExtraTime.ResultB;
+        public int AwayGoalsA => ((SecondLegRegular.ResultA >= 0) ? SecondLegRegular.ResultA : 0) +
+                                 ((ExtraTime.ResultA >= 0) ? ExtraTime.ResultA : 0);
 
         /// <summary>
         /// Full Result Team B
         /// </summary>
-        public int FullResultB => FirstLeg.ResultB + SecondLegRegular.ResultA + ExtraTime.ResultA;
+        public int FullResultB => ((FirstLeg.ResultB >= 0) ? FirstLeg.ResultB : 0) +
+                                  ((SecondLegRegular.ResultA >= 0) ? SecondLegRegular.ResultA : 0) +
+                                  ((ExtraTime.ResultA >= 0) ? ExtraTime.ResultA : 0);
 
         /// <summary>
         /// Away goals Team B
         /// </summary>
-        public int AwayGoalsB => FirstLeg.ResultB;
+        public int AwayGoalsB => (FirstLeg.ResultB >= 0) ? FirstLeg.ResultB : 0;
 
         /// <summary>
         /// Penalty Shootout Result Team A, -1 if none
@@ -225,8 +231,10 @@ namespace Simocracy.CLSim.Football.Base
         {
             var secLeg = new FootballMatch(SecondLegRegular.TeamA, SecondLegRegular.TeamB)
             {
-                ResultA = SecondLegRegular.ResultA + ExtraTime.ResultA,
-                ResultB = SecondLegRegular.ResultB + ExtraTime.ResultB,
+                ResultA = ((SecondLegRegular.ResultA >= 0) ? SecondLegRegular.ResultA : 0) +
+                          ((ExtraTime.ResultA >= 0) ? ExtraTime.ResultA : 0),
+                ResultB = ((SecondLegRegular.ResultB >= 0) ? SecondLegRegular.ResultB : 0) +
+                          ((ExtraTime.ResultB >= 0) ? ExtraTime.ResultB : 0),
                 Date = SecondLegRegular.Date,
                 City = SecondLegRegular.City,
                 Stadium = SecondLegRegular.Stadium
@@ -243,6 +251,14 @@ namespace Simocracy.CLSim.Football.Base
         #endregion
 
         #region Simulation
+
+        /// <summary>
+        /// Simulate matches async
+        /// </summary>
+        public async Task SimulateAsync()
+        {
+            await Task.Run(() => Simulate());
+        }
 
         /// <summary>
         /// Simulates the match

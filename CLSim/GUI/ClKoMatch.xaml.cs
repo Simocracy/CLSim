@@ -37,12 +37,38 @@ namespace Simocracy.CLSim.GUI
                 return;
             }
 
-            if(g.Winner == null) PenaltyTextBlock.Visibility = Visibility.Visible;
+            if(g.Winner == null) g.MatchState = DoubleMatch.EDoubleMatchState.Penalty;
+            else g.MatchState = DoubleMatch.EDoubleMatchState.ExtraTime;
         }
 
         private void IsExtraTimeCheckBox_Unchecked(object sender, RoutedEventArgs e)
         {
+            if(!String.IsNullOrEmpty(PenaltyTeamAResultTextBox.Text) ||
+               !String.IsNullOrEmpty(PenaltyTeamAResultTextBox.Text))
+            {
+                IsExtraTimeCheckBox.IsChecked = true;
+                return;
+            }
 
+            var g = (sender as CheckBox)?.DataContext as DoubleMatch;
+            if (g == null)
+            {
+                SimpleLog.Error("Error in DataContext while disabling extra time in KO match.");
+                return;
+            }
+
+            g.MatchState = DoubleMatch.EDoubleMatchState.Regular;
+        }
+
+        private async void SimulateDoubleMatch_Click(object sender, RoutedEventArgs e)
+        {
+            var g = (sender as Button)?.DataContext as DoubleMatch;
+            if (g == null)
+            {
+                SimpleLog.Error("Error in DataContext while simulating double match.");
+                return;
+            }
+            await g.SimulateAsync();
         }
     }
 }

@@ -6,74 +6,93 @@
              xmlns:local="clr-namespace:Simocracy.CLSim.GUI"
              mc:Ignorable="d" 
              d:DesignHeight="500" d:DesignWidth="525">
-    
-    <StackPanel>
-        <Label TextBlock.FontWeight="Bold">
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="auto" />
+            <ColumnDefinition Width="auto" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="25" />
+            <ColumnDefinition Width="7" />
+            <ColumnDefinition Width="25" />
+            <ColumnDefinition Width="50" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+        </Grid.RowDefinitions>
+        
+        <Label TextBlock.FontWeight="Bold" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="7">
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="{Binding TeamA}" />
-                <TextBlock Text=" vs. " />
+                <TextBlock Text=" vs." Style="{StaticResource MarginSideHalf}" />
                 <TextBlock Text="{Binding TeamB}" />
             </StackPanel>
         </Label>
 
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="auto" />
-                <ColumnDefinition Width="auto" />
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="25" />
-                <ColumnDefinition Width="7" />
-                <ColumnDefinition Width="25" />
-                <ColumnDefinition Width="50" />
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition />
-                <RowDefinition />
-                <RowDefinition />
-            </Grid.RowDefinitions>
+        <Button Content="Simuliere Begegnung" Name="SimulateDoubleMatch" Width="150" HorizontalAlignment="Right"
+                Click="SimulateDoubleMatch_Click" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="7">
+            <Button.Style>
+                <Style TargetType="Button" BasedOn="{StaticResource MarginHalf}">
+                    <Style.Setters>
+                        <Setter Property="IsEnabled" Value="False" />
+                    </Style.Setters>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Page}}, Path=DataContext.IsRoundOf16Simulatable}" Value="True">
+                            <Setter Property="IsEnabled" Value="True"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Button.Style>
+        </Button>
 
-            <!-- First Leg -->
-            <TextBlock Text="Hinspiel:" Grid.Column="0" Grid.Row="0" Style="{StaticResource MarginSideHalf}" />
-            <TextBlock Text="{Binding FirstLeg.TeamA, StringFormat={}{0} vs.}" Grid.Column="1" Grid.Row="0" />
-            <TextBlock Text="{Binding FirstLeg.TeamB}" Grid.Column="2" Grid.Row="0" Style="{StaticResource MarginSideHalf}" />
-            <TextBox Name="FirstLegTeamAResultTextBox" Text="{Binding FirstLeg.ResultA}" MaxLines="1" Grid.Column="3" Grid.Row="0" />
-            <TextBlock Text=":" Grid.Column="4" Grid.Row="0" Style="{StaticResource MarginSideHalf}" />
-            <TextBox Name="FirstLegTeamBResultTextBox" Text="{Binding FirstLeg.ResultB}" MaxLines="1" Grid.Column="5" Grid.Row="0" />
+        <!-- First Leg -->
+        <TextBlock Text="Hinspiel:" Grid.Column="0" Grid.Row="1" Style="{StaticResource MarginSideHalf}" />
+        <TextBlock Text="{Binding FirstLeg.TeamA, StringFormat={}{0} vs.}" Grid.Column="1" Grid.Row="1" />
+        <TextBlock Text="{Binding FirstLeg.TeamB}" Grid.Column="2" Grid.Row="1" Style="{StaticResource MarginSideHalf}" />
+        <TextBox Name="FirstLegTeamAResultTextBox" Text="{Binding FirstLeg.ResultA}" MaxLines="1" Grid.Column="3" Grid.Row="1" />
+        <TextBlock Text=":" Grid.Column="4" Grid.Row="1" Style="{StaticResource MarginSideHalf}" />
+        <TextBox Name="FirstLegTeamBResultTextBox" Text="{Binding FirstLeg.ResultB}" MaxLines="1" Grid.Column="5" Grid.Row="1" />
 
-            <!-- Second Leg -->
-            <TextBlock Text="Rückspiel:" Grid.Column="0" Grid.Row="1" Style="{StaticResource MarginSideHalf}" />
-            <TextBlock Text="{Binding SecondLegRegular.TeamA, StringFormat={}{0} vs.}" Grid.Column="1" Grid.Row="1" />
-            <TextBlock Text="{Binding SecondLegRegular.TeamB}" Grid.Column="2" Grid.Row="1" Style="{StaticResource MarginSideHalf}" />
-            <TextBox Name="SecondLegTeamAResultTextBox" Text="{Binding SecondLegRegular.ResultA}" MaxLines="1" Grid.Column="3" Grid.Row="1" />
-            <TextBlock Text=":" Grid.Column="4" Grid.Row="1" Style="{StaticResource MarginSideHalf}" />
-            <TextBox Name="SecondLegTeamBResultTextBox" Text="{Binding SecondLegRegular.ResultB}" MaxLines="1" Grid.Column="5" Grid.Row="1" />
-            <CheckBox Name="IsExtraTimeCheckBox" Content="n. V." VerticalAlignment="Center" Grid.Column="6" Grid.Row="1" Style="{StaticResource MarginSideHalf}"
-                      Checked="IsExtraTimeCheckBox_Checked" Unchecked="IsExtraTimeCheckBox_Unchecked" />
+        <!-- Second Leg -->
+        <TextBlock Text="Rückspiel:" Grid.Column="0" Grid.Row="2" Style="{StaticResource MarginSideHalf}" />
+        <TextBlock Text="{Binding SecondLegRegular.TeamA, StringFormat={}{0} vs.}" Grid.Column="1" Grid.Row="2" />
+        <TextBlock Text="{Binding SecondLegRegular.TeamB}" Grid.Column="2" Grid.Row="2" Style="{StaticResource MarginSideHalf}" />
+        <TextBox Name="SecondLegTeamAResultTextBox" Text="{Binding SecondLegRegular.ResultA}" MaxLines="1" Grid.Column="3" Grid.Row="2" />
+        <TextBlock Text=":" Grid.Column="4" Grid.Row="2" Style="{StaticResource MarginSideHalf}" />
+        <TextBox Name="SecondLegTeamBResultTextBox" Text="{Binding SecondLegRegular.ResultB}" MaxLines="1" Grid.Column="5" Grid.Row="2" />
+        <CheckBox Name="IsExtraTimeCheckBox" Content="n. V." VerticalAlignment="Center" Grid.Column="6" Grid.Row="2" Style="{StaticResource MarginSideHalf}"
+                    Checked="IsExtraTimeCheckBox_Checked" Unchecked="IsExtraTimeCheckBox_Unchecked" />
 
-            <!-- Penalty -->
-            <TextBlock Name="PenaltyTextBlock" Text="Elfmeterschießen:" Grid.Column="0" Grid.Row="2">
-                <TextBlock.Style>
-                    <Style TargetType="TextBlock" BasedOn="{StaticResource MarginSideHalf}">
-                        <Setter Property="Visibility" Value="Visible" />
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding MatchMode}" Value="Penalty">
-                                <Setter Property="Visibility" Value="Visible" />
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </TextBlock.Style>
-            </TextBlock>
-            <TextBlock Text="{Binding TeamA, StringFormat={}{0} vs.}" Grid.Column="1" Grid.Row="2"
-                       Visibility="{Binding Visibility, ElementName=PenaltyTextBlock}" />
-            <TextBlock Text="{Binding TeamB}" Grid.Column="2" Grid.Row="2" Style="{StaticResource MarginSideHalf}"
-                       Visibility="{Binding Visibility, ElementName=PenaltyTextBlock}" />
-            <TextBox Name="PenaltyTeamAResultTextBox" Text="{Binding PenaltyTeamA}" MaxLines="1" Grid.Column="3" Grid.Row="2"
-                     Visibility="{Binding Visibility, ElementName=PenaltyTextBlock}" />
-            <TextBlock Text=":" Grid.Column="4" Grid.Row="2" Style="{StaticResource MarginSideHalf}"
-                       Visibility="{Binding Visibility, ElementName=PenaltyTextBlock}" />
-            <TextBox Name="PenaltyTeamBResultTextBox" Text="{Binding PenaltyTeamB}" MaxLines="1" Grid.Column="5" Grid.Row="2"
-                     Visibility="{Binding Visibility, ElementName=PenaltyTextBlock}" />
+        <!-- Penalty -->
+        <TextBlock Name="PenaltyTextBlock" Text="Elfmeterschießen:" Grid.Column="0" Grid.Row="3">
+            <TextBlock.Style>
+                <Style TargetType="TextBlock" BasedOn="{StaticResource MarginSideHalf}">
+                    <Setter Property="Visibility" Value="Collapsed" />
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding MatchMode}" Value="Penalty">
+                            <Setter Property="Visibility" Value="Visible" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </TextBlock.Style>
+        </TextBlock>
+        <TextBlock Text="{Binding TeamA, StringFormat={}{0} vs.}" Grid.Column="1" Grid.Row="3"
+                    Visibility="{Binding Visibility, ElementName=PenaltyTextBlock}" />
+        <TextBlock Text="{Binding TeamB}" Grid.Column="2" Grid.Row="3" Style="{StaticResource MarginSideHalf}"
+                    Visibility="{Binding Visibility, ElementName=PenaltyTextBlock}" />
+        <TextBox Name="PenaltyTeamAResultTextBox" Text="{Binding PenaltyTeamA}" MaxLines="1" Grid.Column="3" Grid.Row="3"
+                    Visibility="{Binding Visibility, ElementName=PenaltyTextBlock}" />
+        <TextBlock Text=":" Grid.Column="4" Grid.Row="3" Style="{StaticResource MarginSideHalf}"
+                    Visibility="{Binding Visibility, ElementName=PenaltyTextBlock}" />
+        <TextBox Name="PenaltyTeamBResultTextBox" Text="{Binding PenaltyTeamB}" MaxLines="1" Grid.Column="5" Grid.Row="3"
+                    Visibility="{Binding Visibility, ElementName=PenaltyTextBlock}" />
+        
+        <!-- Winner -->
+        <Label Content="{Binding Winner, StringFormat={}Gewinner: {0}}" Grid.Column="0" Grid.ColumnSpan="7" Grid.Row="4" />
 
-        </Grid>
-    </StackPanel>
+    </Grid>
 </UserControl>
