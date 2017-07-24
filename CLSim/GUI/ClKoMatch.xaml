@@ -62,7 +62,7 @@
                     Checked="IsExtraTimeCheckBox_Checked" Unchecked="IsExtraTimeCheckBox_Unchecked" />
 
         <!-- Penalty -->
-        <TextBlock Name="PenaltyTextBlock" Text="Elfmeterschießen:" Grid.Column="0" Grid.Row="3">
+        <TextBlock Name="PenaltyTextBlock" Text="Elfm.:" Grid.Column="0" Grid.Row="3">
             <TextBlock.Style>
                 <Style TargetType="TextBlock" BasedOn="{StaticResource MarginSideHalf}">
                     <Setter Property="Visibility" Value="Collapsed" />
@@ -86,7 +86,18 @@
                     Visibility="{Binding Visibility, ElementName=PenaltyTextBlock}" />
         
         <!-- Winner -->
-        <Label Content="{Binding Winner, StringFormat={}Gewinner: {0}}" Grid.Column="0" Grid.ColumnSpan="7" Grid.Row="4" />
+        <Label FontWeight="Bold"  Grid.Column="0" Grid.ColumnSpan="7" Grid.Row="4">
+            <Label.Style>
+                <Style TargetType="Label">
+                    <Setter Property="Content" Value="{Binding Winner, StringFormat={}Gewinner: {0}}" />
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding Winner}" Value="{x:Null}">
+                            <Setter Property="Content" Value="Kein Gewinner." />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Label.Style>
+        </Label>
 
     </Grid>
 </UserControl>

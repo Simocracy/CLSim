@@ -46,8 +46,8 @@ namespace Simocracy.CLSim.GUI
             if(!String.IsNullOrEmpty(PenaltyTeamAResultTextBox.Text) ||
                !String.IsNullOrEmpty(PenaltyTeamAResultTextBox.Text))
             {
-                IsExtraTimeCheckBox.IsChecked = true;
-                return;
+                PenaltyTeamAResultTextBox.Text = null;
+                PenaltyTeamBResultTextBox.Text = null;
             }
 
             var g = (sender as CheckBox)?.DataContext as DoubleMatch;

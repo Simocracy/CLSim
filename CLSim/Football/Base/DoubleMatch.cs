@@ -83,8 +83,8 @@ namespace Simocracy.CLSim.Football.Base
         /// <summary>
         /// Away goals Team A
         /// </summary>
-        public int AwayGoalsA => SecondLegRegular.ResultA.GetValueOrDefault() +
-                                 ExtraTime.ResultA.GetValueOrDefault();
+        public int AwayGoalsA => SecondLegRegular.ResultB.GetValueOrDefault() +
+                                 ExtraTime.ResultB.GetValueOrDefault();
 
         /// <summary>
         /// Full Result Team B
@@ -174,7 +174,7 @@ namespace Simocracy.CLSim.Football.Base
         /// </summary>
         private FootballTeam GetWinner()
         {
-            MatchState = (ExtraTime.IsSimulated) ? EDoubleMatchState.ExtraTime : EDoubleMatchState.Regular;
+            //MatchState = (ExtraTime.IsSimulated) ? EDoubleMatchState.ExtraTime : EDoubleMatchState.Regular;
 
             if (FullResultA > FullResultB) return TeamA;
             if(FullResultB > FullResultA) return TeamB;
@@ -182,11 +182,11 @@ namespace Simocracy.CLSim.Football.Base
             if(AwayGoalsA > AwayGoalsB) return TeamA;
             if(AwayGoalsB > AwayGoalsA) return TeamB;
 
-            MatchState = EDoubleMatchState.Penalty;
+            //MatchState = EDoubleMatchState.Penalty;
             if (PenaltyTeamA > PenaltyTeamB) return TeamA;
             if(PenaltyTeamB > PenaltyTeamA) return TeamB;
 
-            MatchState = EDoubleMatchState.None;
+            //MatchState = EDoubleMatchState.None;
             return null;
         }
 
@@ -289,7 +289,8 @@ namespace Simocracy.CLSim.Football.Base
                 }
             }
 
-            SimpleLog.Info($"{this} simulated.");
+            // Winner output to force Notify in Winner
+            SimpleLog.Info($"{this} simulated, winner = {Winner}.");
         }
 
         /// <summary>
