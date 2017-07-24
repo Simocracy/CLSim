@@ -63,8 +63,9 @@ namespace Simocracy.CLSim
         public static LibInfo[] ProgramInfos => new[]
         {
             new LibInfo(ProgramName, ProgramLink, "MIT-Lizenz","https://github.com/Simocracy/CLSim/blob/master/LICENSE"),
-            new LibInfo("SimpleLog", "http://www.codeproject.com/Tips/585796/Simple-Log", "MIT-Lizenz","https://opensource.org/licenses/mit-license.php"),
+            new LibInfo("NDesk.Options", "http://www.ndesk.org/Options", "MIT-Lizenz","https://opensource.org/licenses/mit-license.php"),
             new LibInfo("Simocracy Datumsrechner", "https://github.com/Simocracy/Datumsrechner", "MIT-Lizenz","https://github.com/Simocracy/Datumsrechner/blob/master/LICENSE"),
+            new LibInfo("SimpleLog", "http://www.codeproject.com/Tips/585796/Simple-Log", "MIT-Lizenz","https://opensource.org/licenses/mit-license.php"),
         };
 
         /// <summary>
