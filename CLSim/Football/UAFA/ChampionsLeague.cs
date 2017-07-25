@@ -243,30 +243,17 @@ namespace Simocracy.CLSim.Football.UAFA
         /// <param name="fileName">File name</param>
         public async Task<bool> ExportCoefficient(string fileName)
         {
-            SimpleLog.Info($"Export UAFA Coefficient for CL season {Season}.");
+            SimpleLog.Info($"Calculate and export UAFA Coefficient for CL season {Season}.");
 
             CalculateCoefficient();
 
             var coeffs = Coefficients.Values.ToArray();
 
-            // Try export as xlsx
-            var isXlsSuccess = await ExcelHandler.ExportCoefficientsAsync(coeffs, Season, fileName);
-            bool isCsvSucces = false;
-            if(!isXlsSuccess)
-            {
+            var suc = await Coefficient.Export(coeffs, Season, fileName);
 
-                SimpleLog.Info(
-                    $"Export UAFA Coefficient for CL season {Season} as Excel File failed. Exporting as CSV.");
+            SimpleLog.Info($"UAFA Coefficient for CL season {Season} exported, successfull={suc}.");
 
-                if(fileName.EndsWith("xlsx"))
-                    fileName = fileName.Replace(".xlsx", ".csv");
-
-                isCsvSucces = await CSVHandler.ExportCoefficient(coeffs, Season, fileName);
-            }
-
-            SimpleLog.Info($"UAFA Coefficient for CL season {Season} exported.");
-
-            return isXlsSuccess || isCsvSucces;
+            return suc;
         }
 
         #endregion

@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Simocracy.CLSim.Football.Base;
+using Simocracy.CLSim.IO;
+using SimpleLogger;
 
 namespace Simocracy.CLSim.Football.UAFA
 {
@@ -281,11 +284,38 @@ namespace Simocracy.CLSim.Football.UAFA
         ///     <see cref="Drawn"/>; <see cref="GetReachedCLRound"/>; <see cref="GetReachedALRound"/>; <see cref="Points"/>
         /// </summary>
         /// <param name="seperator">CSV seperator</param>
-        public string ExportAsCSV(string seperator = ";")
+        public string GetCsvString(string seperator = ";")
         {
             return
                 $"{Team.State}{seperator} {Team.Name}{seperator} {Won}{seperator} {Drawn}{seperator} " +
                 $"{GetReachedCLRoundStr()}{seperator} {GetReachedALRoundStr()}{seperator} {Points}";
+        }
+
+        /// <summary>
+        /// Exports the given coefficients as xlsx, or if not successfully as csv
+        /// </summary>
+        /// <param name="coeffs">Coefficient list</param>
+        /// <param name="season">season to export</param>
+        /// <param name="fileName">file name without extension</param>
+        public static async Task<bool> Export(IEnumerable<Coefficient> coeffs, string season, string fileName)
+        {
+            // todo: better export syntax
+            // Try export as xlsx
+            var isXlsSuccess = await ExcelHandler.ExportCoefficientsAsync(coeffs, season, fileName);
+            bool isCsvSucces = false;
+            if (!isXlsSuccess)
+            {
+                // If not successfull: csv
+                SimpleLog.Info(
+                    $"Export UAFA Coefficient for season {season} as Excel File failed. Exporting as CSV.");
+
+                if (fileName.EndsWith("xlsx"))
+                    fileName = fileName.Replace(".xlsx", ".csv");
+
+                isCsvSucces = await CSVHandler.ExportCoefficient(coeffs, season, fileName);
+            }
+
+            return isXlsSuccess || isCsvSucces;
         }
 
         #endregion

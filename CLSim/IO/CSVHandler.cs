@@ -53,7 +53,7 @@ namespace Simocracy.CLSim.IO
             var sb = new StringBuilder();
             foreach(var coeff in coeffs)
             {
-                sb.AppendLine(coeff.ExportAsCSV(seperator));
+                sb.AppendLine(coeff.GetCsvString(seperator));
             }
             return sb.ToString();
         }
