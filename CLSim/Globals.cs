@@ -1,11 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Reflection;
 using System.Threading;
+using NDesk.Options;
 
 namespace Simocracy.CLSim
 {
-    public static partial class Globals
+    public static class Globals
     {
 
         #region Global Variables
@@ -19,6 +19,49 @@ namespace Simocracy.CLSim
 
         #endregion
 
+        #region Command Line Args
+
+        /// <summary>
+        /// Indicates if only the helps will be displayed
+        /// </summary>
+        public static bool ShowHelp { get; set; }
+
+        /// <summary>
+        /// Indicates if logging is enabled
+        /// </summary>
+        public static bool IsLogging { get; set; } = true;
+
+        /// <summary>
+        /// Indicates the logging level
+        /// </summary>
+        public static string LogLevel { get; set; } = "warning";
+
+        /// <summary>
+        /// Indicates that the uafa cl will be simulated in console
+        /// </summary>
+        public static bool IsUafaClSimulation { get; set; }
+
+        /// <summary>
+        /// The command line options
+        /// </summary>
+        public static OptionSet Options => new OptionSet()
+        {
+            {"h|help", "Show this message.", v => ShowHelp = v != null},
+            {"nolog", "Disable logging.", v => IsLogging = v == null},
+            {
+                "loglevel", $"Sets the logging severity.{Environment.NewLine}" +
+                            "The levels are: Info, Warning, Error and Exception.",
+                v => LogLevel = v
+            },
+            {
+                "cl|uafacl", $"Simulates an UAFA Champions League season in the command line.{Environment.NewLine}" +
+                             "Graphical simulation with input for each game will be disabled.",
+                v => IsUafaClSimulation = v != null
+            },
+        };
+
+        #endregion
+
         #region Program Infos
 
         /// <summary>
@@ -28,12 +71,11 @@ namespace Simocracy.CLSim
         {
             get
             {
-                var version = Assembly.GetExecutingAssembly().GetName().Version;
-                var versionString = $"{version.Major}.{version.Minor}.{version.Revision}";
+                var version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
 #if DEBUG
-                versionString = $"{versionString} Debug Build";
+                version = $"{version} Debug Build";
 #endif
-                return versionString;
+                return version;
             }
         }
 
