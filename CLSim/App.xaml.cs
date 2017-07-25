@@ -2,6 +2,7 @@
 using System;
 using NDesk.Options;
 using Simocracy.CLSim.GUI;
+using Simocracy.CLSim.IO;
 
 namespace Simocracy.CLSim
 {
@@ -17,7 +18,6 @@ namespace Simocracy.CLSim
         public static void Main(params string[] args)
         {
             // get args
-            //List<string> arguments;
             try
             {
                 Globals.Options.Parse(args);
@@ -54,7 +54,7 @@ namespace Simocracy.CLSim
                 if(Globals.IsUafaClSimulation)
                 {
                     // UAFA CL in Console
-                    
+                    UafaClConsole.Simulate();
                 }
                 else
                 {

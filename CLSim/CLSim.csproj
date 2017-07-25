@@ -70,6 +70,7 @@
     <Compile Include="GUI\ClKoMatch.xaml.cs">
       <DependentUpon>ClKoMatch.xaml</DependentUpon>
     </Compile>
+    <Compile Include="GUI\UafaClConsole.cs" />
     <Compile Include="PropertyChangedPropagator.cs" />
     <Page Include="App.xaml">
       <Generator>MSBuild:Compile</Generator>
