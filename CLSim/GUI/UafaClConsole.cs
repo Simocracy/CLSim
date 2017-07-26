@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Simocracy.CLSim.Football.UAFA;
+using Simocracy.CLSim.IO;
 using SimpleLogger;
 
 namespace Simocracy.CLSim.GUI
@@ -65,7 +66,37 @@ namespace Simocracy.CLSim.GUI
         /// </summary>
         public void SimulateGroupStage()
         {
-            
+            WriteLine("Start simulating group stage.");
+            do
+            {
+                WriteLine("Enter path to team list file:");
+                var fileName = Read();
+                try
+                {
+                    var teamList = TeamListFileHandler.ReadTeamList(fileName, 40);
+                    var teamCount = Cl.ReadTeamlist(teamList);
+                    if(teamCount != 40)
+                    {
+                        throw new ArgumentOutOfRangeException(nameof(teamCount), teamCount,
+                            @"Teams could not be readed. Wrong file format?");
+                    }
+                }
+                catch(Exception e)
+                {
+                    WriteEx("Error reading team list", e);
+                }
+            } while(Cl.AllTeamsRaw.Count != 40);
+
+            WriteLine("Simulating group drawing...");
+            do
+            {
+                Cl.DrawGroups();
+            } while(Cl.IsGroupsSimulatable != true);
+
+            WriteLine("Simulating groups...");
+            Cl.SimulateGroups();
+
+            WriteLine("Group Stage simulated.");
         }
 
         /// <summary>
@@ -138,6 +169,26 @@ namespace Simocracy.CLSim.GUI
         {
             Console.Write(text);
             SimpleLog.Info(text);
+        }
+
+        /// <summary>
+        /// Writes the given exception to Console and the logger
+        /// </summary>
+        /// <param name="e">The exception</param>
+        public static void WriteEx(Exception e)
+        {
+            WriteEx(String.Empty, e);
+        }
+
+        /// <summary>
+        /// Writes the given message and exception to Console and the logger
+        /// </summary>
+        /// <param name="message">The message</param>
+        /// <param name="e">The exception</param>
+        public static void WriteEx(string message, Exception e)
+        {
+            Console.WriteLine($@"{message}: {e.Message}");
+            SimpleLog.Error($@"{message}: {e}");
         }
 
         /// <summary>
