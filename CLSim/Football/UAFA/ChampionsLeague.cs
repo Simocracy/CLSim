@@ -214,7 +214,8 @@ namespace Simocracy.CLSim.Football.UAFA
         /// Teams must be seperated by line breaks.
         /// </summary>
         /// <param name="list">Teamlist seperated by line breaks</param>
-        public void ReadTeamlist(string list)
+        /// <returns>Team readed count</returns>
+        public int ReadTeamlist(string list)
         {
             SimpleLog.Info("Read CL team input.");
 
@@ -235,6 +236,7 @@ namespace Simocracy.CLSim.Football.UAFA
             }
 
             SimpleLog.Info($"{AllTeamsRaw.Count} teams readed.");
+            return AllTeamsRaw.Count;
         }
 
         /// <summary>
@@ -663,7 +665,7 @@ namespace Simocracy.CLSim.Football.UAFA
         }
 
         /// <summary>
-        /// Simulates all Groups
+        /// Simulates all Groups and calculates their tables
         /// </summary>
         public void SimulateGroups()
         {
@@ -679,7 +681,7 @@ namespace Simocracy.CLSim.Football.UAFA
         }
 
         /// <summary>
-        /// Simulates all groups async
+        /// Simulates all groups and calculates their tables async
         /// </summary>
         public async void SimulateGroupsAsync()
         {
