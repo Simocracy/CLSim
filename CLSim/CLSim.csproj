@@ -71,6 +71,7 @@
       <DependentUpon>ClKoMatch.xaml</DependentUpon>
     </Compile>
     <Compile Include="GUI\UafaClConsole.cs" />
+    <Compile Include="IO\TeamListFileHandler.cs" />
     <Compile Include="PropertyChangedPropagator.cs" />
     <Page Include="App.xaml">
       <Generator>MSBuild:Compile</Generator>
