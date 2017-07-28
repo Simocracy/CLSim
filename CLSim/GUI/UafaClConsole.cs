@@ -87,16 +87,13 @@ namespace Simocracy.CLSim.GUI
                 }
             } while(Cl.AllTeamsRaw.Count != 40);
 
-            WriteLine("Simulating group drawing...");
-            do
-            {
-                Cl.DrawGroups();
-            } while(Cl.IsGroupsSimulatable != true);
+            WriteLine("Simulating drawing...");
+            do Cl.DrawGroups(); while(Cl.IsGroupsSimulatable != true);
 
             WriteLine("Simulating groups...");
             Cl.SimulateGroups();
 
-            WriteLine("Group Stage simulated.");
+            WriteLine("Group stage simulated.");
         }
 
         /// <summary>
@@ -104,7 +101,15 @@ namespace Simocracy.CLSim.GUI
         /// </summary>
         public void SimulateRoundOf16()
         {
+            WriteLine("Start simulating round of 16.");
 
+            WriteLine("Simulating drawing...");
+            do Cl.DrawRoundOf16(); while(Cl.IsRoundOf16Simulatable != true);
+
+            WriteLine("Simulating matches...");
+            Cl.SimulateRoundOf16();
+
+            WriteLine("Round of 16 simulated.");
         }
 
         /// <summary>
@@ -112,7 +117,15 @@ namespace Simocracy.CLSim.GUI
         /// </summary>
         public void SimulateQuarterFinals()
         {
+            WriteLine("Start simulating quarter finals.");
 
+            WriteLine("Simulating drawing...");
+            Cl.DrawQuarterFinals();
+
+            WriteLine("Simulating matches...");
+            Cl.SimulateQuarterFinals();
+
+            WriteLine("Quarter finals simulated.");
         }
 
         /// <summary>
@@ -120,7 +133,15 @@ namespace Simocracy.CLSim.GUI
         /// </summary>
         public void SimulateSemiFinals()
         {
+            WriteLine("Start simulating semi finals.");
 
+            WriteLine("Simulating drawing...");
+            Cl.DrawSemiFinals();
+
+            WriteLine("Simulating matches...");
+            Cl.SimulateSemiFinals();
+
+            WriteLine("Semi finals simulated.");
         }
 
         /// <summary>
@@ -128,7 +149,31 @@ namespace Simocracy.CLSim.GUI
         /// </summary>
         public void SimulateFinal()
         {
+            WriteLine("Start simulating final.");
 
+            WriteLine("Enter name of the final city with flag:");
+            var city = Read();
+
+            WriteLine("Enter name of the final stadium:");
+            var stadium = Read();
+
+            DateTime date;
+            string dateStr = String.Empty;
+            do
+            {
+                WriteLine("Enter name of the final date:");
+                dateStr = Read();
+            } while(DateTime.TryParse(dateStr, out date));
+
+            WriteLine("Initializing final...");
+            Cl.InitFinal(stadium, city, date);
+
+            WriteLine("Simulating final...");
+            Cl.SimulateFinal();
+
+            WriteLine($"Final result: {Cl.Final}");
+
+            WriteLine("Final simulated.");
         }
 
         /// <summary>
