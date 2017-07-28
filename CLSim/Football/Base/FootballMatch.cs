@@ -172,6 +172,15 @@ namespace Simocracy.CLSim.Football.Base
         /// </summary>
         public FootballTeam[] AllTeams { get; }
 
+        /// <summary>
+        /// Match time
+        /// </summary>
+        protected int MatchTime
+        {
+            get => _MatchTime;
+            set { _MatchTime = value; Notify(); }
+        }
+
         #endregion
 
         #region Methods
@@ -179,16 +188,25 @@ namespace Simocracy.CLSim.Football.Base
         /// <summary>
         /// Resets the match
         /// </summary>
-        public void Reset(int time = 0)
+        public void Reset()
+        {
+            Reset(90);
+        }
+
+        /// <summary>
+        /// Resets the match
+        /// </summary>
+        /// <param name="time">specific match time</param>
+        public void Reset(int time)
         {
             ResultA = null;
             ResultB = null;
             _Ball = 0;
-            _MatchTime = time;
+            MatchTime = time;
             _Start = 0;
             _IsSimulated = false;
 
-            SimpleLog.Info($"Football Match {TeamA} vs. {TeamB} initialized.");
+            SimpleLog.Info($"{GetType()}: {TeamA} vs. {TeamB} initialized.");
         }
 
         /// <summary>
@@ -218,28 +236,41 @@ namespace Simocracy.CLSim.Football.Base
         /// <summary>
         /// Simulates the Match
         /// </summary>
-        public void Simulate()
+        public virtual void Simulate()
         {
             SimpleLog.Info($"Simulate Match: TeamA={TeamA}, TeamB={TeamB}");
 
+            var res = MatchSim(MatchTime);
+
+            ResultA = res.Item1;
+            ResultB = res.Item2;
+
+            SimpleLog.Info($"Match Result: ResultA={ResultA}, ResultB={ResultB}");
+        }
+
+        /// <summary>
+        /// Simulates a match the given time and returns the result for team A and B
+        /// </summary>
+        /// <param name="time">time to simulate</param>
+        /// <returns>Tuple with result for team A and B</returns>
+        protected Tuple<int, int> MatchSim(int time)
+        {
             int resA = 0;
             int resB = 0;
 
-            Reset(90);
-
             _Ball = Kickoff();
-            for(int i = 1; i <= _MatchTime; i++)
+            for (int i = 1; i <= time; i++)
             {
-                if(i == 45)
+                if (i == time / 2)
                 {
-                    if(_Ball == TorA)
+                    if (_Ball == TorA)
                         resA++;
-                    else if(_Ball == TorB)
+                    else if (_Ball == TorB)
                         resB++;
                     _Ball = _Start;
                 }
 
-                switch(_Ball)
+                switch (_Ball)
                 {
                     case TorwartA:
                         _Ball = Turn(TeamA.GoalkeeperStrength, TeamB.ForwardStrength);
@@ -276,10 +307,7 @@ namespace Simocracy.CLSim.Football.Base
                 }
             }
 
-            ResultA = resA;
-            ResultB = resB;
-
-            SimpleLog.Info($"Match Result: ResultA={ResultA}, ResultB={ResultB}");
+            return Tuple.Create(resA, resB);
         }
 
         private int Turn(int strength1, int strength2)

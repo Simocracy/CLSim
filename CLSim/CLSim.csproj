@@ -59,6 +59,7 @@
     <Compile Include="External\Options.cs" />
     <Compile Include="Football\Base\DoubleMatch.cs" />
     <Compile Include="Football\Base\ETournamentRound.cs" />
+    <Compile Include="Football\Base\ExtendedFootballMatch.cs" />
     <Compile Include="Football\Base\FootballLeagueComparer.cs" />
     <Compile Include="Football\UAFA\Coefficient.cs" />
     <Compile Include="Globals.cs" />
