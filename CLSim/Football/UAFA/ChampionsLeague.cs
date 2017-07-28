@@ -760,7 +760,7 @@ namespace Simocracy.CLSim.Football.UAFA
         /// <summary>
         /// Simulates the final
         /// </summary>
-        public void SimulateFinals()
+        public void SimulateFinal()
         {
             if(Final != null)
             {
@@ -772,9 +772,9 @@ namespace Simocracy.CLSim.Football.UAFA
         /// <summary>
         /// Simulates the final
         /// </summary>
-        public async Task SimulateFinalsAsync()
+        public async Task SimulateFinalAsync()
         {
-            await Task.Run(() => SimulateFinals());
+            await Task.Run(() => SimulateFinal());
         }
 
         #endregion
