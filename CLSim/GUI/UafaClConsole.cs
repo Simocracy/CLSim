@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Simocracy.CLSim.Football.UAFA;
 using Simocracy.CLSim.IO;
 using SimpleLogger;
@@ -158,7 +154,7 @@ namespace Simocracy.CLSim.GUI
             var stadium = Read();
 
             DateTime date;
-            string dateStr = String.Empty;
+            string dateStr;
             do
             {
                 WriteLine("Enter name of the final date:");
@@ -181,7 +177,20 @@ namespace Simocracy.CLSim.GUI
         /// </summary>
         public void ManageExport()
         {
+            WriteLine("Start exporting results.");
 
+            WriteLine("Enter file name for the UAFA Coefficient file or leave blank to skip:");
+            var coeffFile = Read();
+            if(!String.IsNullOrWhiteSpace(coeffFile))
+            {
+                WriteLine("Exporting UAFA Coefficient...");
+                Cl.ExportCoefficient(coeffFile).RunSynchronously();
+            }
+
+            WriteLine("Create wiki page...");
+            // TODO create wiki page
+
+            WriteLine("Exporting finished.");
         }
 
         #endregion
