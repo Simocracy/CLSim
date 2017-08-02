@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using SimpleLogger;
 
@@ -33,9 +29,6 @@ namespace Simocracy.CLSim.Football.Base
 
         #region Members
 
-        private int? _PenaltyTeamA;
-        private int? _PenaltyTeamB;
-
         private EDoubleMatchState _MatchState;
 
         #endregion
@@ -43,12 +36,12 @@ namespace Simocracy.CLSim.Football.Base
         #region Properties
 
         /// <summary>
-        /// Team A (Home in <see cref="FirstLeg"/>, Away in <see cref="SecondLegRegular"/> and <see cref="ExtraTime"/>)
+        /// Team A (Home in <see cref="FirstLeg"/>, Away in <see cref="SecondLeg"/>)
         /// </summary>
         public FootballTeam TeamA => FirstLeg.TeamA;
 
         /// <summary>
-        /// Team B (Away in <see cref="FirstLeg"/>, Home in <see cref="SecondLegRegular"/> and <see cref="ExtraTime"/>)
+        /// Team B (Away in <see cref="FirstLeg"/>, Home in <see cref="SecondLeg"/>)
         /// </summary>
         public FootballTeam TeamB => FirstLeg.TeamB;
 
@@ -58,40 +51,26 @@ namespace Simocracy.CLSim.Football.Base
         public FootballMatch FirstLeg { get; }
 
         /// <summary>
-        /// If simulated: Second Leg after 90 min.
-        /// If inputted: Full Second Leg
+        /// Second Leg
         /// </summary>
-        public FootballMatch SecondLegRegular { get; }
-
-        /// <summary>
-        /// Extra time, only if simulated
-        /// </summary>
-        public FootballMatch ExtraTime { get; }
-
-        /// <summary>
-        /// Gets a new <see cref="FootballMatch"/> instance with the full second leg
-        /// </summary>
-        public FootballMatch FullSecondLeg => GetFullSecondLeg();
+        public ExtendedFootballMatch SecondLeg { get; }
 
         /// <summary>
         /// Full Result Team A
         /// </summary>
         public int FullResultA => FirstLeg.ResultA.GetValueOrDefault() +
-                                  SecondLegRegular.ResultB.GetValueOrDefault() +
-                                  ExtraTime.ResultB.GetValueOrDefault();
+                                  SecondLeg.ResultB.GetValueOrDefault();
 
         /// <summary>
         /// Away goals Team A
         /// </summary>
-        public int AwayGoalsA => SecondLegRegular.ResultB.GetValueOrDefault() +
-                                 ExtraTime.ResultB.GetValueOrDefault();
+        public int AwayGoalsA => SecondLeg.ResultB.GetValueOrDefault();
 
         /// <summary>
         /// Full Result Team B
         /// </summary>
         public int FullResultB => FirstLeg.ResultB.GetValueOrDefault() +
-                                  SecondLegRegular.ResultA.GetValueOrDefault() +
-                                  ExtraTime.ResultA.GetValueOrDefault();
+                                  SecondLeg.ResultA.GetValueOrDefault();
 
         /// <summary>
         /// Away goals Team B
@@ -101,20 +80,12 @@ namespace Simocracy.CLSim.Football.Base
         /// <summary>
         /// Penalty Shootout Result Team A, -1 if none
         /// </summary>
-        public int? PenaltyTeamA
-        {
-            get => _PenaltyTeamA;
-            set { _PenaltyTeamA = value; Notify(); }
-        }
+        public int? PenaltyTeamA => SecondLeg.PenaltyB;
 
         /// <summary>
         /// Penalty Shootout Result Team B, -1 if none
         /// </summary>
-        public int? PenaltyTeamB
-        {
-            get => _PenaltyTeamB;
-            set { _PenaltyTeamB = value; Notify(); }
-        }
+        public int? PenaltyTeamB => SecondLeg.PenaltyA;
 
         /// <summary>
         /// Match name
@@ -147,20 +118,19 @@ namespace Simocracy.CLSim.Football.Base
         /// <summary>
         /// Creates a new double match
         /// </summary>
-        /// <param name="teamA">Team A (Home in <see cref="FirstLeg"/>, Away in <see cref="SecondLegRegular"/> and <see cref="ExtraTime"/>)</param>
-        /// <param name="teamB">Team B (Away in <see cref="FirstLeg"/>, Home in <see cref="SecondLegRegular"/> and <see cref="ExtraTime"/>)</param>
+        /// <param name="teamA">Team A (Home in <see cref="FirstLeg"/>, Away in <see cref="SecondLeg"/>)</param>
+        /// <param name="teamB">Team B (Away in <see cref="FirstLeg"/>, Home in <see cref="SecondLeg"/>)</param>
         public DoubleMatch(FootballTeam teamA, FootballTeam teamB)
         {
             FirstLeg = new FootballMatch(teamA, teamB);
-            SecondLegRegular = new FootballMatch(teamB, teamA);
-            ExtraTime = new FootballMatch(teamB, teamA, 30);
+            SecondLeg = new ExtendedFootballMatch(teamB, teamA);
 
             FirstLeg.PropertyChanged += PropertyChangedPropagator.Create(nameof(FootballMatch.IsSimulated), nameof(Winner), Notify);
-            SecondLegRegular.PropertyChanged += PropertyChangedPropagator.Create(nameof(FootballMatch.IsSimulated), nameof(Winner), Notify);
-            ExtraTime.PropertyChanged += PropertyChangedPropagator.Create(nameof(FootballMatch.IsSimulated), nameof(Winner), Notify);
+            SecondLeg.PropertyChanged += PropertyChangedPropagator.Create(nameof(ExtendedFootballMatch.IsSimulated), nameof(Winner), Notify);
 
-            SecondLegRegular.PropertyChanged += PropertyChangedPropagator.Create(nameof(FootballMatch.IsSimulated), nameof(MatchState), Notify);
-            ExtraTime.PropertyChanged += PropertyChangedPropagator.Create(nameof(FootballMatch.IsSimulated), nameof(MatchState), Notify);
+            SecondLeg.PropertyChanged += PropertyChangedPropagator.Create(nameof(ExtendedFootballMatch.IsSimulated), nameof(MatchState), Notify);
+            SecondLeg.PropertyChanged += PropertyChangedPropagator.Create(nameof(ExtendedFootballMatch.PenaltyB), nameof(PenaltyTeamA), Notify);
+            SecondLeg.PropertyChanged += PropertyChangedPropagator.Create(nameof(ExtendedFootballMatch.PenaltyA), nameof(PenaltyTeamB), Notify);
 
             ResetMatch();
         }
@@ -196,11 +166,7 @@ namespace Simocracy.CLSim.Football.Base
         public void ResetMatch()
         {
             FirstLeg.Reset();
-            SecondLegRegular.Reset();
-            ExtraTime.Reset(30);
-
-            PenaltyTeamA = null;
-            PenaltyTeamB = null;
+            SecondLeg.Reset();
 
             MatchState = EDoubleMatchState.None;
 
@@ -215,32 +181,7 @@ namespace Simocracy.CLSim.Football.Base
             SimpleLog.Info($"Swap teams in {this}");
 
             FirstLeg.SwapTeams();
-            SecondLegRegular.SwapTeams();
-            ExtraTime.SwapTeams();
-            
-            var oldPenaltyA = PenaltyTeamA;
-            PenaltyTeamA = PenaltyTeamB;
-            PenaltyTeamB = oldPenaltyA;
-        }
-
-        /// <summary>
-        /// Returns the full second leg with extra time
-        /// </summary>
-        /// <returns>New <see cref="FootballMatch"/> instance for the second leg</returns>
-        public FootballMatch GetFullSecondLeg()
-        {
-            var secLeg = new FootballMatch(SecondLegRegular.TeamA, SecondLegRegular.TeamB)
-            {
-                ResultA = SecondLegRegular.ResultA.GetValueOrDefault() +
-                          ExtraTime.ResultA.GetValueOrDefault(),
-                ResultB = SecondLegRegular.ResultB.GetValueOrDefault() +
-                          ExtraTime.ResultB.GetValueOrDefault(),
-                Date = SecondLegRegular.Date,
-                City = SecondLegRegular.City,
-                Stadium = SecondLegRegular.Stadium
-            };
-
-            return secLeg;
+            SecondLeg.SwapTeams();
         }
 
         public override string ToString()
@@ -268,127 +209,14 @@ namespace Simocracy.CLSim.Football.Base
             SimpleLog.Info($"Simulate {this}.");
 
             FirstLeg.Simulate();
-            SecondLegRegular.Simulate();
+            SecondLeg.Simulate();
+
             MatchState = EDoubleMatchState.Regular;
-
-            // Extra Time
-            if(Winner == null)
-            {
-                SimpleLog.Info($"Extra time needed on {this}.");
-
-                ExtraTime.Simulate();
-                MatchState = EDoubleMatchState.ExtraTime;
-
-                // Penalty
-                if (Winner == null)
-                {
-                    SimpleLog.Info($"Penalty Shootout needed on {this}.");
-
-                    PenaltyShootout();
-                    MatchState = EDoubleMatchState.Penalty;
-                }
-            }
+            if (SecondLeg.IsExtraTime) MatchState = EDoubleMatchState.ExtraTime;
+            if (SecondLeg.IsPenalty) MatchState = EDoubleMatchState.Penalty;
 
             // Winner output to force Notify in Winner
             SimpleLog.Info($"{this} simulated, winner = {Winner}.");
-        }
-
-        /// <summary>
-        /// Simulates a penalty shootout
-        /// </summary>
-        /// <remarks>Based on Algorithm by Laserdisc/Flux:
-        /// <code>
-        ///     //simulates a rudimentary penalty shoot-out
-        ///     int[] goals = new int[2][6]; //in the first row the total amount of goals is stored. in the second to sixth row there is stored whether the team scored or not.
-        ///     var round = 0;
-        ///     var totalStrength = TeamA.Strength + TeamB.Strength;
-        ///     
-        ///     goals[0][0] = 0; //set goals for team A to 0
-        ///     goals[1][0] = 0; //set goals for team B to 0
-        ///     
-        ///     for(int i = 1; i &lt;= 5; i++)
-        ///     {
-        ///         var valueA = Random.Next(0, totalStrength);
-        ///         var valueB = Random.Next(0, totalStrength);
-        ///     
-        ///         if(valueA &lt; TeamA.Strength)
-        ///         {
-        ///             goals[0][0]++;
-        ///             goals[0][i] = 1;
-        ///         }
-        ///         else goals[0][i] = 0;
-        ///     
-        ///         if(valueB &lt; TeamB.Strength)
-        ///         {
-        ///             goals[1][0]++;
-        ///             goals[1][i] = 1;
-        ///         }
-        ///         else goals[1][i] = 0;
-        ///     }
-        ///     
-        ///     if(goals[0][0] &gt; goals[1][0]) "A hat gewonnen, tu irgendwas";
-        ///     elseif(goals[0][0] &lt; goals[1][0]) "B hat gewonnen, tu irgendwas";
-        ///     else {
-        ///         //additional penalties
-        ///         var value = Random.Next(0, totalStrength);
-        ///     
-        ///         if(value &lt; TeamA.Strength) "A hat gewonnen, tu irgendwas";
-        ///         else "B hat gewonnen, tu irgendwas";
-        /// </code>
-        /// </remarks>
-        private void PenaltyShootout()
-        {
-            SimpleLog.Info($"Simulate Penalty Shootout on {this}.");
-
-            var totalStrength = TeamA.AvgStrength + TeamB.AvgStrength;
-            
-            var firVal = Globals.Random.Next(0, 1);
-            var firTeam = firVal == 0 ? TeamA : TeamB;
-            var secTeam = firVal == 1 ? TeamA : TeamB;
-
-            // first 5 penalties
-            var firstPenalties = 5;
-            int remainA = 0, remainB = 0;
-            int neededA, neededB;
-            int penaltyA = 0, penaltyB = 0;
-            for(int i = 0; i < firstPenalties; i++)
-            {
-                var valueA = Globals.Random.Next(0, totalStrength);
-                var valueB = Globals.Random.Next(0, totalStrength);
-
-                if(valueA < firTeam.AvgStrength)
-                    penaltyA++;
-
-                // break
-                remainA = firstPenalties - i;
-                neededB = firstPenalties - penaltyA;
-                if(neededB > remainB) break;
-
-                if(valueB < secTeam.AvgStrength)
-                    penaltyB++;
-
-                // break
-                remainB = firstPenalties - i;
-                neededA = firstPenalties - penaltyB;
-                if(neededA > remainA) break;
-            }
-
-            // additional penalties
-            while(penaltyA == penaltyB)
-            {
-                var valueA = Globals.Random.Next(0, totalStrength);
-                var valueB = Globals.Random.Next(0, totalStrength);
-
-                if(valueA < firTeam.AvgStrength)
-                    penaltyA++;
-                if(valueB < secTeam.AvgStrength)
-                    penaltyB++;
-            }
-
-            PenaltyTeamA = firVal == 0 ? penaltyA : penaltyB;
-            PenaltyTeamB = firVal == 1 ? penaltyA : penaltyB;
-
-            SimpleLog.Info($"Penalty Shootout simulated: PenaltyTeamA={PenaltyTeamA}, PenaltyTeamB={PenaltyTeamB}.");
         }
 
         #endregion

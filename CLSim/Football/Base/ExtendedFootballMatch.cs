@@ -19,6 +19,9 @@ namespace Simocracy.CLSim.Football.Base
         private int? _PenaltyA;
         private int? _PenaltyB;
 
+        private bool _IsExtraTime;
+        private bool _IsPenalty;
+
         #endregion
 
         #region Constructors
@@ -58,12 +61,12 @@ namespace Simocracy.CLSim.Football.Base
         /// <summary>
         /// full result Team A
         /// </summary>
-        public new int? ResultA => RegularResultA.GetValueOrDefault() + ExtraResultA.GetValueOrDefault();
+        public override int? ResultA => RegularResultA.GetValueOrDefault() + ExtraResultA.GetValueOrDefault();
 
         /// <summary>
         /// full result Team B
         /// </summary>
-        public new int? ResultB => RegularResultB.GetValueOrDefault() + ExtraResultB.GetValueOrDefault();
+        public override int? ResultB => RegularResultB.GetValueOrDefault() + ExtraResultB.GetValueOrDefault();
 
         /// <summary>
         /// Regular time result Team A
@@ -128,6 +131,24 @@ namespace Simocracy.CLSim.Football.Base
             set { _ExtraMatchTime = value; Notify(); }
         }
 
+        /// <summary>
+        /// If match is in extra time
+        /// </summary>
+        public bool IsExtraTime
+        {
+            get => _IsExtraTime;
+            set { _IsExtraTime = value; Notify(); }
+        }
+
+        /// <summary>
+        /// If match is in penalty shootout
+        /// </summary>
+        public bool IsPenalty
+        {
+            get => _IsPenalty;
+            set { _IsPenalty = value; Notify(); }
+        }
+
         #endregion
 
         #region Methods
@@ -154,8 +175,23 @@ namespace Simocracy.CLSim.Football.Base
             PenaltyA = null;
             PenaltyB = null;
             ExtraMatchTime = extraTime;
+
+            IsExtraTime = false;
+            IsPenalty = false;
             
             Reset(regularTime);
+        }
+        
+        /// <summary>
+        /// Swaps the teams
+        /// </summary>
+        public override void SwapTeams()
+        {
+            base.SwapTeams();
+
+            var oldPenaltyA = PenaltyA;
+            PenaltyA = PenaltyB;
+            PenaltyB = oldPenaltyA;
         }
 
         #endregion
@@ -203,6 +239,7 @@ namespace Simocracy.CLSim.Football.Base
         {
             SimpleLog.Info($"Simulate Match with extra time {ExtraMatchTime}: TeamA={TeamA}, TeamB={TeamB}");
 
+            IsExtraTime = true;
             var res = MatchSim(ExtraMatchTime);
             ExtraResultA = res.Item1;
             ExtraResultB = res.Item2;
@@ -257,6 +294,7 @@ namespace Simocracy.CLSim.Football.Base
         {
             SimpleLog.Info($"Simulate penalty shootout: TeamA={TeamA}, TeamB={TeamB}");
 
+            IsPenalty = true;
             var totalStrength = TeamA.AvgStrength + TeamB.AvgStrength;
 
             var firVal = Globals.Random.Next(0, 1);

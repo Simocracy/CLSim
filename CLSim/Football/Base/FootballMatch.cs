@@ -101,7 +101,7 @@ namespace Simocracy.CLSim.Football.Base
         /// <summary>
         /// Result Team A
         /// </summary>
-        public int? ResultA
+        public virtual int? ResultA
         {
             get => _ResultA;
             set
@@ -115,7 +115,7 @@ namespace Simocracy.CLSim.Football.Base
         /// <summary>
         /// Result Team B
         /// </summary>
-        public int? ResultB
+        public virtual int? ResultB
         {
             get => _ResultB;
             set
@@ -212,7 +212,7 @@ namespace Simocracy.CLSim.Football.Base
         /// <summary>
         /// Swaps the teams
         /// </summary>
-        public void SwapTeams()
+        public virtual void SwapTeams()
         {
             SimpleLog.Info($"Swap teams in Football Match {TeamA} vs. {TeamB}");
 

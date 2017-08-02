@@ -211,7 +211,7 @@ namespace Simocracy.CLSim.Football.UAFA
         public void AddMatch(ETournamentRound round, DoubleMatch dMatch)
         {
             AddMatch(round, dMatch.FirstLeg);
-            AddMatch(round, dMatch.GetFullSecondLeg());
+            AddMatch(round, dMatch.SecondLeg);
         }
 
         /// <summary>
