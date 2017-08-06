@@ -108,6 +108,7 @@ namespace Simocracy.CLSim
             new LibInfo("NDesk.Options", "http://www.ndesk.org/Options", "MIT-Lizenz","https://opensource.org/licenses/mit-license.php"),
             new LibInfo("Simocracy Datumsrechner", "https://github.com/Simocracy/Datumsrechner", "MIT-Lizenz","https://github.com/Simocracy/Datumsrechner/blob/master/LICENSE"),
             new LibInfo("SimpleLog", "http://www.codeproject.com/Tips/585796/Simple-Log", "MIT-Lizenz","https://opensource.org/licenses/mit-license.php"),
+            new LibInfo("DotNetWikiBot Framework", "http://dotnetwikibot.sourceforge.net/", "GNU General Public License, version 2","http://www.gnu.org/licenses/gpl-2.0.html"),
         };
 
         /// <summary>
