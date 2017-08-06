@@ -62,6 +62,7 @@
     <Compile Include="Football\Base\ETournamentRound.cs" />
     <Compile Include="Football\Base\ExtendedFootballMatch.cs" />
     <Compile Include="Football\Base\FootballLeagueComparer.cs" />
+    <Compile Include="PwrBot\ClWikiHandler.cs" />
     <Compile Include="Football\UAFA\Coefficient.cs" />
     <Compile Include="Globals.cs" />
     <Compile Include="Football\UAFA\ChampionsLeague.cs" />
@@ -75,6 +76,7 @@
     <Compile Include="GUI\UafaClConsole.cs" />
     <Compile Include="IO\TeamListFileHandler.cs" />
     <Compile Include="PropertyChangedPropagator.cs" />
+    <Compile Include="PwrBot\PwrBotLoginData.cs" />
     <Page Include="App.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
