@@ -146,14 +146,14 @@ namespace Simocracy.CLSim.Football.Base
         {
             //MatchState = (ExtraTime.IsSimulated) ? EDoubleMatchState.ExtraTime : EDoubleMatchState.Regular;
 
-            if (FullResultA > FullResultB) return TeamA;
+            if(FullResultA > FullResultB) return TeamA;
             if(FullResultB > FullResultA) return TeamB;
 
             if(AwayGoalsA > AwayGoalsB) return TeamA;
             if(AwayGoalsB > AwayGoalsA) return TeamB;
 
             //MatchState = EDoubleMatchState.Penalty;
-            if (PenaltyTeamA > PenaltyTeamB) return TeamA;
+            if(PenaltyTeamA > PenaltyTeamB) return TeamA;
             if(PenaltyTeamB > PenaltyTeamA) return TeamB;
 
             //MatchState = EDoubleMatchState.None;
@@ -209,11 +209,20 @@ namespace Simocracy.CLSim.Football.Base
             SimpleLog.Info($"Simulate {this}.");
 
             FirstLeg.Simulate();
-            SecondLeg.Simulate();
-
+            SecondLeg.SimulateRegular();
             MatchState = EDoubleMatchState.Regular;
-            if (SecondLeg.IsExtraTime) MatchState = EDoubleMatchState.ExtraTime;
-            if (SecondLeg.IsPenalty) MatchState = EDoubleMatchState.Penalty;
+
+            if(Winner == null)
+            {
+                MatchState = EDoubleMatchState.ExtraTime;
+                SecondLeg.SimulateExtra();
+
+                if(Winner == null)
+                {
+                    MatchState = EDoubleMatchState.Penalty;
+                    SecondLeg.SimulatePenaltyShootout();
+                }
+            }
 
             // Winner output to force Notify in Winner
             SimpleLog.Info($"{this} simulated, winner = {Winner}.");
