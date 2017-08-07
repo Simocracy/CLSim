@@ -176,6 +176,11 @@ namespace Simocracy.CLSim.Football.Base
             GoalkeeperStrength = DefenseStrength = MidfieldStrength = ForwardStrength = avgStrength;
             Remark = (!String.IsNullOrEmpty(remarks)) ? remarks : String.Empty;
 
+            PropertyChanged += PropertyChangedPropagator.Create(nameof(Name), nameof(FullName), Notify);
+            PropertyChanged += PropertyChangedPropagator.Create(nameof(Name), nameof(FullName), Notify);
+            PropertyChanged += PropertyChangedPropagator.Create(nameof(State), nameof(FullName), Notify);
+            PropertyChanged += PropertyChangedPropagator.Create(nameof(State), nameof(FullName), Notify);
+
             SimpleLog.Info($"{this} created.");
         }
 
@@ -183,9 +188,25 @@ namespace Simocracy.CLSim.Football.Base
 
         #region Methods
 
+        /// <summary>
+        /// Gets the <see cref="FullName"/> for this Team
+        /// </summary>
+        /// <returns>The team name</returns>
         public override string ToString()
         {
             return FullName;
+        }
+
+        /// <summary>
+        /// Gets the wiki code for this team with remarks
+        /// </summary>
+        /// <returns>wiki code</returns>
+        public string GetWikiCodeWithRemarks()
+        {
+            if (String.IsNullOrWhiteSpace(Remark))
+                return $"{FullName}<ref group=\"A\">{Remark}</ref>";
+            else
+                return FullName;
         }
 
         #endregion
