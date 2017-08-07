@@ -236,6 +236,7 @@ namespace Simocracy.CLSim.Football.Base
             SimpleLog.Info($"Calculate table in Football League ID={ID}");
 
             Table = new LeagueTable();
+            Table.TableName = ID;
             Table.PropertyChanged += PropertyChangedPropagator.Create(nameof(LeagueTable.IsTableCalculated),
                 nameof(IsTableCalculated), Notify);
             Table.CalculateTable(Teams, Matches);
