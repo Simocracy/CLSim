@@ -28,7 +28,7 @@ namespace Simocracy.CLSim.Football.UAFA
         private bool? _IsRoundOf16Simulatable;
         private ObservableCollection<DoubleMatch> _QuarterFinals;
         private ObservableCollection<DoubleMatch> _SemiFinals;
-        private FootballMatch _Final;
+        private ExtendedFootballMatch _Final;
 
         private string _Season;
 
@@ -182,7 +182,7 @@ namespace Simocracy.CLSim.Football.UAFA
         /// <summary>
         /// Final
         /// </summary>
-        public FootballMatch Final
+        public ExtendedFootballMatch Final
         {
             get => _Final;
             set
@@ -608,7 +608,7 @@ namespace Simocracy.CLSim.Football.UAFA
         {
             SimpleLog.Info($"Initialize CL Final with Stadium={stadium}, City={city}, Date={date}.");
 
-            Final = new FootballMatch(SemiFinals[0].Winner, SemiFinals[1].Winner)
+            Final = new ExtendedFootballMatch(SemiFinals[0].Winner, SemiFinals[1].Winner)
             {
                 Stadium = stadium,
                 City = city,
