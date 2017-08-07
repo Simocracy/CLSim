@@ -62,6 +62,7 @@
     <Compile Include="Football\Base\ETournamentRound.cs" />
     <Compile Include="Football\Base\ExtendedFootballMatch.cs" />
     <Compile Include="Football\Base\FootballLeagueComparer.cs" />
+    <Compile Include="IO\WikiCodeConverter.cs" />
     <Compile Include="PwrBot\ClWikiHandler.cs" />
     <Compile Include="Football\UAFA\Coefficient.cs" />
     <Compile Include="Globals.cs" />
