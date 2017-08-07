@@ -77,6 +77,7 @@
     <Compile Include="IO\TeamListFileHandler.cs" />
     <Compile Include="PropertyChangedPropagator.cs" />
     <Compile Include="PwrBot\PwrBotLoginData.cs" />
+    <Compile Include="PwrBot\Simocracy.cs" />
     <Page Include="App.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
