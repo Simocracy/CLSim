@@ -5,7 +5,6 @@ using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Simocracy.CLSim.Football.Base;
-using Simocracy.CLSim.IO;
 using SimpleLogger;
 
 namespace Simocracy.CLSim.Football.UAFA
