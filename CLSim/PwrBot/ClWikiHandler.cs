@@ -221,23 +221,25 @@ namespace Simocracy.CLSim.PwrBot
         /// <returns>True if successfully</returns>
         /// <remarks>
         /// The Variables needed in Raw Page:
-        ///  0: season number
-        ///  1: start year (4 digits)
-        ///  2: final year (2 digits)
-        ///  3: full final date string
-        ///  4: final city
-        ///  5: winner team
-        ///  6: last winner
-        ///  7: group stage out color
-        ///  8: round of 16 out color
-        ///  9: quarter finals out color
-        /// 10: semi finals out color
-        /// 11: final color
-        /// 12: winner color
-        /// 13: last winner out color
-        /// 14-89: team out color / team with remarks
-        /// 90-91: MAC-PV team out color /team with remarks
-        /// 
+        ///   0: season number
+        ///   1: start year (4 digits)
+        ///   2: final year (2 digits)
+        ///   3: full final date string
+        ///   4: final city
+        ///   5: winner team
+        ///   6: last winner
+        ///   7: group stage out color
+        ///   8: round of 16 out color
+        ///   9: quarter finals out color
+        ///  10: semi finals out color
+        ///  11: final color
+        ///  12: winner color
+        ///  13: last winner out color
+        ///  14- 89: team out color / team with remarks
+        ///  90- 91: MAC-PV team out color /team with remarks
+        ///  92- 96: Group A teams
+        ///  97-131: Group B-H teams
+        /// 132-139: Group A-H Codes
         /// </remarks>
         public bool CreatePageContent(ChampionsLeague cl)
         {
@@ -327,7 +329,12 @@ namespace Simocracy.CLSim.PwrBot
                 rawList[stateIndex][team] = color;
             }
 
+            var finalDic = new Dictionary<FootballTeam, Color>();
+            foreach(var r in rawList.Values)
+                foreach(var d in r)
+                    finalDic.Add(d.Key, d.Value);
 
+            return finalDic;
         }
 
         #endregion
