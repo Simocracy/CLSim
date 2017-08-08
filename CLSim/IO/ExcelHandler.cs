@@ -214,8 +214,8 @@ namespace Simocracy.CLSim.IO
             Worksheet.Cells[newRow, TeamNameCol] = coeff.Team.Name;
             Worksheet.Cells[newRow, WonCol] = coeff.Won;
             Worksheet.Cells[newRow, DrawnCol] = coeff.Drawn;
-            Worksheet.Cells[newRow, CLRoundCol] = coeff.GetReachedCLRoundStr();
-            Worksheet.Cells[newRow, ALRoundCol] = coeff.GetReachedALRoundStr();
+            Worksheet.Cells[newRow, CLRoundCol] = coeff.GetReachedClRoundStr();
+            Worksheet.Cells[newRow, ALRoundCol] = coeff.GetReachedAlRoundStr();
             Worksheet.Cells[newRow, PointsCol] = coeff.Points;
         }
 
