@@ -38,6 +38,13 @@ namespace Simocracy.CLSim.Football.Base
             PropertyChanged += PropertyChangedPropagator.Create(nameof(RegularResultB), nameof(ResultB), Notify);
             PropertyChanged += PropertyChangedPropagator.Create(nameof(ExtraResultB), nameof(ResultB), Notify);
 
+            PropertyChanged += PropertyChangedPropagator.Create(nameof(RegularResultA), nameof(Winner), Notify);
+            PropertyChanged += PropertyChangedPropagator.Create(nameof(ExtraResultA), nameof(Winner), Notify);
+            PropertyChanged += PropertyChangedPropagator.Create(nameof(PenaltyA), nameof(Winner), Notify);
+            PropertyChanged += PropertyChangedPropagator.Create(nameof(RegularResultB), nameof(Winner), Notify);
+            PropertyChanged += PropertyChangedPropagator.Create(nameof(ExtraResultB), nameof(Winner), Notify);
+            PropertyChanged += PropertyChangedPropagator.Create(nameof(PenaltyB), nameof(Winner), Notify);
+
             Reset();
         }
 
@@ -110,7 +117,7 @@ namespace Simocracy.CLSim.Football.Base
         public int? PenaltyA
         {
             get => _PenaltyA;
-            set { _PenaltyA = value; Notify(); }
+            set { _PenaltyA = value; Notify(); if (value >= 0) IsSimulated = true; }
         }
 
         /// <summary>
@@ -119,7 +126,7 @@ namespace Simocracy.CLSim.Football.Base
         public int? PenaltyB
         {
             get => _PenaltyB;
-            set { _PenaltyB = value; Notify(); }
+            set { _PenaltyB = value; Notify(); if (value >= 0) IsSimulated = true; }
         }
 
         /// <summary>
@@ -148,6 +155,11 @@ namespace Simocracy.CLSim.Football.Base
             get => _IsPenalty;
             set { _IsPenalty = value; Notify(); }
         }
+
+        /// <summary>
+        /// Gets the winner team
+        /// </summary>
+        public FootballTeam Winner => GetWinner();
 
         #endregion
 
@@ -192,6 +204,21 @@ namespace Simocracy.CLSim.Football.Base
             var oldPenaltyA = PenaltyA;
             PenaltyA = PenaltyB;
             PenaltyB = oldPenaltyA;
+        }
+
+        /// <summary>
+        /// Returns the winning team
+        /// </summary>
+        /// <returns>The winner team</returns>
+        public FootballTeam GetWinner()
+        {
+            if(ResultA > ResultB) return TeamA;
+            if(ResultB > ResultA) return TeamB;
+
+            if(PenaltyA > PenaltyB) return TeamA;
+            if(PenaltyB > PenaltyA) return TeamB;
+
+            return null;
         }
 
         #endregion
