@@ -30,7 +30,7 @@ namespace Simocracy.CLSim.Football.Base
         }
 
         /// <summary>
-        /// Association/Nationality/State of Team
+        /// Association/Nationality/State of Team (without {{}})
         /// </summary>
         public string State
         {
