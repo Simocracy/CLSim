@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Simocracy.CLSim.Football.Base;
 using Simocracy.CLSim.IO;
@@ -124,7 +121,7 @@ namespace Simocracy.CLSim.Football.UAFA
         /// Returns the latest Champions League round
         /// </summary>
         /// <returns>Reached Champions League round</returns>
-        public ETournamentRound GetReachedCLRound()
+        public ETournamentRound GetReachedClRound()
         {
             var played = RoundsPlayed.Where(r => r.ToString().StartsWith("CL"));
             var eTournamentRounds = played as ETournamentRound[] ?? played.ToArray();
@@ -135,9 +132,9 @@ namespace Simocracy.CLSim.Football.UAFA
         /// Returns the latest Champions League round as export string
         /// </summary>
         /// <returns>Reached Champions League round as string</returns>
-        public string GetReachedCLRoundStr()
+        public string GetReachedClRoundStr()
         {
-            switch(GetReachedCLRound())
+            switch(GetReachedClRound())
             {
                 case ETournamentRound.CLQualification:
                     return "Quali";
@@ -160,7 +157,7 @@ namespace Simocracy.CLSim.Football.UAFA
         /// Returns the latest America League round
         /// </summary>
         /// <returns>Reached America League round</returns>
-        public ETournamentRound GetReachedALRound()
+        public ETournamentRound GetReachedAlRound()
         {
             var played = RoundsPlayed.Where(r => r.ToString().StartsWith("AL"));
             var eTournamentRounds = played as ETournamentRound[] ?? played.ToArray();
@@ -171,9 +168,9 @@ namespace Simocracy.CLSim.Football.UAFA
         /// Returns the latest America League round as export string
         /// </summary>
         /// <returns>Reached America League round as string</returns>
-        public string GetReachedALRoundStr()
+        public string GetReachedAlRoundStr()
         {
-            switch(GetReachedALRound())
+            switch(GetReachedAlRound())
             {
                 case ETournamentRound.ALQualification:
                     return "Quali";
@@ -281,14 +278,14 @@ namespace Simocracy.CLSim.Football.UAFA
         /// <summary>
         /// Exports the coefficient into a csv string.
         /// Format: <see cref="FootballTeam.State"/>; <see cref="FootballTeam.Name"/>; <see cref="Won"/>;
-        ///     <see cref="Drawn"/>; <see cref="GetReachedCLRound"/>; <see cref="GetReachedALRound"/>; <see cref="Points"/>
+        ///     <see cref="Drawn"/>; <see cref="GetReachedClRound"/>; <see cref="GetReachedAlRound"/>; <see cref="Points"/>
         /// </summary>
         /// <param name="seperator">CSV seperator</param>
         public string GetCsvString(string seperator = ";")
         {
             return
                 $"{Team.State}{seperator} {Team.Name}{seperator} {Won}{seperator} {Drawn}{seperator} " +
-                $"{GetReachedCLRoundStr()}{seperator} {GetReachedALRoundStr()}{seperator} {Points}";
+                $"{GetReachedClRoundStr()}{seperator} {GetReachedAlRoundStr()}{seperator} {Points}";
         }
 
         /// <summary>
