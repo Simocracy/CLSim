@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Media;
 using DotNetWikiBot;
+using Simocracy.CLSim.Football.Base;
 using Simocracy.CLSim.Football.UAFA;
 using Simocracy.PwrBot;
 using SimpleLogger;
@@ -36,6 +39,7 @@ namespace Simocracy.CLSim.PwrBot
         private static Site _Site;
         private string _RawPageCode;
         private int _CurrentSeasonNumber;
+        private ChampionsLeague _Cl;
 
         private string _PageTitle;
         private string _PageContent;
@@ -54,10 +58,11 @@ namespace Simocracy.CLSim.PwrBot
         /// <summary>
         /// Creates a new cl wiki handler instance
         /// </summary>
-        /// <param name="pageTitle">The page title for the page which will be created</param>
-        public ClWikiHandler(string pageTitle)
+        /// <param name="cl">The <see cref="ChampionsLeague"/> to use</param>
+        public ClWikiHandler(ChampionsLeague cl)
         {
-            PageTitle = pageTitle;
+            Cl = cl;
+            PageTitle = $"{ClPageTitlePrefix} {cl.Season}";
         }
 
         #endregion
@@ -68,6 +73,15 @@ namespace Simocracy.CLSim.PwrBot
         /// The Site for the Bot
         /// </summary>
         public static Site Site => _Site ?? (_Site = new Site("https://simocracy.de", PwrBotLoginData.Username, PwrBotLoginData.Password));
+
+        /// <summary>
+        /// The <see cref="ChampionsLeague"/> to export
+        /// </summary>
+        public ChampionsLeague Cl
+        {
+            get => _Cl;
+            set { _Cl = value; Notify(); }
+        }
 
         /// <summary>
         /// Raw wiki page code
@@ -112,45 +126,43 @@ namespace Simocracy.CLSim.PwrBot
         /// <summary>
         /// Gets the raw page code for the CL site
         /// </summary>
-        /// <param name="rawPageName">Page Name for raw code</param>
         /// <returns>True if successfully</returns>
-        public bool GetRawPageCode(string rawPageName)
+        public bool GetRawPageCode()
         {
-            SimpleLog.Info($"Get raw page code from {rawPageName}.");
+            SimpleLog.Info($"Get raw page code from {CurrentClRawPageTitle}.");
             var haveCode = false;
 
             try
             {
                 RawPageCode = String.Empty;
-                Page p = new Page(Site, rawPageName);
+                Page p = new Page(Site, CurrentClRawPageTitle);
                 p.Load();
                 RawPageCode = p.text;
 
                 haveCode = !String.IsNullOrWhiteSpace(RawPageCode);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 SimpleLog.Error(e.ToString());
             }
-            SimpleLog.Info($"Have raw page code from {rawPageName}: {haveCode}");
+            SimpleLog.Info($"Have raw page code from {CurrentClRawPageTitle}: {haveCode}");
             return haveCode;
         }
 
         /// <summary>
         /// Searches for the current cl season number
         /// </summary>
-        /// <param name="currentSeason">current season years</param>
         /// <returns>True if succesfully</returns>
-        public bool GetClSeasonNumber(string currentSeason)
+        public bool GetClSeasonNumber()
         {
-            SimpleLog.Info($"Get current cl season number for season {currentSeason}.");
+            SimpleLog.Info($"Get current cl season number for season {Cl.Season}.");
 
             try
             {
-                var seasonRegexMatch = Regex.Match(currentSeason, @"((\d{4})\/(\d{2}))");
-                if(!seasonRegexMatch.Success)
+                var seasonRegexMatch = Regex.Match(Cl.Season, @"((\d{4})\/(\d{2}))");
+                if (!seasonRegexMatch.Success)
                 {
-                    SimpleLog.Warning($"Wrong season format: {currentSeason}");
+                    SimpleLog.Warning($"Wrong season format: {Cl.Season}");
                     return false;
                 }
 
@@ -159,17 +171,17 @@ namespace Simocracy.CLSim.PwrBot
                 Page p = new Page(Site, $"{ClPageTitlePrefix} {lastSeason}");
                 p.Load();
                 var seasonNumberMatch = Regex.Match(p.text, @"Die (\d{2})\. Saison der").Groups[1];
-                if(!seasonNumberMatch.Success)
+                if (!seasonNumberMatch.Success)
                 {
                     SimpleLog.Warning($"Season cannot be readed from: {p.title}");
                     return false;
                 }
 
-                CurrentSeasonNumber = Int32.Parse(seasonNumberMatch.Value);
+                CurrentSeasonNumber = Int32.Parse(seasonNumberMatch.Value) + 1;
                 SimpleLog.Info("Current season number readed.");
                 return true;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 SimpleLog.Error(e.ToString());
             }
@@ -260,7 +272,63 @@ namespace Simocracy.CLSim.PwrBot
 
         #region Utility Methods
 
+        /// <summary>
+        /// Gets the participants table values for the champions league
+        /// </summary>
+        /// <returns>the table values</returns>
+        /// <remarks>
+        /// The team sorting inside a state is based on <see cref="ChampionsLeague.AllTeamsRaw"/>.
+        /// The list is sorted by state.
+        /// The last winner is always the first team, MAC-PV always the last.
+        /// </remarks>
+        public Dictionary<FootballTeam, Color> GetParticipantsTable()
+        {
+            SimpleLog.Info($"Building participants table for CL season {Cl.Season}");
+            if(Cl.Coefficients.Count <= 0)
+                Cl.CalculateCoefficient();
 
+            // get colors
+            var rawList = new SortedDictionary<string, Dictionary<FootballTeam, Color>>(StringComparer.CurrentCultureIgnoreCase);
+            for(int i = Cl.AllTeamsRaw.Count - 1; i >= 0; i--)
+            {
+                var team = Cl.AllTeamsRaw[i];
+
+                var reached = Cl.Coefficients[team].GetReachedClRound();
+                var color = ColorGroupStage;
+                switch(reached)
+                {
+                    case ETournamentRound.CLGroupStage:
+                        color = ColorGroupStage;
+                        break;
+                    case ETournamentRound.CLRoundOf16:
+                        color = ColorRoundOf16;
+                        break;
+                    case ETournamentRound.CLQuarterFinals:
+                        color = ColorQuarterFinals;
+                        break;
+                    case ETournamentRound.CLSemiFinals:
+                        color = ColorSemiFinals;
+                        break;
+                    case ETournamentRound.CLFinal:
+                        color = ColorFinal;
+                        break;
+                }
+                if(team == Cl.Final.Winner)
+                    color = ColorWinner;
+
+                var stateIndex = team.State;
+                if(i == 0) // tv
+                    stateIndex = "aaatv";
+                else if(team.State.ToLower() == "mac-pv" && !rawList.ContainsKey("zzzmacpv")) // MAC-PV team
+                    stateIndex = "zzzmacpv";
+
+                if(!rawList.ContainsKey(stateIndex))
+                    rawList[stateIndex] = new Dictionary<FootballTeam, Color>();
+                rawList[stateIndex][team] = color;
+            }
+
+
+        }
 
         #endregion
 
