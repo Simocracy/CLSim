@@ -14,6 +14,26 @@ namespace Simocracy.CLSim.IO
     public static class WikiCodeConverter
     {
 
+        #region ELeagueTemplate
+
+        /// <summary>
+        /// Wiki templates for groups
+        /// </summary>
+        public enum ELeagueTemplate
+        {
+            /// <summary>
+            /// No match output
+            /// </summary>
+            None,
+
+            /// <summary>
+            /// Vorlage:AL-Gruppe
+            /// </summary>
+            AlGruppe
+        }
+
+        #endregion
+
         #region Football Base Classes
 
         /// <summary>
@@ -92,15 +112,84 @@ namespace Simocracy.CLSim.IO
                               $"| {row[LeagueTable.PointsRow]}");
             }
 
-            return sb.ToString();
+            return sb.ToString().Trim();
         }
 
-        public static string ToWikiCode()
+        /// <summary>
+        /// Creates the wiki code for the given group with the given match template
+        /// </summary>
+        /// <param name="league">league</param>
+        /// <param name="template">match template</param>
+        /// <param name="qual1Count">qual1 count</param>
+        /// <param name="qual2Count">qual2 count</param>
+        /// <returns>the wiki code for the group</returns>
+        public static string ToWikiCode(FootballLeague league, ELeagueTemplate template, int qual1Count = 2, int qual2Count = 1)
         {
-            SimpleLog.Info($"Convert football league to wiki code.");
+            SimpleLog.Info($"Convert football league {league.ID} to wiki code.");
             var sb = new StringBuilder();
 
+            sb.AppendLine(ToWikiCode(league.Table, qual1Count, qual2Count));
 
+            switch(template)
+            {
+                case ELeagueTemplate.AlGruppe:
+                    sb.Append(AlGroup(league));
+                    break;
+            }
+
+            return sb.ToString().Trim();
+        }
+
+        #endregion
+
+        #region Group Template Converting
+
+        /// <summary>
+        /// Creates the match code with the template Vorlage:AL-Gruppe
+        /// </summary>
+        /// <param name="league">league</param>
+        /// <returns>the wiki code</returns>
+        private static string AlGroup(FootballLeague league)
+        {
+            SimpleLog.Info($"Create the match code using Vorlage:AL-Gruppe for league {league.ID}.");
+
+            if(league.TeamCount != 5)
+            {
+                SimpleLog.Error($"Cannot create match code using Vorlage:AL-Gruppe with {league.TeamCount} teams, need 5.");
+                return String.Empty;
+            }
+
+            var sb = new StringBuilder();
+
+            sb.AppendLine("{{AL-Gruppe");
+            sb.AppendLine($"|A1={league.Teams[0]}");
+            sb.AppendLine($"|A2={league.Teams[1]}");
+            sb.AppendLine($"|A3={league.Teams[2]}");
+            sb.AppendLine($"|A4={league.Teams[3]}");
+            sb.AppendLine($"|A5={league.Teams[4]}");
+
+            sb.Append($"|A1-A2={league.Matches.FirstOrDefault(m => m.TeamA == league.Teams[0] && m.TeamB == league.Teams[1])}\t");
+            sb.AppendLine($"|A2-A1={league.Matches.FirstOrDefault(m => m.TeamA == league.Teams[1] && m.TeamB == league.Teams[0])}");
+            sb.Append($"|A3-A4={league.Matches.FirstOrDefault(m => m.TeamA == league.Teams[2] && m.TeamB == league.Teams[3])}\t");
+            sb.AppendLine($"|A4-A3={league.Matches.FirstOrDefault(m => m.TeamA == league.Teams[3] && m.TeamB == league.Teams[2])}");
+            sb.Append($"|A2-A3={league.Matches.FirstOrDefault(m => m.TeamA == league.Teams[1] && m.TeamB == league.Teams[2])}\t");
+            sb.AppendLine($"|A3-A2={league.Matches.FirstOrDefault(m => m.TeamA == league.Teams[2] && m.TeamB == league.Teams[1])}");
+            sb.Append($"|A4-A5={league.Matches.FirstOrDefault(m => m.TeamA == league.Teams[3] && m.TeamB == league.Teams[4])}\t");
+            sb.AppendLine($"|A5-A4={league.Matches.FirstOrDefault(m => m.TeamA == league.Teams[4] && m.TeamB == league.Teams[3])}");
+            sb.Append($"|A5-A1={league.Matches.FirstOrDefault(m => m.TeamA == league.Teams[4] && m.TeamB == league.Teams[0])}\t");
+            sb.AppendLine($"|A1-A5={league.Matches.FirstOrDefault(m => m.TeamA == league.Teams[0] && m.TeamB == league.Teams[4])}");
+            sb.Append($"|A4-A2={league.Matches.FirstOrDefault(m => m.TeamA == league.Teams[3] && m.TeamB == league.Teams[1])}\t");
+            sb.AppendLine($"|A2-A4={league.Matches.FirstOrDefault(m => m.TeamA == league.Teams[1] && m.TeamB == league.Teams[3])}");
+            sb.Append($"|A3-A1={league.Matches.FirstOrDefault(m => m.TeamA == league.Teams[2] && m.TeamB == league.Teams[0])}\t");
+            sb.AppendLine($"|A1-A3={league.Matches.FirstOrDefault(m => m.TeamA == league.Teams[0] && m.TeamB == league.Teams[2])}");
+            sb.Append($"|A2-A5={league.Matches.FirstOrDefault(m => m.TeamA == league.Teams[1] && m.TeamB == league.Teams[4])}\t");
+            sb.AppendLine($"|A5-A2={league.Matches.FirstOrDefault(m => m.TeamA == league.Teams[4] && m.TeamB == league.Teams[1])}");
+            sb.Append($"|A1-A4={league.Matches.FirstOrDefault(m => m.TeamA == league.Teams[0] && m.TeamB == league.Teams[3])}\t");
+            sb.AppendLine($"|A4-A1={league.Matches.FirstOrDefault(m => m.TeamA == league.Teams[3] && m.TeamB == league.Teams[0])}");
+            sb.Append($"|A5-A3={league.Matches.FirstOrDefault(m => m.TeamA == league.Teams[4] && m.TeamB == league.Teams[2])}\t");
+            sb.AppendLine($"|A3-A5={league.Matches.FirstOrDefault(m => m.TeamA == league.Teams[2] && m.TeamB == league.Teams[4])}");
+
+            sb.Append("}}");
 
             return sb.ToString();
         }
