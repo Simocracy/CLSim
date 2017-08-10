@@ -112,7 +112,7 @@ namespace Simocracy.CLSim.Football.Base
         }
 
         /// <summary>
-        /// Penalty Shootout Result Team A, -1 if none
+        /// Penalty Shootout Result Team A
         /// </summary>
         public int? PenaltyA
         {
@@ -121,7 +121,7 @@ namespace Simocracy.CLSim.Football.Base
         }
 
         /// <summary>
-        /// Penalty Shootout Result Team B, -1 if none
+        /// Penalty Shootout Result Team B
         /// </summary>
         public int? PenaltyB
         {
