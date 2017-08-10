@@ -237,9 +237,15 @@ namespace Simocracy.CLSim.PwrBot
         ///  13: last winner out color
         ///  14- 89: team out color / team with remarks
         ///  90- 91: MAC-PV team out color /team with remarks
-        ///  92- 96: Group A teams
-        ///  97-131: Group B-H teams
+        ///  92-131: Group A-H teams
         /// 132-139: Group A-H Codes
+        /// 140-147: Round of 16 matches
+        /// 148-151: Quarter finals matches
+        /// 152: Semi final 1 first leg
+        /// 153: Semi final 2 first leg
+        /// 154: Semi final 2 second leg
+        /// 155: Semi final 1 second leg
+        /// 156: Final match
         /// </remarks>
         public bool CreatePageContent(ChampionsLeague cl)
         {
