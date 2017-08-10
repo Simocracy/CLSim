@@ -140,6 +140,31 @@ namespace Simocracy.CLSim.IO
             return sb.ToString().Trim();
         }
 
+        /// <summary>
+        /// Converts the double match to wiki code for using Vorlage:K.O.-Runde
+        /// </summary>
+        /// <param name="doubleMatch"><see cref="DoubleMatch"/> to export</param>
+        /// <param name="teamNo1">Number for team 1 for the template</param>
+        /// <param name="teamNo2">Number for team 2 for the template</param>
+        /// <returns>The wiki code</returns>
+        public static string ToWikiCode(DoubleMatch doubleMatch, int teamNo1, int teamNo2)
+        {
+            SimpleLog.Info($"Convert double match {doubleMatch} to wiki code.");
+            var sb = new StringBuilder();
+
+            sb.AppendLine($"|A1={doubleMatch.TeamA}");
+            sb.AppendLine($"|A2={doubleMatch.TeamB}");
+            sb.AppendLine($"|A1-A2={doubleMatch.FirstLeg.ResultA}|{doubleMatch.FirstLeg.ResultB}");
+            sb.AppendLine($"|A2-A1={doubleMatch.SecondLeg.ResultA}|{doubleMatch.SecondLeg.ResultB}");
+            var extraTime = doubleMatch.SecondLeg.IsExtraTime ? "t" : String.Empty;
+            sb.AppendLine($"|A1-A2-Verl={extraTime}");
+            var p1 = doubleMatch.SecondLeg.IsPenalty ? doubleMatch.PenaltyA.ToString() : String.Empty;
+            var p2 = doubleMatch.SecondLeg.IsPenalty ? doubleMatch.PenaltyB.ToString() : String.Empty;
+            sb.Append($"|A1-A2-Elfm={p1}|{p2}");
+
+            return sb.ToString().Trim();
+        }
+
         #endregion
 
         #region Group Template Converting
@@ -191,7 +216,7 @@ namespace Simocracy.CLSim.IO
 
             sb.Append("}}");
 
-            return sb.ToString();
+            return sb.ToString().Trim();
         }
 
         #endregion
