@@ -17,6 +17,7 @@ namespace Simocracy.CLSim.Football.Base
         private int _MidfieldStrength;
         private int _ForwardStrength;
         private string _Remark;
+        private string _Logo;
 
         #region Properties
 
@@ -82,12 +83,21 @@ namespace Simocracy.CLSim.Football.Base
         }
 
         /// <summary>
-        /// Forward strength
+        /// Team remarks
         /// </summary>
         public string Remark
         {
             get => _Remark;
             set { _Remark = value; Notify(); }
+        }
+
+        /// <summary>
+        /// Team logo
+        /// </summary>
+        public string Logo
+        {
+            get => _Logo;
+            set { _Logo = value; Notify(); }
         }
 
         /// <summary>
