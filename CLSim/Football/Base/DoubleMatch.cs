@@ -78,14 +78,14 @@ namespace Simocracy.CLSim.Football.Base
         public int AwayGoalsB => FirstLeg.ResultB.GetValueOrDefault();
 
         /// <summary>
-        /// Penalty Shootout Result Team A, -1 if none
+        /// Penalty Shootout Result Team A
         /// </summary>
-        public int? PenaltyTeamA => SecondLeg.PenaltyB;
+        public int? PenaltyA => SecondLeg.PenaltyB;
 
         /// <summary>
-        /// Penalty Shootout Result Team B, -1 if none
+        /// Penalty Shootout Result Team B
         /// </summary>
-        public int? PenaltyTeamB => SecondLeg.PenaltyA;
+        public int? PenaltyB => SecondLeg.PenaltyA;
 
         /// <summary>
         /// Match name
@@ -129,8 +129,8 @@ namespace Simocracy.CLSim.Football.Base
             SecondLeg.PropertyChanged += PropertyChangedPropagator.Create(nameof(ExtendedFootballMatch.IsSimulated), nameof(Winner), Notify);
 
             SecondLeg.PropertyChanged += PropertyChangedPropagator.Create(nameof(ExtendedFootballMatch.IsSimulated), nameof(MatchState), Notify);
-            SecondLeg.PropertyChanged += PropertyChangedPropagator.Create(nameof(ExtendedFootballMatch.PenaltyB), nameof(PenaltyTeamA), Notify);
-            SecondLeg.PropertyChanged += PropertyChangedPropagator.Create(nameof(ExtendedFootballMatch.PenaltyA), nameof(PenaltyTeamB), Notify);
+            SecondLeg.PropertyChanged += PropertyChangedPropagator.Create(nameof(ExtendedFootballMatch.PenaltyB), nameof(PenaltyA), Notify);
+            SecondLeg.PropertyChanged += PropertyChangedPropagator.Create(nameof(ExtendedFootballMatch.PenaltyA), nameof(PenaltyB), Notify);
 
             ResetMatch();
         }
@@ -153,8 +153,8 @@ namespace Simocracy.CLSim.Football.Base
             if(AwayGoalsB > AwayGoalsA) return TeamB;
 
             //MatchState = EDoubleMatchState.Penalty;
-            if(PenaltyTeamA > PenaltyTeamB) return TeamA;
-            if(PenaltyTeamB > PenaltyTeamA) return TeamB;
+            if(PenaltyA > PenaltyB) return TeamA;
+            if(PenaltyB > PenaltyA) return TeamB;
 
             //MatchState = EDoubleMatchState.None;
             return null;
