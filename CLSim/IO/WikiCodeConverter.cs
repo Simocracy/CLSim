@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using Simocracy.CLSim.Football.Base;
 using SimpleLogger;
 
@@ -60,59 +58,30 @@ namespace Simocracy.CLSim.IO
             sb.AppendLine("! style=\"width: 12%;\" | Tore");
             sb.AppendLine("! style=\"width: 8%;\" | Pkt.");
 
-            // qual1 rows
-            for(int i = 1; i <= qual1Count; i++)
-            {
-                if(i >= table.Rows.Count) break;
-
-                var row = table.Rows[i - 1];
-
-                sb.AppendLine("|- class=\"qual1\"");
-                sb.AppendLine($"| '''{i}'''");
-                sb.AppendLine($"| style=\"text-align: left;\" | {row[LeagueTable.TeamRow]}");
-                sb.AppendLine($"| {row[LeagueTable.MatchCountRow]} |" +
-                              $"| {row[LeagueTable.WinCountRow]} |" +
-                              $"| {row[LeagueTable.DrawnCountRow]} |" +
-                              $"| {row[LeagueTable.LoseCountRow]} |" +
-                              $"| {row[LeagueTable.GoalsRow]} |" +
-                              $"| {row[LeagueTable.PointsRow]}");
-            }
-
-            // qual2 rows
-            for(int i = qual1Count + 1; i <= qual1Count + qual2Count; i++)
-            {
-                if(i >= table.Rows.Count) break;
-
-                var row = table.Rows[i - 1];
-
-                sb.AppendLine("|- class=\"qual2\"");
-                sb.AppendLine($"| '''{i}'''");
-                sb.AppendLine($"| style=\"text-align: left;\" | {row[LeagueTable.TeamRow]}");
-                sb.AppendLine($"| {row[LeagueTable.MatchCountRow]} |" +
-                              $"| {row[LeagueTable.WinCountRow]} |" +
-                              $"| {row[LeagueTable.DrawnCountRow]} |" +
-                              $"| {row[LeagueTable.LoseCountRow]} |" +
-                              $"| {row[LeagueTable.GoalsRow]} |" +
-                              $"| {row[LeagueTable.PointsRow]}");
-            }
-
-            // other rows
-            for(int i = qual1Count + qual2Count + 1; i < table.Rows.Count; i++)
+            for(int i = 1; i <= table.Rows.Count; i++)
             {
                 var row = table.Rows[i - 1];
 
-                sb.AppendLine("|-");
-                sb.AppendLine($"| '''{i}'''");
+                var clas = String.Empty;
+                if(i <= qual1Count)
+                    clas = "class\"=qual1\"";
+                else if(i <= qual1Count + qual2Count)
+                    clas = "class\"=qual2\"";
+
+                sb.AppendLine($"|- {clas}");
+                sb.Append($"| '''{i}''' |");
                 sb.AppendLine($"| style=\"text-align: left;\" | {row[LeagueTable.TeamRow]}");
-                sb.AppendLine($"| {row[LeagueTable.MatchCountRow]} |" +
-                              $"| {row[LeagueTable.WinCountRow]} |" +
-                              $"| {row[LeagueTable.DrawnCountRow]} |" +
-                              $"| {row[LeagueTable.LoseCountRow]} |" +
-                              $"| {row[LeagueTable.GoalsRow]} |" +
-                              $"| {row[LeagueTable.PointsRow]}");
+                sb.Append($"| {row[LeagueTable.MatchCountRow]} |");
+                sb.Append($"| {row[LeagueTable.WinCountRow]} |");
+                sb.Append($"| {row[LeagueTable.DrawnCountRow]} |");
+                sb.Append($"| {row[LeagueTable.LoseCountRow]} |");
+                sb.Append($"| {row[LeagueTable.GoalsRow]} |");
+                sb.AppendLine($"| '''{row[LeagueTable.PointsRow]}'''");
             }
 
-            return sb.ToString().Trim();
+            sb.Append("|}");
+
+            return sb.ToString();
         }
 
         /// <summary>
@@ -162,7 +131,45 @@ namespace Simocracy.CLSim.IO
             var p2 = doubleMatch.SecondLeg.IsPenalty ? doubleMatch.PenaltyB.ToString() : String.Empty;
             sb.Append($"|A1-A2-Elfm={p1}|{p2}");
 
-            return sb.ToString().Trim();
+            return sb.ToString();
+        }
+
+        /// <summary>
+        /// Converts the football match to wiki code using Vorlage:Turnierfinale
+        /// </summary>
+        /// <param name="match"><see cref="FootballMatch"/> to export</param>
+        /// <returns>The wiki code</returns>
+        public static string ToWikiCode(FootballMatch match)
+        {
+            SimpleLog.Info($"Convert football match {match} to wiki code.");
+            var sb = new StringBuilder();
+
+            sb.AppendLine("{{Turnierfinale");
+            sb.AppendLine($"|Team1={match.TeamA.Name}");
+            sb.AppendLine($"|Logo1={match.TeamA.Logo}");
+            sb.AppendLine("|Tore1=");
+            sb.AppendLine("|Aufstellung1=");
+            sb.AppendLine($"|Team2={match.TeamB.Name}");
+            sb.AppendLine($"|Logo2={match.TeamB.Logo}");
+            sb.AppendLine("|Tore2=");
+            sb.AppendLine("|Aufstellung2=");
+
+            var date = match.Date != DateTime.MinValue ? match.Date.ToShortDateString() : String.Empty;
+            sb.AppendLine($"|Datum={date}");
+            sb.AppendLine($"Stadion={match.Stadium ?? String.Empty}");
+            sb.AppendLine($"Stadion-Land={match.City ?? String.Empty}");
+
+            var resStr = $"{match.ResultA}:{match.ResultB}";
+            var extMatch = match as ExtendedFootballMatch;
+            if(extMatch != null && extMatch.IsExtraTime)
+                resStr += " n. V.";
+            sb.AppendLine($"Ergebnis={resStr}");
+
+            sb.AppendLine("Zuschauer=");
+            sb.AppendLine($"Schiri={match.Refere ?? String.Empty}");
+            sb.Append("}}");
+
+            return sb.ToString();
         }
 
         #endregion
@@ -216,7 +223,7 @@ namespace Simocracy.CLSim.IO
 
             sb.Append("}}");
 
-            return sb.ToString().Trim();
+            return sb.ToString();
         }
 
         #endregion
