@@ -22,6 +22,7 @@ namespace Simocracy.CLSim.Football.Base
         private DateTime _Date;
         private string _Stadium;
         private string _City;
+        private string _Refere;
 
         private bool _IsSimulated;
 
@@ -151,6 +152,15 @@ namespace Simocracy.CLSim.Football.Base
         {
             get => _City;
             set { _City = value; Notify(); }
+        }
+
+        /// <summary>
+        /// Refere (with Flag)
+        /// </summary>
+        public string Refere
+        {
+            get => _Refere;
+            set { _Refere = value; Notify(); }
         }
 
         /// <summary>

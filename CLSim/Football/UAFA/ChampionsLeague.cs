@@ -601,17 +601,22 @@ namespace Simocracy.CLSim.Football.UAFA
         }
 
         /// <summary>
-        /// Initializes the Final
+        /// Initializes the final
         /// </summary>
-        public void InitFinal(string stadium, string city, DateTime? date = null)
+        /// <param name="stadium">Final Stadium</param>
+        /// <param name="city">Final city</param>
+        /// <param name="date">Final date</param>
+        /// <param name="refere">Final refere</param>
+        public void InitFinal(string stadium, string city, DateTime? date = null, string refere = null)
         {
-            SimpleLog.Info($"Initialize CL Final with Stadium={stadium}, City={city}, Date={date}.");
+            SimpleLog.Info($"Initialize CL Final with Stadium={stadium}, City={city}, Date={date}, Refere={refere}.");
 
             Final = new ExtendedFootballMatch(SemiFinals[0].Winner, SemiFinals[1].Winner)
             {
                 Stadium = stadium,
                 City = city,
-                Date = date ?? DateTime.MinValue
+                Date = date ?? DateTime.MinValue,
+                Refere = refere ?? String.Empty
             };
         }
 
