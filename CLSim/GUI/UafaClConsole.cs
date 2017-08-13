@@ -1,6 +1,7 @@
 ﻿using System;
 using Simocracy.CLSim.Football.UAFA;
 using Simocracy.CLSim.IO;
+using Simocracy.CLSim.PwrBot;
 using SimpleLogger;
 
 namespace Simocracy.CLSim.GUI
@@ -134,6 +135,18 @@ namespace Simocracy.CLSim.GUI
             WriteLine("Simulating drawing...");
             Cl.DrawSemiFinals();
 
+            WriteLine($"Enter team logo for {Cl.SemiFinals[0].TeamA}:");
+            Cl.SemiFinals[0].TeamA.Logo = Read();
+
+            WriteLine($"Enter team logo for {Cl.SemiFinals[0].TeamB}:");
+            Cl.SemiFinals[0].TeamB.Logo = Read();
+
+            WriteLine($"Enter team logo for {Cl.SemiFinals[1].TeamA}:");
+            Cl.SemiFinals[1].TeamA.Logo = Read();
+
+            WriteLine($"Enter team logo for {Cl.SemiFinals[1].TeamB}:");
+            Cl.SemiFinals[1].TeamB.Logo = Read();
+
             WriteLine("Simulating matches...");
             Cl.SimulateSemiFinals();
 
@@ -188,7 +201,8 @@ namespace Simocracy.CLSim.GUI
             }
 
             WriteLine("Create wiki page...");
-            // TODO create wiki page
+            var exportSucc = ClWikiHandler.CreateWikiPage(Cl);
+            WriteLine(exportSucc ? "Export successfully." : "Errors on export. See log file for details.");
 
             WriteLine("Exporting finished.");
         }
