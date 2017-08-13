@@ -39,7 +39,8 @@ namespace Simocracy.CLSim.GUI
         /// <summary>
         /// Initiates the simulation of the Champions League
         /// </summary>
-        public static void Simulate()
+        /// <param name="teamListFile">team list file</param>
+        public static void Simulate(string teamListFile = null)
         {
             WriteLine("UAFA Champions League simulation.");
             WriteLine();
@@ -48,7 +49,7 @@ namespace Simocracy.CLSim.GUI
             var cl = new UafaClConsole(season);
             WriteLine($"UAFA Champions League season {cl.Cl.Season} created.");
 
-            cl.SimulateGroupStage();
+            cl.SimulateGroupStage(teamListFile);
             cl.SimulateRoundOf16();
             cl.SimulateQuarterFinals();
             cl.SimulateSemiFinals();
@@ -61,16 +62,21 @@ namespace Simocracy.CLSim.GUI
         /// <summary>
         /// Simulates the group stage
         /// </summary>
-        public void SimulateGroupStage()
+        /// <param name="teamListFile">team list file</param>
+        public void SimulateGroupStage(string teamListFile = null)
         {
             WriteLine("Start simulating group stage.");
+            var firstDoing = true;
             do
             {
-                WriteLine("Enter path to team list file:");
-                var fileName = Read();
+                if(!firstDoing || String.IsNullOrWhiteSpace(teamListFile))
+                {
+                    WriteLine("Enter path to team list file:");
+                    teamListFile = Read();
+                }
                 try
                 {
-                    var teamList = TeamListFileHandler.ReadTeamList(fileName, 40);
+                    var teamList = TeamListFileHandler.ReadTeamList(teamListFile, 40);
                     var teamCount = Cl.ReadTeamlist(teamList);
                     if(teamCount != 40)
                     {
@@ -82,6 +88,7 @@ namespace Simocracy.CLSim.GUI
                 {
                     WriteEx("Error reading team list", e);
                 }
+                firstDoing = false;
             } while(Cl.AllTeamsRaw.Count != 40);
 
             WriteLine("Simulating drawing...");

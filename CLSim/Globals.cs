@@ -44,7 +44,7 @@ namespace Simocracy.CLSim
         /// <summary>
         /// The command line options
         /// </summary>
-        public static OptionSet Options => new OptionSet()
+        public static OptionSet Options => new OptionSet
         {
             {"h|help", "Show this message.", v => ShowHelp = v != null},
             {"nolog", "Disable logging.", v => IsLogging = v == null},
@@ -56,6 +56,10 @@ namespace Simocracy.CLSim
             {
                 "cl|uafacl", $"Simulates an UAFA Champions League season in the command line.{Environment.NewLine}" +
                              "Graphical simulation with input for each game will be disabled.",
+                v => IsUafaClSimulation = v != null
+            },
+            {
+                "teamfile", $"Use the given file as team file for simulation.{Environment.NewLine}",
                 v => IsUafaClSimulation = v != null
             },
         };
