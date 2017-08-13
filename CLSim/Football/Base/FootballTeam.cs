@@ -96,7 +96,7 @@ namespace Simocracy.CLSim.Football.Base
         /// </summary>
         public string Logo
         {
-            get => _Logo;
+            get => String.IsNullOrWhiteSpace(_Logo) ? $"{{{{State|150}}}}" : _Logo;
             set { _Logo = value; Notify(); }
         }
 
