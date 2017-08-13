@@ -237,13 +237,13 @@ namespace Simocracy.CLSim.PwrBot
         ///   3: full final date string
         ///   4: final city
         ///   5: winner team
-        ///   6: last winner
-        ///   7: group stage out color
-        ///   8: round of 16 out color
-        ///   9: quarter finals out color
-        ///  10: semi finals out color
-        ///  11: final color
-        ///  12: winner color
+        ///   6: group stage out color
+        ///   7: round of 16 out color
+        ///   8: quarter finals out color
+        ///  9: semi finals out color
+        ///  10: final color
+        ///  11: winner color
+        ///  12: last winner
         ///  13: last winner out color
         ///  14- 89: team out color / team with remarks
         ///  90- 91: MAC-PV team out color /team with remarks
@@ -272,33 +272,30 @@ namespace Simocracy.CLSim.PwrBot
                 var sb = new StringBuilder();
 
                 // base infos
-                var partTable = GetParticipantsTable();
-                var participants = new string[partTable.Count * 2];
-                for(int i = 2; i <= (partTable.Count - 1) * 2; i = i + 2)
-                {
-                    var kvp = partTable.ElementAt(i);
-                    participants[i+1] = kvp.Key.FullName;
-                    participants[i] = kvp.Value.ToString().Substring(3);
-                }
+                var participants = GetParticipantsTable();
                 var yearRegexMatch = YearRegex.Match(cl.Season);
                 var startYear = yearRegexMatch.Groups[1].Value;
                 var finalYear = yearRegexMatch.Groups[2].Value.Substring(yearRegexMatch.Groups[2].Value.Length - 2);
                 var groupTeamList = GetGroupTeamList();
                 var groupCodes = GetGroupCodes();
+                var roundOf16Codes = GetDoubleMatchCodes(cl.RoundOf16);
+                var quarterFinalsCodes = GetDoubleMatchCodes(cl.QuarterFinals);
 
                 // building
                 sb.AppendFormat(RawPageCode,
                     CurrentSeasonNumber, startYear, finalYear, // season no/years
                     cl.Final.Date.ToLongDateString(), cl.Final.City, cl.Final.Winner, // final infos
-                    partTable.ElementAt(0).Key.FullName, // last winner
                     ColorGroupStage, ColorRoundOf16, ColorQuarterFinals, // base colors
                     ColorSemiFinals, ColorFinal, ColorWinner, // base colors
-                    partTable.ElementAt(0).Value.ToString().Substring(3), // last winner color
                     participants, // participants color+name
-                    partTable.ElementAt(partTable.Count - 1).Value.ToString().Substring(3), //macpv color
-                    partTable.ElementAt(partTable.Count - 1).Key.GetWikiCodeWithRemarks(), // macpv name
                     groupTeamList, groupCodes, // groups
-                    "");
+                    roundOf16Codes, quarterFinalsCodes, // KO round codes
+                    WikiCodeConverter.ToWikiCode(cl.SemiFinals[0].FirstLeg), // semi final 1 first leg
+                    WikiCodeConverter.ToWikiCode(cl.SemiFinals[1].FirstLeg), // semi final 2 first leg
+                    WikiCodeConverter.ToWikiCode(cl.SemiFinals[1].SecondLeg), // semi final 2 second leg
+                    WikiCodeConverter.ToWikiCode(cl.SemiFinals[0].SecondLeg), // semi final 1 second leg
+                    WikiCodeConverter.ToWikiCode(cl.Final) // final
+                    );
 
                 PageContent = sb.ToString();
 
@@ -326,7 +323,7 @@ namespace Simocracy.CLSim.PwrBot
         /// The team sorting inside a state is based on <see cref="ChampionsLeague.AllTeamsRaw"/>.
         /// The last winner is always the first team, MAC-PV always the last.
         /// </remarks>
-        public Dictionary<FootballTeam, Color> GetParticipantsTable()
+        public string[] GetParticipantsTable()
         {
             SimpleLog.Info($"Building participants table for CL season {Cl.Season}.");
             if(Cl.Coefficients.Count <= 0)
@@ -372,12 +369,18 @@ namespace Simocracy.CLSim.PwrBot
                 rawList[stateIndex][team] = color;
             }
 
-            var finalDic = new Dictionary<FootballTeam, Color>();
+            var finalList = new string[Cl.AllTeamsRaw.Count * 2];
+            int j = 0;
             foreach(var r in rawList.Values)
+            {
                 foreach(var d in r)
-                    finalDic.Add(d.Key, d.Value);
+                {
+                    finalList[j++] = d.Value.ToString().Substring(3);
+                    finalList[j++] = d.Key.GetWikiCodeWithRemarks();
+                }
+            }
 
-            return finalDic;
+            return finalList;
         }
 
         /// <summary>
@@ -405,7 +408,22 @@ namespace Simocracy.CLSim.PwrBot
             SimpleLog.Info($"Get group codes for CL season {Cl.Season}.");
 
             var list = new List<string>(8);
-            foreach(var g in Cl.Groups)
+            foreach (var g in Cl.Groups)
+                list.Add(WikiCodeConverter.ToWikiCode(g, WikiCodeConverter.ELeagueTemplate.AlGruppe, 2, 1));
+
+            return list.ToArray();
+        }
+
+        /// <summary>
+        /// Returns the group wiki codes as list
+        /// </summary>
+        /// <returns>The list</returns>
+        private string[] GetDoubleMatchCodes(IEnumerable<DoubleMatch> doubleMatches)
+        {
+            SimpleLog.Info($"Get double matches codes for {Cl.Season}.");
+
+            var list = new List<string>();
+            foreach (var g in Cl.Groups)
                 list.Add(WikiCodeConverter.ToWikiCode(g, WikiCodeConverter.ELeagueTemplate.AlGruppe, 2, 1));
 
             return list.ToArray();
