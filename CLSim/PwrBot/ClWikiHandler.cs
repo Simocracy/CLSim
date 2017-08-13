@@ -200,31 +200,6 @@ namespace Simocracy.CLSim.PwrBot
         }
 
         /// <summary>
-        /// Saves the page to the wiki and overrides existing pages
-        /// </summary>
-        /// <returns>True if successfully</returns>
-        public bool WritePageToWiki()
-        {
-            SimpleLog.Info($"Write article {PageTitle} to wiki.");
-
-            try
-            {
-                Page p = new Page(Site, PageTitle);
-                p.text = PageContent;
-                p.Save("CLSim simulation", false);
-
-                SimpleLog.Info($"Article {PageTitle} writed to wiki.");
-                return true;
-            }
-            catch(Exception e)
-            {
-                SimpleLog.Error(e.ToString());
-            }
-
-            return false;
-        }
-
-        /// <summary>
         /// Creates the page content for the given <see cref="ChampionsLeague"/>
         /// </summary>
         /// <param name="cl">The CL complete simulated instance</param>
@@ -257,13 +232,13 @@ namespace Simocracy.CLSim.PwrBot
         /// 155: Semi final 1 second leg
         /// 156: Final match
         /// </remarks>
-        public bool CreatePageContent(ChampionsLeague cl)
+        public bool CreatePageContent()
         {
-            SimpleLog.Info($"Create content for page {PageTitle} with Champions League {cl.Season}.");
+            SimpleLog.Info($"Create content for page {PageTitle} with Champions League {Cl.Season}.");
 
-            if(cl.Final == null || !cl.Final.IsSimulated)
+            if(Cl.Final == null || !Cl.Final.IsSimulated)
             {
-                SimpleLog.Warning($"The given CL {cl.Season} is not completly simulated.");
+                SimpleLog.Warning($"The given CL {Cl.Season} is not completly simulated.");
                 return false;
             }
 
@@ -273,28 +248,28 @@ namespace Simocracy.CLSim.PwrBot
 
                 // base infos
                 var participants = GetParticipantsTable();
-                var yearRegexMatch = YearRegex.Match(cl.Season);
+                var yearRegexMatch = YearRegex.Match(Cl.Season);
                 var startYear = yearRegexMatch.Groups[1].Value;
                 var finalYear = yearRegexMatch.Groups[2].Value.Substring(yearRegexMatch.Groups[2].Value.Length - 2);
                 var groupTeamList = GetGroupTeamList();
                 var groupCodes = GetGroupCodes();
-                var roundOf16Codes = GetDoubleMatchCodes(cl.RoundOf16);
-                var quarterFinalsCodes = GetDoubleMatchCodes(cl.QuarterFinals);
+                var roundOf16Codes = GetDoubleMatchCodes(Cl.RoundOf16);
+                var quarterFinalsCodes = GetDoubleMatchCodes(Cl.QuarterFinals);
 
                 // building
                 sb.AppendFormat(RawPageCode,
                     CurrentSeasonNumber, startYear, finalYear, // season no/years
-                    cl.Final.Date.ToLongDateString(), cl.Final.City, cl.Final.Winner, // final infos
+                    Cl.Final.Date.ToLongDateString(), Cl.Final.City, Cl.Final.Winner, // final infos
                     ColorGroupStage, ColorRoundOf16, ColorQuarterFinals, // base colors
                     ColorSemiFinals, ColorFinal, ColorWinner, // base colors
                     participants, // participants color+name
                     groupTeamList, groupCodes, // groups
                     roundOf16Codes, quarterFinalsCodes, // KO round codes
-                    WikiCodeConverter.ToWikiCode(cl.SemiFinals[0].FirstLeg), // semi final 1 first leg
-                    WikiCodeConverter.ToWikiCode(cl.SemiFinals[1].FirstLeg), // semi final 2 first leg
-                    WikiCodeConverter.ToWikiCode(cl.SemiFinals[1].SecondLeg), // semi final 2 second leg
-                    WikiCodeConverter.ToWikiCode(cl.SemiFinals[0].SecondLeg), // semi final 1 second leg
-                    WikiCodeConverter.ToWikiCode(cl.Final) // final
+                    WikiCodeConverter.ToWikiCode(Cl.SemiFinals[0].FirstLeg), // semi final 1 first leg
+                    WikiCodeConverter.ToWikiCode(Cl.SemiFinals[1].FirstLeg), // semi final 2 first leg
+                    WikiCodeConverter.ToWikiCode(Cl.SemiFinals[1].SecondLeg), // semi final 2 second leg
+                    WikiCodeConverter.ToWikiCode(Cl.SemiFinals[0].SecondLeg), // semi final 1 second leg
+                    WikiCodeConverter.ToWikiCode(Cl.Final) // final
                     );
 
                 PageContent = sb.ToString();
@@ -309,6 +284,47 @@ namespace Simocracy.CLSim.PwrBot
             }
 
             return false;
+        }
+
+        /// <summary>
+        /// Saves the page to the wiki and overrides existing pages
+        /// </summary>
+        /// <returns>True if successfully</returns>
+        public bool WritePageToWiki()
+        {
+            SimpleLog.Info($"Write article {PageTitle} to wiki.");
+
+            try
+            {
+                Page p = new Page(Site, PageTitle);
+                p.text = PageContent;
+                p.Save("CLSim simulation", false);
+
+                SimpleLog.Info($"Article {PageTitle} writed to wiki.");
+                return true;
+            }
+            catch (Exception e)
+            {
+                SimpleLog.Error(e.ToString());
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Creates the wiki page for the given <see cref="ChampionsLeague"/>
+        /// </summary>
+        /// <param name="cl">The champions league</param>
+        /// <returns>True if successfully</returns>
+        public static bool CreateWikiPage(ChampionsLeague cl)
+        {
+            var succ = false;
+            var handler = new ClWikiHandler(cl);
+            succ = handler.GetRawPageCode();
+            if(succ) succ = handler.GetClSeasonNumber();
+            if(succ) succ = handler.CreatePageContent();
+            if(succ) succ = handler.WritePageToWiki();
+            return succ;
         }
 
         #endregion
