@@ -151,12 +151,12 @@ namespace Simocracy.CLSim.Football.Base
         }
 
         /// <summary>
-        /// Set ups a football team. Scheme: {{Flag}} Team Name, Strenght (, Remarks)
+        /// Set ups a football team. Scheme: {{Flag}} Team Name; Strenght (; Remarks)
         /// </summary>
         /// <param name="inputStr">Input string</param>
         private void SetupTeam(string inputStr)
         {
-            var regexMatch = Regex.Match(inputStr, @"\{\{([^\}]+)\}\}\s*([^\,]+)\s*,\s*(\d+)(\s*,\s*(.*))?");
+            var regexMatch = Regex.Match(inputStr, @"\{\{([^\}]+)\}\}\s*([^\;]+)\s*;\s*(\d+)(\s*;\s*(.*))?");
             SetupTeam(regexMatch.Groups[2].Value, regexMatch.Groups[1].Value, Int32.Parse(regexMatch.Groups[3].Value), regexMatch.Groups[5].Value);
         }
 
