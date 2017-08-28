@@ -173,13 +173,14 @@ namespace Simocracy.CLSim.GUI
             WriteLine("Enter name of the final stadium:");
             var stadium = Read();
 
-            DateTime date;
+            DateTime date = DateTime.MinValue;
             string dateStr;
             do
             {
                 WriteLine("Enter name of the final date:");
                 dateStr = Read();
-            } while(DateTime.TryParse(dateStr, out date));
+                DateTime.TryParse(dateStr, out date);
+            } while(date == DateTime.MinValue);
 
             WriteLine("Initializing final...");
             Cl.InitFinal(stadium, city, date);

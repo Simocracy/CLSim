@@ -54,7 +54,7 @@ namespace Simocracy.CLSim
                 if(Globals.IsUafaClSimulation)
                 {
                     // UAFA CL in Console
-                    UafaClConsole.Simulate();
+                    UafaClConsole.Simulate(Globals.TeamListFile);
                 }
                 else
                 {

@@ -42,6 +42,11 @@ namespace Simocracy.CLSim
         public static bool IsUafaClSimulation { get; set; }
 
         /// <summary>
+        /// Team list file for console
+        /// </summary>
+        public static string TeamListFile { get; set; }
+
+        /// <summary>
         /// The command line options
         /// </summary>
         public static OptionSet Options => new OptionSet
@@ -49,18 +54,18 @@ namespace Simocracy.CLSim
             {"h|help", "Show this message.", v => ShowHelp = v != null},
             {"nolog", "Disable logging.", v => IsLogging = v == null},
             {
-                "loglevel", $"Sets the logging severity.{Environment.NewLine}" +
+                "loglevel", "Sets the logging severity." +
                             "The levels are: Info, Warning, Error and Exception.",
                 v => LogLevel = v
             },
             {
-                "cl|uafacl", $"Simulates an UAFA Champions League season in the command line.{Environment.NewLine}" +
+                "cl|uafacl", "Simulates an UAFA Champions League season in the command line." +
                              "Graphical simulation with input for each game will be disabled.",
                 v => IsUafaClSimulation = v != null
             },
             {
-                "teamfile", $"Use the given file as team file for simulation.{Environment.NewLine}",
-                v => IsUafaClSimulation = v != null
+                "teamfile", "Use the given file as team file for simulation.",
+                v => TeamListFile = v
             },
         };
 
