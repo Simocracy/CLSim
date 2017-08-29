@@ -24,6 +24,7 @@ namespace Simocracy.CLSim
             }
             catch(OptionException e)
             {
+                ConsoleManager.Show();
                 Console.Write($@"{System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName}: ");
                 Console.WriteLine(e.Message);
                 Console.WriteLine($@"Try '{System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName} --help' for more information.");
@@ -54,6 +55,7 @@ namespace Simocracy.CLSim
                 if(Globals.IsUafaClSimulation)
                 {
                     // UAFA CL in Console
+                    ConsoleManager.Show();
                     UafaClConsole.Simulate(Globals.TeamListFile);
                 }
                 else
@@ -72,6 +74,7 @@ namespace Simocracy.CLSim
             }
 
             app.Shutdown();
+            ConsoleManager.Hide();
             if(Globals.IsLogging)
             {
                 SimpleLog.Info($"{Globals.ProgramName} {Globals.ProgramVersion} closed");
@@ -82,6 +85,7 @@ namespace Simocracy.CLSim
 
         public static void ShowHelp()
         {
+            ConsoleManager.Show();
             Console.WriteLine($@"Usage: {System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName} [OPTIONS]+");
             Console.WriteLine();
             Console.WriteLine($@"Starts {Globals.ProgramName} with the given options.");
