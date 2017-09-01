@@ -298,7 +298,8 @@ namespace Simocracy.CLSim.Football.UAFA
         {
             // todo: better export syntax
             // Try export as xlsx
-            var isXlsSuccess = await ExcelHandler.ExportCoefficientsAsync(coeffs, season, fileName);
+            var coefficients = coeffs as Coefficient[] ?? coeffs.ToArray();
+            var isXlsSuccess = await ExcelHandler.ExportCoefficientsAsync(coefficients, season, fileName);
             bool isCsvSucces = false;
             if (!isXlsSuccess)
             {
@@ -309,7 +310,7 @@ namespace Simocracy.CLSim.Football.UAFA
                 if (fileName.EndsWith("xlsx"))
                     fileName = fileName.Replace(".xlsx", ".csv");
 
-                isCsvSucces = await CSVHandler.ExportCoefficient(coeffs, season, fileName);
+                isCsvSucces = await CSVHandler.ExportCoefficient(coefficients, season, fileName);
             }
 
             return isXlsSuccess || isCsvSucces;
