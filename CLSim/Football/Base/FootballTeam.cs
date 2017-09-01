@@ -213,7 +213,7 @@ namespace Simocracy.CLSim.Football.Base
         /// <returns>wiki code</returns>
         public string GetWikiCodeWithRemarks()
         {
-            if (String.IsNullOrWhiteSpace(Remark))
+            if (!String.IsNullOrWhiteSpace(Remark))
                 return $"{FullName}<ref group=\"A\">{Remark}</ref>";
             else
                 return FullName;
