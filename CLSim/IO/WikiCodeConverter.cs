@@ -200,26 +200,26 @@ namespace Simocracy.CLSim.IO
             sb.AppendLine($"|A4={league.Teams[3]}");
             sb.AppendLine($"|A5={league.Teams[4]}");
 
-            sb.Append($"|A1-A2={league.Matches.FirstOrDefault(m => m.TeamA == league.Teams[0] && m.TeamB == league.Teams[1])}\t");
-            sb.AppendLine($"|A2-A1={league.Matches.FirstOrDefault(m => m.TeamA == league.Teams[1] && m.TeamB == league.Teams[0])}");
-            sb.Append($"|A3-A4={league.Matches.FirstOrDefault(m => m.TeamA == league.Teams[2] && m.TeamB == league.Teams[3])}\t");
-            sb.AppendLine($"|A4-A3={league.Matches.FirstOrDefault(m => m.TeamA == league.Teams[3] && m.TeamB == league.Teams[2])}");
-            sb.Append($"|A2-A3={league.Matches.FirstOrDefault(m => m.TeamA == league.Teams[1] && m.TeamB == league.Teams[2])}\t");
-            sb.AppendLine($"|A3-A2={league.Matches.FirstOrDefault(m => m.TeamA == league.Teams[2] && m.TeamB == league.Teams[1])}");
-            sb.Append($"|A4-A5={league.Matches.FirstOrDefault(m => m.TeamA == league.Teams[3] && m.TeamB == league.Teams[4])}\t");
-            sb.AppendLine($"|A5-A4={league.Matches.FirstOrDefault(m => m.TeamA == league.Teams[4] && m.TeamB == league.Teams[3])}");
-            sb.Append($"|A5-A1={league.Matches.FirstOrDefault(m => m.TeamA == league.Teams[4] && m.TeamB == league.Teams[0])}\t");
-            sb.AppendLine($"|A1-A5={league.Matches.FirstOrDefault(m => m.TeamA == league.Teams[0] && m.TeamB == league.Teams[4])}");
-            sb.Append($"|A4-A2={league.Matches.FirstOrDefault(m => m.TeamA == league.Teams[3] && m.TeamB == league.Teams[1])}\t");
-            sb.AppendLine($"|A2-A4={league.Matches.FirstOrDefault(m => m.TeamA == league.Teams[1] && m.TeamB == league.Teams[3])}");
-            sb.Append($"|A3-A1={league.Matches.FirstOrDefault(m => m.TeamA == league.Teams[2] && m.TeamB == league.Teams[0])}\t");
-            sb.AppendLine($"|A1-A3={league.Matches.FirstOrDefault(m => m.TeamA == league.Teams[0] && m.TeamB == league.Teams[2])}");
-            sb.Append($"|A2-A5={league.Matches.FirstOrDefault(m => m.TeamA == league.Teams[1] && m.TeamB == league.Teams[4])}\t");
-            sb.AppendLine($"|A5-A2={league.Matches.FirstOrDefault(m => m.TeamA == league.Teams[4] && m.TeamB == league.Teams[1])}");
-            sb.Append($"|A1-A4={league.Matches.FirstOrDefault(m => m.TeamA == league.Teams[0] && m.TeamB == league.Teams[3])}\t");
-            sb.AppendLine($"|A4-A1={league.Matches.FirstOrDefault(m => m.TeamA == league.Teams[3] && m.TeamB == league.Teams[0])}");
-            sb.Append($"|A5-A3={league.Matches.FirstOrDefault(m => m.TeamA == league.Teams[4] && m.TeamB == league.Teams[2])}\t");
-            sb.AppendLine($"|A3-A5={league.Matches.FirstOrDefault(m => m.TeamA == league.Teams[2] && m.TeamB == league.Teams[4])}");
+            sb.Append($"|A1-A2={league.Matches.FirstOrDefault(m => m.TeamA == league.Teams[0] && m.TeamB == league.Teams[1])?.FullResultStr ?? String.Empty}\t");
+            sb.AppendLine($"|A2-A1={league.Matches.FirstOrDefault(m => m.TeamA == league.Teams[1] && m.TeamB == league.Teams[0])?.FullResultStr ?? String.Empty}");
+            sb.Append($"|A3-A4={league.Matches.FirstOrDefault(m => m.TeamA == league.Teams[2] && m.TeamB == league.Teams[3])?.FullResultStr ?? String.Empty}\t");
+            sb.AppendLine($"|A4-A3={league.Matches.FirstOrDefault(m => m.TeamA == league.Teams[3] && m.TeamB == league.Teams[2])?.FullResultStr ?? String.Empty}");
+            sb.Append($"|A2-A3={league.Matches.FirstOrDefault(m => m.TeamA == league.Teams[1] && m.TeamB == league.Teams[2])?.FullResultStr ?? String.Empty}\t");
+            sb.AppendLine($"|A3-A2={league.Matches.FirstOrDefault(m => m.TeamA == league.Teams[2] && m.TeamB == league.Teams[1])?.FullResultStr ?? String.Empty}");
+            sb.Append($"|A4-A5={league.Matches.FirstOrDefault(m => m.TeamA == league.Teams[3] && m.TeamB == league.Teams[4])?.FullResultStr ?? String.Empty}\t");
+            sb.AppendLine($"|A5-A4={league.Matches.FirstOrDefault(m => m.TeamA == league.Teams[4] && m.TeamB == league.Teams[3])?.FullResultStr ?? String.Empty}");
+            sb.Append($"|A5-A1={league.Matches.FirstOrDefault(m => m.TeamA == league.Teams[4] && m.TeamB == league.Teams[0])?.FullResultStr ?? String.Empty}\t");
+            sb.AppendLine($"|A1-A5={league.Matches.FirstOrDefault(m => m.TeamA == league.Teams[0] && m.TeamB == league.Teams[4])?.FullResultStr ?? String.Empty}");
+            sb.Append($"|A4-A2={league.Matches.FirstOrDefault(m => m.TeamA == league.Teams[3] && m.TeamB == league.Teams[1])?.FullResultStr ?? String.Empty}\t");
+            sb.AppendLine($"|A2-A4={league.Matches.FirstOrDefault(m => m.TeamA == league.Teams[1] && m.TeamB == league.Teams[3])?.FullResultStr ?? String.Empty}");
+            sb.Append($"|A3-A1={league.Matches.FirstOrDefault(m => m.TeamA == league.Teams[2] && m.TeamB == league.Teams[0])?.FullResultStr ?? String.Empty}\t");
+            sb.AppendLine($"|A1-A3={league.Matches.FirstOrDefault(m => m.TeamA == league.Teams[0] && m.TeamB == league.Teams[2])?.FullResultStr ?? String.Empty}");
+            sb.Append($"|A2-A5={league.Matches.FirstOrDefault(m => m.TeamA == league.Teams[1] && m.TeamB == league.Teams[4])?.FullResultStr ?? String.Empty}\t");
+            sb.AppendLine($"|A5-A2={league.Matches.FirstOrDefault(m => m.TeamA == league.Teams[4] && m.TeamB == league.Teams[1])?.FullResultStr ?? String.Empty}");
+            sb.Append($"|A1-A4={league.Matches.FirstOrDefault(m => m.TeamA == league.Teams[0] && m.TeamB == league.Teams[3])?.FullResultStr ?? String.Empty}\t");
+            sb.AppendLine($"|A4-A1={league.Matches.FirstOrDefault(m => m.TeamA == league.Teams[3] && m.TeamB == league.Teams[0])?.FullResultStr ?? String.Empty}");
+            sb.Append($"|A5-A3={league.Matches.FirstOrDefault(m => m.TeamA == league.Teams[4] && m.TeamB == league.Teams[2])?.FullResultStr ?? String.Empty}\t");
+            sb.AppendLine($"|A3-A5={league.Matches.FirstOrDefault(m => m.TeamA == league.Teams[2] && m.TeamB == league.Teams[4])?.FullResultStr ?? String.Empty}");
 
             sb.Append("}}");
 

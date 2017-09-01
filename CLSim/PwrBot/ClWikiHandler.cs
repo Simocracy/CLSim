@@ -202,7 +202,6 @@ namespace Simocracy.CLSim.PwrBot
         /// <summary>
         /// Creates the page content for the given <see cref="ChampionsLeague"/>
         /// </summary>
-        /// <param name="cl">The CL complete simulated instance</param>
         /// <returns>True if successfully</returns>
         /// <remarks>
         /// The Variables needed in Raw Page:
@@ -249,8 +248,8 @@ namespace Simocracy.CLSim.PwrBot
                 // base infos
                 var participants = GetParticipantsTable();
                 var yearRegexMatch = YearRegex.Match(Cl.Season);
-                var startYear = yearRegexMatch.Groups[1].Value;
-                var finalYear = yearRegexMatch.Groups[2].Value.Substring(yearRegexMatch.Groups[2].Value.Length - 2);
+                var startYear = yearRegexMatch.Groups[2].Value;
+                var finalYear = yearRegexMatch.Groups[3].Value.Substring(yearRegexMatch.Groups[3].Value.Length - 2);
                 var groupTeamList = GetGroupTeamList();
                 var groupCodes = GetGroupCodes();
                 var roundOf16Codes = GetDoubleMatchCodes(Cl.RoundOf16);
@@ -318,9 +317,8 @@ namespace Simocracy.CLSim.PwrBot
         /// <returns>True if successfully</returns>
         public static bool CreateWikiPage(ChampionsLeague cl)
         {
-            var succ = false;
             var handler = new ClWikiHandler(cl);
-            succ = handler.GetRawPageCode();
+            var succ = handler.GetRawPageCode();
             if(succ) succ = handler.GetClSeasonNumber();
             if(succ) succ = handler.CreatePageContent();
             if(succ) succ = handler.WritePageToWiki();
@@ -425,7 +423,7 @@ namespace Simocracy.CLSim.PwrBot
 
             var list = new List<string>(8);
             foreach (var g in Cl.Groups)
-                list.Add(WikiCodeConverter.ToWikiCode(g, WikiCodeConverter.ELeagueTemplate.AlGruppe, 2, 1));
+                list.Add(WikiCodeConverter.ToWikiCode(g, WikiCodeConverter.ELeagueTemplate.AlGruppe));
 
             return list.ToArray();
         }
@@ -438,9 +436,28 @@ namespace Simocracy.CLSim.PwrBot
         {
             SimpleLog.Info($"Get double matches codes for {Cl.Season}.");
 
-            var list = new List<string>();
-            foreach (var g in Cl.Groups)
-                list.Add(WikiCodeConverter.ToWikiCode(g, WikiCodeConverter.ELeagueTemplate.AlGruppe, 2, 1));
+            var dMatches = doubleMatches as DoubleMatch[] ?? doubleMatches.ToArray();
+            var list = new List<string>(dMatches.Length);
+            int teamIndex = 0;
+            foreach(var dm in dMatches)
+            {
+                var t1 = ++teamIndex;
+                var t2 = ++teamIndex;
+
+                var sb = new StringBuilder();
+                sb.AppendLine($"|A{t1}={dm.TeamA}");
+                sb.AppendLine($"|A{t2}={dm.TeamB}");
+                sb.AppendLine($"|A{t1}-A{t2}={dm.FirstLeg.ResultA}|{dm.FirstLeg.ResultA}");
+                sb.AppendLine($"|A{t2}-A{t1}={dm.SecondLeg.ResultA}|{dm.SecondLeg.ResultB}");
+                sb.Append($"|A{t1}-A{t2}-Verl=");
+                if(dm.SecondLeg.IsExtraTime)
+                    sb.AppendLine("j");
+                else
+                    sb.AppendLine();
+                sb.Append($"|A{t1}-A{t2}-Elfm={dm.SecondLeg.PenaltyA}|{dm.SecondLeg.PenaltyB}");
+
+                list.Add(sb.ToString());
+            }
 
             return list.ToArray();
         }
