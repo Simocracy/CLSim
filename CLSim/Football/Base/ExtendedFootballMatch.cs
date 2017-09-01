@@ -165,15 +165,17 @@ namespace Simocracy.CLSim.Football.Base
         public FootballTeam Winner => GetWinner();
 
         /// <summary>
-        /// Full result string with penalty result
+        /// Full result string with extra time and penalty
         /// </summary>
-        public override string FullResultStr {
+        public override string FullResultStr
+        {
             get
             {
-                if(IsPenalty) return $"{PenaltyA}:{PenaltyB} iE. ({base.FullResultStr})";
-                if(IsExtraTime) return $"{base.FullResultStr} nV.";
+                if (IsPenalty) return $"{PenaltyA}:{PenaltyB} iE. ({base.FullResultStr})";
+                if (IsExtraTime) return $"{base.FullResultStr} nV.";
                 return base.FullResultStr;
-            } }
+            }
+        }
 
         #endregion
 

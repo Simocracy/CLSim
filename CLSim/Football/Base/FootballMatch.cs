@@ -58,6 +58,8 @@ namespace Simocracy.CLSim.Football.Base
 
             PropertyChanged += PropertyChangedPropagator.Create(nameof(ResultA), nameof(FullResultStr), Notify);
             PropertyChanged += PropertyChangedPropagator.Create(nameof(ResultB), nameof(FullResultStr), Notify);
+            PropertyChanged += PropertyChangedPropagator.Create(nameof(ResultA), nameof(ResultStr), Notify);
+            PropertyChanged += PropertyChangedPropagator.Create(nameof(ResultB), nameof(ResultStr), Notify);
 
             Reset();
         }
@@ -197,6 +199,11 @@ namespace Simocracy.CLSim.Football.Base
             get => _MatchTime;
             set { _MatchTime = value; Notify(); }
         }
+
+        /// <summary>
+        /// Result string
+        /// </summary>
+        public virtual string ResultStr => $"{ResultA}:{ResultB}";
 
         /// <summary>
         /// Full result string
