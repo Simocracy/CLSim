@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Office.Interop.Excel;
@@ -113,19 +114,20 @@ namespace Simocracy.CLSim.IO
             if(!CanUse) return false;
 
             if(!fileName.EndsWith(".xlsx")) fileName += ".xlsx";
+            FileInfo file = new FileInfo(fileName);
             bool retVal = false;
 
             try
             {
-                SimpleLog.Info($"Save Excel file \"{fileName}\".");
-                Workbook.SaveAs(Filename: fileName);
+                SimpleLog.Info($"Save Excel file \"{file.FullName}\".");
+                Workbook.SaveAs(Filename: file.FullName);
                 ExcelApp.Quit();
                 retVal = true;
-                SimpleLog.Info($"Excel file \"{fileName}\" saved.");
+                SimpleLog.Info($"Excel file \"{file.FullName}\" saved.");
             }
             catch(Exception e)
             {
-                SimpleLog.Log($"Failed to write file \"{fileName}\".");
+                SimpleLog.Log($"Failed to write file \"{file.FullName}\".");
                 SimpleLog.Error(e.ToString());
             }
             return retVal;
