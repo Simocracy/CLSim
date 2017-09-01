@@ -10,7 +10,7 @@ namespace Simocracy.CLSim.Football.Base
     /// Football Match
     /// </summary>
     /// <remarks>By Laserdisc/Flux, adapted from Simocracy Sport Simulator</remarks>
-    [DebuggerDisplay("Match:{" + nameof(Name) + "}")]
+    [DebuggerDisplay("{" + nameof(Name) + "} {" + nameof(FullResultStr) + "}")]
     public class FootballMatch : INotifyPropertyChanged
     {
         #region Members
@@ -56,6 +56,9 @@ namespace Simocracy.CLSim.Football.Base
             TeamA = teamA;
             TeamB = teamB;
 
+            PropertyChanged += PropertyChangedPropagator.Create(nameof(ResultA), nameof(FullResultStr), Notify);
+            PropertyChanged += PropertyChangedPropagator.Create(nameof(ResultB), nameof(FullResultStr), Notify);
+
             Reset();
         }
 
@@ -81,7 +84,9 @@ namespace Simocracy.CLSim.Football.Base
         public FootballTeam TeamA
         {
             get => _TeamA;
-            set { _TeamA = value;
+            set
+            {
+                _TeamA = value;
                 AllTeams[0] = value;
                 Notify();
             }
@@ -93,7 +98,9 @@ namespace Simocracy.CLSim.Football.Base
         public FootballTeam TeamB
         {
             get => _TeamB;
-            set { _TeamB = value;
+            set
+            {
+                _TeamB = value;
                 AllTeams[1] = value;
                 Notify();
             }
@@ -109,7 +116,7 @@ namespace Simocracy.CLSim.Football.Base
             {
                 _ResultA = value;
                 Notify();
-                if(value >= 0) IsSimulated = true;
+                if (value >= 0) IsSimulated = true;
             }
         }
 
@@ -191,6 +198,11 @@ namespace Simocracy.CLSim.Football.Base
             set { _MatchTime = value; Notify(); }
         }
 
+        /// <summary>
+        /// Full result string
+        /// </summary>
+        public virtual string FullResultStr => $"{ResultA}:{ResultB}";
+
         #endregion
 
         #region Methods
@@ -268,6 +280,8 @@ namespace Simocracy.CLSim.Football.Base
             int resA = 0;
             int resB = 0;
 
+            time = time / 2;
+
             _Ball = Kickoff();
             for (int i = 1; i <= time; i++)
             {
@@ -323,10 +337,10 @@ namespace Simocracy.CLSim.Football.Base
         private int Turn(int strength1, int strength2)
         {
             int random = Globals.Random.Next(strength1 + strength2);
-            if(random < strength1)
+            if (random < strength1)
                 return ++_Ball;
             else
-                switch(_Ball)
+                switch (_Ball)
                 {
                     case TorwartA:
                         return SturmB;
@@ -352,9 +366,9 @@ namespace Simocracy.CLSim.Football.Base
         private int Kickoff()
         {
             int random = Globals.Random.Next(2);
-            if(random == 0)
+            if (random == 0)
             { _Start = MittelfeldB; return MittelfeldA; }
-            if(random == 1)
+            if (random == 1)
             { _Start = MittelfeldA; return MittelfeldB; }
             else
                 return 0;

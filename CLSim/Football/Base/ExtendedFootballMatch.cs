@@ -45,6 +45,9 @@ namespace Simocracy.CLSim.Football.Base
             PropertyChanged += PropertyChangedPropagator.Create(nameof(ExtraResultB), nameof(Winner), Notify);
             PropertyChanged += PropertyChangedPropagator.Create(nameof(PenaltyB), nameof(Winner), Notify);
 
+            PropertyChanged += PropertyChangedPropagator.Create(nameof(PenaltyA), nameof(FullResultStr), Notify);
+            PropertyChanged += PropertyChangedPropagator.Create(nameof(PenaltyB), nameof(FullResultStr), Notify);
+
             Reset();
         }
 
@@ -160,6 +163,17 @@ namespace Simocracy.CLSim.Football.Base
         /// Gets the winner team
         /// </summary>
         public FootballTeam Winner => GetWinner();
+
+        /// <summary>
+        /// Full result string with penalty result
+        /// </summary>
+        public override string FullResultStr {
+            get
+            {
+                if(IsPenalty) return $"{PenaltyA}:{PenaltyB} iE. ({base.FullResultStr})";
+                if(IsExtraTime) return $"{base.FullResultStr} nV.";
+                return base.FullResultStr;
+            } }
 
         #endregion
 
