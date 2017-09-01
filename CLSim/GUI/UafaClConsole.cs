@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Simocracy.CLSim.Football.UAFA;
 using Simocracy.CLSim.IO;
 using Simocracy.CLSim.PwrBot;
@@ -44,7 +45,7 @@ namespace Simocracy.CLSim.GUI
         {
             WriteLine("UAFA Champions League simulation.");
             WriteLine();
-            Write("Simulated season: ");
+            WriteLine("Simulated season:");
             var season = Read();
             var cl = new UafaClConsole(season);
             WriteLine($"UAFA Champions League season {cl.Cl.Season} created.");
@@ -205,7 +206,7 @@ namespace Simocracy.CLSim.GUI
             if(!String.IsNullOrWhiteSpace(coeffFile))
             {
                 WriteLine("Exporting UAFA Coefficient...");
-                Cl.ExportCoefficient(coeffFile).RunSynchronously();
+                var res = Task.Run(() => Cl.ExportCoefficient(coeffFile));
             }
 
             WriteLine("Create wiki page...");
