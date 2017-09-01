@@ -89,7 +89,9 @@ namespace Simocracy.CLSim.IO
             try
             {       
                 ExcelApp = new Application();
-                //ExcelApp.Visible = true;
+#if DEBUG
+                ExcelApp.Visible = true;
+#endif
                 ExcelApp.DisplayAlerts = false;
                 Workbook = ExcelApp.Workbooks.Add(1);
                 Worksheet = (Worksheet)Workbook.Sheets[1];
