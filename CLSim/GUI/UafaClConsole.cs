@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading.Tasks;
 using Simocracy.CLSim.Football.UAFA;
 using Simocracy.CLSim.IO;
 using Simocracy.CLSim.PwrBot;
@@ -174,12 +173,11 @@ namespace Simocracy.CLSim.GUI
             WriteLine("Enter name of the final stadium:");
             var stadium = Read();
 
-            DateTime date = DateTime.MinValue;
-            string dateStr;
+            DateTime date;
             do
             {
                 WriteLine("Enter name of the final date:");
-                dateStr = Read();
+                var dateStr = Read();
                 DateTime.TryParse(dateStr, out date);
             } while(date == DateTime.MinValue);
 
@@ -206,7 +204,10 @@ namespace Simocracy.CLSim.GUI
             if(!String.IsNullOrWhiteSpace(coeffFile))
             {
                 WriteLine("Exporting UAFA Coefficient...");
-                var res = Task.Run(() => Cl.ExportCoefficient(coeffFile));
+                if(Cl.ExportCoefficient(coeffFile).Result)
+                    WriteLine("Export successfull.");
+                else
+                    WriteLine("Export failed:");
             }
 
             WriteLine("Create wiki page...");
