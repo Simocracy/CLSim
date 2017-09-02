@@ -383,25 +383,22 @@ namespace Simocracy.CLSim.Football.UAFA
             bool reValidNeeded = false;
             for(int i = 0; i < Groups.Count; i++)
             {
-                var group = Groups[i];
-                isNationValid[i] = !AreSameStatesInGroup(group);
-                if(isNationValid[i])
-                    continue;
-
-                // Switch teams
-                for(int teamA = 0; teamA < group.TeamCount - 1; teamA++)
+                isNationValid[i] = true;
+                for(int teamA = 0; teamA < Groups[i].TeamCount; teamA++)
                 {
-                    for(int teamB = teamA + 1; teamB < group.TeamCount; teamB++)
+                    for(int teamB = teamA + 1; teamB < Groups[i].TeamCount; teamB++)
                     {
-                        var res = SwitchTeamGroups(i, teamA, teamB);
-                        if(!reValidNeeded)
-                            reValidNeeded = res;
+                        if(Groups[i].Teams[teamA].State == Groups[i].Teams[teamB].State)
+                        {
+                            isNationValid[i] = false;
+                            reValidNeeded = SwitchTeamGroups(i, teamA, teamB);
+                        }
                     }
                 }
-
-                if(reValidNeeded)
-                    isNationValid[i] = !AreSameStatesInGroup(group);
             }
+
+            if(reValidNeeded)
+                isNationValid = ValidateGroups();
 
             return isNationValid;
         }
@@ -417,42 +414,22 @@ namespace Simocracy.CLSim.Football.UAFA
         {
             var group = Groups[groupNo];
 
+            // other group
+            int otherGroupNo = groupNo - 1;
+            if (otherGroupNo < 0) otherGroupNo += 8;
+            var otherGroup = Groups[otherGroupNo];
+
             // Check
             if(group.Teams[teamA].State != group.Teams[teamB].State)
                 return false;
 
-            // Previous group
-            if(groupNo > 0 && Groups[groupNo - 1].Teams[teamA].State != group.Teams[teamA].State)
-            {
-                var newTeam = Groups[groupNo - 1].Teams[teamA];
-                Groups[groupNo - 1].Teams[teamA] = group.Teams[teamA];
-                group.Teams[teamA] = newTeam;
-                SimpleLog.Info($"Switched teams in groups {Groups[groupNo - 1].ID} and {group.ID}");
-            }
-            // Next group
-            else if(groupNo < Groups.Count-1 && Groups[groupNo + 1].Teams[teamA].State != group.Teams[teamA].State)
-            {
-                var newTeam = Groups[groupNo + 1].Teams[teamA];
-                Groups[groupNo + 1].Teams[teamA] = group.Teams[teamA];
-                group.Teams[teamA] = newTeam;
-                SimpleLog.Info($"Switched teams in groups {group.ID} and {Groups[groupNo + 1].ID}");
-            }
-            else return false;
+            // Switch teams
+            var newTeam = otherGroup.Teams[teamA];
+            otherGroup.Teams[teamA] = group.Teams[teamA];
+            group.Teams[teamA] = newTeam;
+            SimpleLog.Info($"Switched teams in groups {otherGroup.ID} and {group.ID}");
 
             return true;
-        }
-
-        /// <summary>
-        /// Checks if 2 teams from the same state in the same group and returns false if not
-        /// </summary>
-        /// <param name="group">Group</param>
-        private bool AreSameStatesInGroup(FootballLeague group)
-        {
-            for(int i = 0; i < group.TeamCount - 1; i++)
-            for(int j = i + 1; j < group.TeamCount; j++)
-                if(group.Teams[i].State == group.Teams[j].State)
-                    return true;
-            return false;
         }
 
         #endregion
