@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Windows.Media;
 using Simocracy.CLSim.Football.Base;
 using SimpleLogger;
 
@@ -64,9 +66,9 @@ namespace Simocracy.CLSim.IO
 
                 var clas = String.Empty;
                 if(i <= qual1Count)
-                    clas = "class\"=qual1\"";
+                    clas = "class=\"qual1\"";
                 else if(i <= qual1Count + qual2Count)
-                    clas = "class\"=qual2\"";
+                    clas = "class=\"qual2\"";
 
                 sb.AppendLine($"|- {clas}");
                 sb.Append($"| '''{i}''' |");
@@ -121,15 +123,15 @@ namespace Simocracy.CLSim.IO
             SimpleLog.Info($"Convert double match {doubleMatch} to wiki code.");
             var sb = new StringBuilder();
 
-            sb.AppendLine($"|A1={doubleMatch.TeamA}");
-            sb.AppendLine($"|A2={doubleMatch.TeamB}");
-            sb.AppendLine($"|A1-A2={doubleMatch.FirstLeg.ResultA}|{doubleMatch.FirstLeg.ResultB}");
-            sb.AppendLine($"|A2-A1={doubleMatch.SecondLeg.ResultA}|{doubleMatch.SecondLeg.ResultB}");
+            sb.AppendLine($"|A{teamNo1}={doubleMatch.TeamA}");
+            sb.AppendLine($"|A{teamNo2}={doubleMatch.TeamB}");
+            sb.AppendLine($"|A{teamNo1}-A{teamNo2}={doubleMatch.FirstLeg.ResultA}|{doubleMatch.FirstLeg.ResultB}");
+            sb.AppendLine($"|A{teamNo2}-A{teamNo1}={doubleMatch.SecondLeg.ResultA}|{doubleMatch.SecondLeg.ResultB}");
             var extraTime = doubleMatch.SecondLeg.IsExtraTime ? "t" : String.Empty;
-            sb.AppendLine($"|A1-A2-Verl={extraTime}");
+            sb.AppendLine($"|A{teamNo1}-A{teamNo2}-Verl={extraTime}");
             var p1 = doubleMatch.SecondLeg.IsPenalty ? doubleMatch.PenaltyA.ToString() : String.Empty;
             var p2 = doubleMatch.SecondLeg.IsPenalty ? doubleMatch.PenaltyB.ToString() : String.Empty;
-            sb.Append($"|A1-A2-Elfm={p1}|{p2}");
+            sb.Append($"|A{teamNo1}-A{teamNo2}-Elfm={p1}|{p2}");
 
             return sb.ToString();
         }
@@ -156,18 +158,120 @@ namespace Simocracy.CLSim.IO
 
             var date = match.Date != DateTime.MinValue ? match.Date.ToShortDateString() : String.Empty;
             sb.AppendLine($"|Datum={date}");
-            sb.AppendLine($"Stadion={match.Stadium ?? String.Empty}");
-            sb.AppendLine($"Stadion-Land={match.City ?? String.Empty}");
+            sb.AppendLine($"|Stadion={match.Stadium ?? String.Empty}");
+            sb.AppendLine($"|Stadion-Land={match.City ?? String.Empty}");
 
             var resStr = $"{match.ResultA}:{match.ResultB}";
             var extMatch = match as ExtendedFootballMatch;
             if(extMatch != null && extMatch.IsExtraTime)
                 resStr += " n. V.";
-            sb.AppendLine($"Ergebnis={resStr}");
+            sb.AppendLine($"|Ergebnis={resStr}");
 
-            sb.AppendLine("Zuschauer=");
-            sb.AppendLine($"Schiri={match.Refere ?? String.Empty}");
+            sb.AppendLine("|Zuschauer=");
+            sb.AppendLine($"|Schiri={match.Refere ?? String.Empty}");
             sb.Append("}}");
+
+            return sb.ToString();
+        }
+
+        #endregion
+
+        #region Article Tables
+
+        /// <summary>
+        /// Builds the participant table sorted by state for UAFA CL/AL.
+        /// First state must be last winner team, last state MAC-PV.
+        /// </summary>
+        /// <param name="participants">Participants sorted by state</param>
+        /// <returns>Participant table wiki code</returns>
+        public static string GetUafaClParticipantTable(SortedDictionary<string, Dictionary<FootballTeam, Color>> participants)
+        {
+            SimpleLog.Info("Building participant table for UAFA CL/AL.");
+            var sb = new StringBuilder();
+
+            sb.AppendLine("{| class=\"wikitable\" style=\"width:100%;\"");
+            sb.AppendLine("|-");
+            sb.AppendLine("! style=\"width:25%;\" | Meister");
+            sb.AppendLine("! style=\"width:25%;\" | Zweitplatzierter");
+            sb.AppendLine("! rowspan=\"11\" style=\"width:1%;\" | ");
+            sb.AppendLine("! style=\"width:25%;\" | Meister");
+            sb.AppendLine("! style=\"width:25%;\" | Zweitplatzierter");
+            sb.AppendLine("|-");
+
+            int i = 1;
+            foreach(var state in participants)
+            {
+                if(state.Key.Contains("macpv"))
+                {
+                    sb.AppendLine($"| style=\"background-color:#{state.Value.First().Value.ToString().Substring(3)}; colspan=\"5\" | Verterter Puerta Venturas: {state.Value.First().Key}");
+                }
+                else if(state.Key.EndsWith("tv"))
+                {
+                    sb.AppendLine($"| style=\"background-color:#{participants.First().Value.First().Value.ToString().Substring(3)};\" colspan=\"2\" | Titelverteidiger: {participants.First().Value.First().Key}");
+                }
+                else
+                {
+
+                    foreach(var team in state.Value)
+                        sb.AppendLine($"| style=\"background-color:#{team.Value.ToString().Substring(3)};\" | {team.Key.GetWikiCodeWithRemarks()}");
+
+                    i++;
+                    if(i % 2 == 0)
+                        sb.AppendLine("|-");
+                }
+            }
+
+            sb.AppendLine("|}");
+            sb.Append("<small><references group=\"A\" /></small>");
+
+            return sb.ToString();
+        }
+
+        /// <summary>
+        /// Gets the group teams table code for 8 groups with 5 teams
+        /// </summary>
+        /// <param name="teams">the teams sorted per group</param>
+        /// <returns>The team group table</returns>
+        public static string GetGroupTeamsTable(IEnumerable<string> teams)
+        {
+            SimpleLog.Info("Building group teams table.");
+            var sb = new StringBuilder();
+
+            var tArr = teams.ToArray();
+
+            sb.AppendLine("{| class=\"wikitable\" style=\"width:100%;\"");
+            sb.AppendLine("|-");
+            sb.AppendLine("! style=\"width:25%;\" | Gruppe A");
+            sb.AppendLine("! style=\"width:25%;\" | Gruppe B");
+            sb.AppendLine("! style=\"width:25%;\" | Gruppe C");
+            sb.AppendLine("! style=\"width:25%;\" | Gruppe D");
+            sb.AppendLine("|-");
+
+            for(int i = 0; i < 5; i++)
+            {
+                sb.AppendLine($"| {tArr[i]}");
+                sb.AppendLine($"| {tArr[i + 5]}");
+                sb.AppendLine($"| {tArr[i + 10]}");
+                sb.AppendLine($"| {tArr[i + 15]}");
+                sb.AppendLine("|-");
+            }
+
+            sb.AppendLine("! style=\"width:25%;\" | Gruppe E");
+            sb.AppendLine("! style=\"width:25%;\" | Gruppe F");
+            sb.AppendLine("! style=\"width:25%;\" | Gruppe G");
+            sb.AppendLine("! style=\"width:25%;\" | Gruppe H");
+            sb.AppendLine("|-");
+
+            for(int i = 20; i < 25; i++)
+            {
+                sb.AppendLine($"| {tArr[i]}");
+                sb.AppendLine($"| {tArr[i + 5]}");
+                sb.AppendLine($"| {tArr[i + 10]}");
+                sb.AppendLine($"| {tArr[i + 15]}");
+                sb.AppendLine("|-");
+            }
+
+            sb.Append("|}");
 
             return sb.ToString();
         }

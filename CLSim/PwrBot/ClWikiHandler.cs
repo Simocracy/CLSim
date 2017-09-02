@@ -65,8 +65,8 @@ namespace Simocracy.CLSim.PwrBot
             Cl = cl;
 
             var yearRegexMatch = YearRegex.Match(cl.Season);
-            var startYear = yearRegexMatch.Groups[1].Value;
-            var finalYear = yearRegexMatch.Groups[2].Value.Substring(yearRegexMatch.Groups[2].Value.Length - 2);
+            var startYear = yearRegexMatch.Groups[2].Value;
+            var finalYear = yearRegexMatch.Groups[3].Value.Substring(yearRegexMatch.Groups[3].Value.Length - 2);
             PageTitle = $"{ClPageTitlePrefix} {startYear}/{finalYear}";
         }
 
@@ -205,31 +205,29 @@ namespace Simocracy.CLSim.PwrBot
         /// <returns>True if successfully</returns>
         /// <remarks>
         /// The Variables needed in Raw Page:
-        ///   0: season number
-        ///   1: start year (4 digits)
-        ///   2: final year (2 digits)
-        ///   3: full final date string
-        ///   4: final city
-        ///   5: winner team
-        ///   6: group stage out color
-        ///   7: round of 16 out color
-        ///   8: quarter finals out color
+        ///  0: season number
+        ///  1: start year (4 digits)
+        ///  2: final year (2 digits)
+        ///  3: full final date string
+        ///  4: final city
+        ///  5: winner team
+        ///  6: group stage out color
+        ///  7: round of 16 out color
+        ///  8: quarter finals out color
         ///  9: semi finals out color
-        ///  10: final color
-        ///  11: winner color
-        ///  12: last winner
-        ///  13: last winner out color
-        ///  14- 89: team out color / team with remarks
-        ///  90- 91: MAC-PV team out color /team with remarks
-        ///  92-131: Group A-H teams
-        /// 132-139: Group A-H Codes
-        /// 140-147: Round of 16 matches
-        /// 148-151: Quarter finals matches
-        /// 152: Semi final 1 first leg
-        /// 153: Semi final 2 first leg
-        /// 154: Semi final 2 second leg
-        /// 155: Semi final 1 second leg
-        /// 156: Final match
+        /// 10: final color
+        /// 11: winner color
+        /// 12: last winner
+        /// 13: participant table
+        /// 14: group team list table
+        /// 15-22: Group A-H Codes
+        /// 23-30: Round of 16 matches
+        /// 31-34: Quarter finals matches
+        /// 35: Semi final 1 first leg
+        /// 36: Semi final 2 first leg
+        /// 37: Semi final 2 second leg
+        /// 38: Semi final 1 second leg
+        /// 39: Final match
         /// </remarks>
         public bool CreatePageContent()
         {
@@ -259,11 +257,16 @@ namespace Simocracy.CLSim.PwrBot
                 sb.AppendFormat(RawPageCode,
                     CurrentSeasonNumber, startYear, finalYear, // season no/years
                     Cl.Final.Date.ToLongDateString(), Cl.Final.City, Cl.Final.Winner, // final infos
-                    ColorGroupStage, ColorRoundOf16, ColorQuarterFinals, // base colors
-                    ColorSemiFinals, ColorFinal, ColorWinner, // base colors
-                    participants, // participants color+name
-                    groupTeamList, groupCodes, // groups
-                    roundOf16Codes, quarterFinalsCodes, // KO round codes
+                    ColorGroupStage.ToString().Substring(3), ColorRoundOf16.ToString().Substring(3), // base colors
+                    ColorQuarterFinals.ToString().Substring(3), ColorSemiFinals.ToString().Substring(3), // base colors
+                    ColorFinal.ToString().Substring(3), ColorWinner.ToString().Substring(3), // base colors
+                    participants.Item1, participants.Item2, groupTeamList, // participants
+                    groupCodes[0], groupCodes[1], groupCodes[2], groupCodes[3], // groups
+                    groupCodes[4], groupCodes[5], groupCodes[6], groupCodes[7], // groups
+                    roundOf16Codes[0], roundOf16Codes[1], roundOf16Codes[2], roundOf16Codes[3], // Round of 16
+                    roundOf16Codes[4], roundOf16Codes[5], roundOf16Codes[6], roundOf16Codes[7], // Round of 16
+                    quarterFinalsCodes[0], quarterFinalsCodes[1], // Quarter Finals
+                    quarterFinalsCodes[2], quarterFinalsCodes[3], // Quarter Finals
                     WikiCodeConverter.ToWikiCode(Cl.SemiFinals[0].FirstLeg), // semi final 1 first leg
                     WikiCodeConverter.ToWikiCode(Cl.SemiFinals[1].FirstLeg), // semi final 2 first leg
                     WikiCodeConverter.ToWikiCode(Cl.SemiFinals[1].SecondLeg), // semi final 2 second leg
@@ -330,14 +333,14 @@ namespace Simocracy.CLSim.PwrBot
         #region Utility Methods
 
         /// <summary>
-        /// Gets the participants table values for the champions league
+        /// Gets the participants table values for the champions league with last winner first
         /// </summary>
-        /// <returns>the table values</returns>
+        /// <returns>Tuple with the last winner and the table</returns>
         /// <remarks>
         /// The team sorting inside a state is based on <see cref="ChampionsLeague.AllTeamsRaw"/>.
-        /// The last winner is always the first team, MAC-PV always the last.
+        /// The last winner is always the first team, (first) MAC-PV always the last.
         /// </remarks>
-        public string[] GetParticipantsTable()
+        public Tuple<string, string> GetParticipantsTable()
         {
             SimpleLog.Info($"Building participants table for CL season {Cl.Season}.");
             if(Cl.Coefficients.Count <= 0)
@@ -345,7 +348,7 @@ namespace Simocracy.CLSim.PwrBot
 
             // get colors
             var rawList = new SortedDictionary<string, Dictionary<FootballTeam, Color>>(StringComparer.CurrentCultureIgnoreCase);
-            for(int i = Cl.AllTeamsRaw.Count - 1; i >= 0; i--)
+            for(int i = 0; i < Cl.AllTeamsRaw.Count; i++)
             {
                 var team = Cl.AllTeamsRaw[i];
 
@@ -383,34 +386,29 @@ namespace Simocracy.CLSim.PwrBot
                 rawList[stateIndex][team] = color;
             }
 
-            var finalList = new string[Cl.AllTeamsRaw.Count * 2];
-            int j = 0;
-            foreach(var r in rawList.Values)
-            {
-                foreach(var d in r)
-                {
-                    finalList[j++] = d.Value.ToString().Substring(3);
-                    finalList[j++] = d.Key.GetWikiCodeWithRemarks();
-                }
-            }
+            // convert for getting wiki code
+            var table = WikiCodeConverter.GetUafaClParticipantTable(rawList);
+            var tuple = Tuple.Create(rawList.First().Value.First().Key.FullName, table);
 
-            return finalList;
+            return tuple;
         }
 
         /// <summary>
         /// Returns the group team list as array
         /// </summary>
         /// <returns>The list</returns>
-        private string[] GetGroupTeamList()
+        private string GetGroupTeamList()
         {
             SimpleLog.Info($"Get group list for CL season {Cl.Season}.");
 
             var list = new List<string>(Cl.AllTeamsRaw.Count);
-            foreach (var g in Cl.Groups)
-            foreach (var t in g.Teams)
-                list.Add(t.FullName);
+            foreach(var g in Cl.Groups)
+                foreach(var t in g.Teams)
+                    list.Add(t.FullName);
 
-            return list.ToArray();
+            var table = WikiCodeConverter.GetGroupTeamsTable(list);
+
+            return table;
         }
 
         /// <summary>
@@ -439,25 +437,8 @@ namespace Simocracy.CLSim.PwrBot
             var dMatches = doubleMatches as DoubleMatch[] ?? doubleMatches.ToArray();
             var list = new List<string>(dMatches.Length);
             int teamIndex = 0;
-            foreach(var dm in dMatches)
-            {
-                var t1 = ++teamIndex;
-                var t2 = ++teamIndex;
-
-                var sb = new StringBuilder();
-                sb.AppendLine($"|A{t1}={dm.TeamA}");
-                sb.AppendLine($"|A{t2}={dm.TeamB}");
-                sb.AppendLine($"|A{t1}-A{t2}={dm.FirstLeg.ResultA}|{dm.FirstLeg.ResultA}");
-                sb.AppendLine($"|A{t2}-A{t1}={dm.SecondLeg.ResultA}|{dm.SecondLeg.ResultB}");
-                sb.Append($"|A{t1}-A{t2}-Verl=");
-                if(dm.SecondLeg.IsExtraTime)
-                    sb.AppendLine("j");
-                else
-                    sb.AppendLine();
-                sb.Append($"|A{t1}-A{t2}-Elfm={dm.SecondLeg.PenaltyA}|{dm.SecondLeg.PenaltyB}");
-
-                list.Add(sb.ToString());
-            }
+            foreach (var g in dMatches)
+                list.Add(WikiCodeConverter.ToWikiCode(g, ++teamIndex, ++teamIndex));
 
             return list.ToArray();
         }
