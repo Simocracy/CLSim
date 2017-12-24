@@ -56,14 +56,14 @@ namespace Simocracy.CLSim
                 {
                     // UAFA CL in Console
                     ConsoleManager.Show();
-                    UafaClConsole.Simulate(Globals.TeamListFile);
+                    UafaAlConsole.Simulate(Globals.TeamListFile);
                 }
                 else
                 {
                     // GUI
-                    app.InitializeComponent();
-                    MainWindow window = new MainWindow();
-                    app.Run(window);
+                    //app.InitializeComponent();
+                    //MainWindow window = new MainWindow();
+                    //app.Run(window);
                 }
             }
             catch(Exception e)

@@ -15,15 +15,15 @@ using SimpleLogger;
 namespace Simocracy.CLSim.PwrBot
 {
     /// <summary>
-    /// Wiki handler class for UAFA Champions League
+    /// Wiki handler class for UAFA America League
     /// </summary>
-    public class ClWikiHandler : INotifyPropertyChanged
+    public class AlWikiHandler : INotifyPropertyChanged
     {
 
         #region Constants
 
-        public const string CurrentClRawPageTitle = "CLSim/UAFA CL Vorlage 2054";
-        public const string ClPageTitlePrefix = "UAFA Champions League";
+        public const string CurrentAlRawPageTitle = "CLSim/UAFA AL Vorlage 2055";
+        public const string AlPageTitlePrefix = "UAFA America League";
 
         public static readonly Color ColorGroupStage = Color.FromRgb(0xe5, 0xb1, 0xb1);
         public static readonly Color ColorRoundOf32 = Color.FromRgb(0xff, 0xda, 0xda);
@@ -40,7 +40,7 @@ namespace Simocracy.CLSim.PwrBot
         private static Site _Site;
         private string _RawPageCode;
         private int _CurrentSeasonNumber;
-        private ChampionsLeague _Cl;
+        private AmericaLeague _Al;
 
         private string _PageTitle;
         private string _PageContent;
@@ -50,24 +50,24 @@ namespace Simocracy.CLSim.PwrBot
         #region Constructors
 
         /// <summary>
-        /// Creates a new cl wiki handler instance
+        /// Creates a new al wiki handler instance
         /// </summary>
-        public ClWikiHandler()
+        public AlWikiHandler()
         {
         }
 
         /// <summary>
-        /// Creates a new cl wiki handler instance
+        /// Creates a new al wiki handler instance
         /// </summary>
-        /// <param name="cl">The <see cref="ChampionsLeague"/> to use</param>
-        public ClWikiHandler(ChampionsLeague cl)
+        /// <param name="al">The <see cref="AmericaLeague"/> to use</param>
+        public AlWikiHandler(AmericaLeague al)
         {
-            Cl = cl;
+            Al = al;
 
-            var yearRegexMatch = YearRegex.Match(cl.Season);
+            var yearRegexMatch = YearRegex.Match(al.Season);
             var startYear = yearRegexMatch.Groups[2].Value;
             var finalYear = yearRegexMatch.Groups[3].Value.Substring(yearRegexMatch.Groups[3].Value.Length - 2);
-            PageTitle = $"{ClPageTitlePrefix} {startYear}/{finalYear}";
+            PageTitle = $"{AlPageTitlePrefix} {startYear}/{finalYear}";
         }
 
         #endregion
@@ -80,12 +80,12 @@ namespace Simocracy.CLSim.PwrBot
         public static Site Site => _Site ?? (_Site = new Site("https://simocracy.de", PwrBotLoginData.Username, PwrBotLoginData.Password));
 
         /// <summary>
-        /// The <see cref="ChampionsLeague"/> to export
+        /// The <see cref="AmericaLeague"/> to export
         /// </summary>
-        public ChampionsLeague Cl
+        public AmericaLeague Al
         {
-            get => _Cl;
-            set { _Cl = value; Notify(); }
+            get => _Al;
+            set { _Al = value; Notify(); }
         }
 
         /// <summary>
@@ -134,18 +134,18 @@ namespace Simocracy.CLSim.PwrBot
         #region Page Methods
 
         /// <summary>
-        /// Gets the raw page code for the CL site
+        /// Gets the raw page code for the AL site
         /// </summary>
         /// <returns>True if successfully</returns>
         public bool GetRawPageCode()
         {
-            SimpleLog.Info($"Get raw page code from {CurrentClRawPageTitle}.");
+            SimpleLog.Info($"Get raw page code from {CurrentAlRawPageTitle}.");
             var haveCode = false;
 
             try
             {
                 RawPageCode = String.Empty;
-                Page p = new Page(Site, CurrentClRawPageTitle);
+                Page p = new Page(Site, CurrentAlRawPageTitle);
                 p.Load();
                 RawPageCode = p.text;
 
@@ -155,30 +155,30 @@ namespace Simocracy.CLSim.PwrBot
             {
                 SimpleLog.Error(e.ToString());
             }
-            SimpleLog.Info($"Have raw page code from {CurrentClRawPageTitle}: {haveCode}");
+            SimpleLog.Info($"Have raw page code from {CurrentAlRawPageTitle}: {haveCode}");
             return haveCode;
         }
 
         /// <summary>
-        /// Searches for the current cl season number
+        /// Searches for the current al season number
         /// </summary>
         /// <returns>True if succesfully</returns>
         public bool GetClSeasonNumber()
         {
-            SimpleLog.Info($"Get current cl season number for season {Cl.Season}.");
+            SimpleLog.Info($"Get current al season number for season {Al.Season}.");
 
             try
             {
-                var seasonRegexMatch = YearRegex.Match(Cl.Season);
+                var seasonRegexMatch = YearRegex.Match(Al.Season);
                 if (!seasonRegexMatch.Success)
                 {
-                    SimpleLog.Warning($"Wrong season format: {Cl.Season}");
+                    SimpleLog.Warning($"Wrong season format: {Al.Season}");
                     return false;
                 }
 
                 var lastSeason = $"{Int32.Parse(seasonRegexMatch.Groups[2].Value) - 1}/{seasonRegexMatch.Groups[2].Value.Substring(2)}";
 
-                Page p = new Page(Site, $"{ClPageTitlePrefix} {lastSeason}");
+                Page p = new Page(Site, $"{AlPageTitlePrefix} {lastSeason}");
                 p.Load();
                 var seasonNumberMatch = Regex.Match(p.text, @"Die (\d{2})\. Saison der").Groups[1];
                 if (!seasonNumberMatch.Success)
@@ -200,7 +200,7 @@ namespace Simocracy.CLSim.PwrBot
         }
 
         /// <summary>
-        /// Creates the page content for the given <see cref="ChampionsLeague"/>
+        /// Creates the page content for the given <see cref="AmericaLeague"/>
         /// </summary>
         /// <returns>True if successfully</returns>
         /// <remarks>
@@ -231,11 +231,11 @@ namespace Simocracy.CLSim.PwrBot
         /// </remarks>
         public bool CreatePageContent()
         {
-            SimpleLog.Info($"Create content for page {PageTitle} with Champions League {Cl.Season}.");
+            SimpleLog.Info($"Create content for page {PageTitle} with America League {Al.Season}.");
 
-            if(Cl.Final == null || !Cl.Final.IsSimulated)
+            if(Al.Final == null || !Al.Final.IsSimulated)
             {
-                SimpleLog.Warning($"The given CL {Cl.Season} is not completly simulated.");
+                SimpleLog.Warning($"The given AL {Al.Season} is not completly simulated.");
                 return false;
             }
 
@@ -245,18 +245,18 @@ namespace Simocracy.CLSim.PwrBot
 
                 // base infos
                 var participants = GetParticipantsTable();
-                var yearRegexMatch = YearRegex.Match(Cl.Season);
+                var yearRegexMatch = YearRegex.Match(Al.Season);
                 var startYear = yearRegexMatch.Groups[2].Value;
                 var finalYear = yearRegexMatch.Groups[3].Value.Substring(yearRegexMatch.Groups[3].Value.Length - 2);
                 var groupTeamList = GetGroupTeamList();
                 var groupCodes = GetGroupCodes();
-                var roundOf16Codes = GetDoubleMatchCodes(Cl.RoundOf16);
-                var quarterFinalsCodes = GetDoubleMatchCodes(Cl.QuarterFinals);
+                var roundOf16Codes = GetDoubleMatchCodes(Al.RoundOf16);
+                var quarterFinalsCodes = GetDoubleMatchCodes(Al.QuarterFinals);
 
                 // building
                 sb.AppendFormat(RawPageCode,
                     CurrentSeasonNumber, startYear, finalYear, // season no/years
-                    Cl.Final.Date.ToLongDateString(), Cl.Final.City, Cl.Final.Winner, // final infos
+                    Al.Final.Date.ToLongDateString(), Al.Final.City, Al.Final.Winner, // final infos
                     ColorGroupStage.ToString().Substring(3), ColorRoundOf16.ToString().Substring(3), // base colors
                     ColorQuarterFinals.ToString().Substring(3), ColorSemiFinals.ToString().Substring(3), // base colors
                     ColorFinal.ToString().Substring(3), ColorWinner.ToString().Substring(3), // base colors
@@ -267,11 +267,11 @@ namespace Simocracy.CLSim.PwrBot
                     roundOf16Codes[4], roundOf16Codes[5], roundOf16Codes[6], roundOf16Codes[7], // Round of 16
                     quarterFinalsCodes[0], quarterFinalsCodes[1], // Quarter Finals
                     quarterFinalsCodes[2], quarterFinalsCodes[3], // Quarter Finals
-                    WikiCodeConverter.ToWikiCode(Cl.SemiFinals[0].FirstLeg), // semi final 1 first leg
-                    WikiCodeConverter.ToWikiCode(Cl.SemiFinals[1].FirstLeg), // semi final 2 first leg
-                    WikiCodeConverter.ToWikiCode(Cl.SemiFinals[1].SecondLeg), // semi final 2 second leg
-                    WikiCodeConverter.ToWikiCode(Cl.SemiFinals[0].SecondLeg), // semi final 1 second leg
-                    WikiCodeConverter.ToWikiCode(Cl.Final) // final
+                    WikiCodeConverter.ToWikiCode(Al.SemiFinals[0].FirstLeg), // semi final 1 first leg
+                    WikiCodeConverter.ToWikiCode(Al.SemiFinals[1].FirstLeg), // semi final 2 first leg
+                    WikiCodeConverter.ToWikiCode(Al.SemiFinals[1].SecondLeg), // semi final 2 second leg
+                    WikiCodeConverter.ToWikiCode(Al.SemiFinals[0].SecondLeg), // semi final 1 second leg
+                    WikiCodeConverter.ToWikiCode(Al.Final) // final
                     );
 
                 PageContent = sb.ToString();
@@ -314,13 +314,13 @@ namespace Simocracy.CLSim.PwrBot
         }
 
         /// <summary>
-        /// Creates the wiki page for the given <see cref="ChampionsLeague"/>
+        /// Creates the wiki page for the given <see cref="AmericaLeague"/>
         /// </summary>
-        /// <param name="cl">The champions league</param>
+        /// <param name="al">The champions league</param>
         /// <returns>True if successfully</returns>
-        public static bool CreateWikiPage(ChampionsLeague cl)
+        public static bool CreateWikiPage(AmericaLeague al)
         {
-            var handler = new ClWikiHandler(cl);
+            var handler = new AlWikiHandler(al);
             var succ = handler.GetRawPageCode();
             if(succ) succ = handler.GetClSeasonNumber();
             if(succ) succ = handler.CreatePageContent();
@@ -333,53 +333,56 @@ namespace Simocracy.CLSim.PwrBot
         #region Utility Methods
 
         /// <summary>
-        /// Gets the participants table values for the champions league with last winner first
+        /// Gets the participants table values for the america league with last winner first
         /// </summary>
         /// <returns>Tuple with the last winner and the table</returns>
         /// <remarks>
-        /// The team sorting inside a state is based on <see cref="ChampionsLeague.AllTeamsRaw"/>.
-        /// The last winner is always the first team, (first) MAC-PV always the last.
+        /// The team sorting inside a state is based on <see cref="AmericaLeague.AllTeamsRaw"/>.
+        /// The last winner is always the first team, (first) MAC-PV always the last, and after this the 8 CL relegation teams.
         /// </remarks>
         public Tuple<string, string> GetParticipantsTable()
         {
-            SimpleLog.Info($"Building participants table for CL season {Cl.Season}.");
-            if(Cl.Coefficients.Count <= 0)
-                Cl.CalculateCoefficient();
+            SimpleLog.Info($"Building participants table for AL season {Al.Season}.");
+            if(Al.Coefficients.Count <= 0)
+                Al.CalculateCoefficient();
 
             // get colors
             var rawList = new SortedDictionary<string, Dictionary<FootballTeam, Color>>(StringComparer.CurrentCultureIgnoreCase);
-            for(int i = 0; i < Cl.AllTeamsRaw.Count; i++)
+            for(int i = 0; i < Al.AllTeamsRaw.Count; i++)
             {
-                var team = Cl.AllTeamsRaw[i];
+                var team = Al.AllTeamsRaw[i];
 
-                var reached = Cl.Coefficients[team].GetReachedClRound();
+                var reached = Al.Coefficients[team].GetReachedAlRound();
                 var color = ColorGroupStage;
                 switch(reached)
                 {
-                    case ETournamentRound.CLGroupStage:
+                    case ETournamentRound.ALGroupStage:
                         color = ColorGroupStage;
                         break;
-                    case ETournamentRound.CLRoundOf16:
+                    case ETournamentRound.ALRoundOf32:
+                        color = ColorRoundOf32;
+                        break;
+                    case ETournamentRound.ALRoundOf16:
                         color = ColorRoundOf16;
                         break;
-                    case ETournamentRound.CLQuarterFinals:
+                    case ETournamentRound.ALQuarterFinals:
                         color = ColorQuarterFinals;
                         break;
-                    case ETournamentRound.CLSemiFinals:
+                    case ETournamentRound.ALSemiFinals:
                         color = ColorSemiFinals;
                         break;
-                    case ETournamentRound.CLFinal:
+                    case ETournamentRound.ALFinal:
                         color = ColorFinal;
                         break;
                 }
-                if(team == Cl.Final.Winner)
+                if(team == Al.Final.Winner)
                     color = ColorWinner;
 
                 var stateIndex = team.State;
                 if(i == 0) // tv
-                    stateIndex = "aaatv";
-                else if(team.State.ToLower() == "mac-pv" && !rawList.ContainsKey("zzzmacpv")) // MAC-PV team
-                    stateIndex = "zzzmacpv";
+                    stateIndex = WikiCodeConverter.TeamStateTvKey;
+                else if(team.State.ToLower() == "mac-pv" && !rawList.ContainsKey(WikiCodeConverter.TeamStateMacPvKey)) // MAC-PV team
+                    stateIndex = WikiCodeConverter.TeamStateMacPvKey;
 
                 if(!rawList.ContainsKey(stateIndex))
                     rawList[stateIndex] = new Dictionary<FootballTeam, Color>();
@@ -387,7 +390,7 @@ namespace Simocracy.CLSim.PwrBot
             }
 
             // convert for getting wiki code
-            var table = WikiCodeConverter.GetUafaClParticipantTable(rawList);
+            var table = WikiCodeConverter.GetUafaAlParticipantTable(rawList);
             var tuple = Tuple.Create(rawList.First().Value.First().Key.FullName, table);
 
             return tuple;
@@ -399,10 +402,10 @@ namespace Simocracy.CLSim.PwrBot
         /// <returns>The list</returns>
         private string GetGroupTeamList()
         {
-            SimpleLog.Info($"Get group list for CL season {Cl.Season}.");
+            SimpleLog.Info($"Get group list for AL season {Al.Season}.");
 
-            var list = new List<string>(Cl.AllTeamsRaw.Count);
-            foreach(var g in Cl.Groups)
+            var list = new List<string>(Al.AllTeamsRaw.Count);
+            foreach(var g in Al.Groups)
                 foreach(var t in g.Teams)
                     list.Add(t.FullName);
 
@@ -417,10 +420,10 @@ namespace Simocracy.CLSim.PwrBot
         /// <returns>The list</returns>
         private string[] GetGroupCodes()
         {
-            SimpleLog.Info($"Get group codes for CL season {Cl.Season}.");
+            SimpleLog.Info($"Get group codes for AL season {Al.Season}.");
 
             var list = new List<string>(8);
-            foreach (var g in Cl.Groups)
+            foreach (var g in Al.Groups)
                 list.Add(WikiCodeConverter.ToWikiCode(g, WikiCodeConverter.ELeagueTemplate.AlGruppe));
 
             return list.ToArray();
@@ -432,7 +435,7 @@ namespace Simocracy.CLSim.PwrBot
         /// <returns>The list</returns>
         private string[] GetDoubleMatchCodes(IEnumerable<DoubleMatch> doubleMatches)
         {
-            SimpleLog.Info($"Get double matches codes for {Cl.Season}.");
+            SimpleLog.Info($"Get double matches codes for {Al.Season}.");
 
             var dMatches = doubleMatches as DoubleMatch[] ?? doubleMatches.ToArray();
             var list = new List<string>(dMatches.Length);

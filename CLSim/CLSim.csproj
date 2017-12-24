@@ -66,17 +66,14 @@
     <Compile Include="Football\Base\ExtendedFootballMatch.cs" />
     <Compile Include="Football\Base\FootballLeagueComparer.cs" />
     <Compile Include="IO\WikiCodeConverter.cs" />
-    <Compile Include="PwrBot\ClWikiHandler.cs" />
+    <Compile Include="PwrBot\AlWikiHandler.cs" />
     <Compile Include="Football\UAFA\Coefficient.cs" />
     <Compile Include="Globals.cs" />
-    <Compile Include="Football\UAFA\ChampionsLeague.cs" />
+    <Compile Include="Football\UAFA\AmericaLeague.cs" />
     <Compile Include="Football\Base\FootballLeague.cs" />
     <Compile Include="Football\Base\FootballMatch.cs" />
     <Compile Include="Football\Base\FootballTeam.cs" />
     <Compile Include="Football\Base\LeagueTable.cs" />
-    <Compile Include="GUI\ClKoMatch.xaml.cs">
-      <DependentUpon>ClKoMatch.xaml</DependentUpon>
-    </Compile>
     <Compile Include="GUI\UafaClConsole.cs" />
     <Compile Include="IO\TeamListFileHandler.cs" />
     <Compile Include="PropertyChangedPropagator.cs" />
@@ -86,59 +83,15 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="GUI\ClGroup.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="GUI\ClKoMatch.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="GUI\GuiResources.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="GUI\HintTextBox.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="GUI\InfoPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="GUI\MainWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="External\SimpleLog.cs" />
-    <Compile Include="GUI\ClGroup.xaml.cs">
-      <DependentUpon>ClGroup.xaml</DependentUpon>
-    </Compile>
     <Compile Include="GUI\Converter.cs" />
-    <Compile Include="GUI\HintTextBox.xaml.cs">
-      <DependentUpon>HintTextBox.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="GUI\InfoPage.xaml.cs">
-      <DependentUpon>InfoPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="GUI\PropertyManager.cs" />
-    <Compile Include="GUI\UafaClPage.xaml.cs">
-      <DependentUpon>UafaClPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="IO\CSVHandler.cs" />
     <Compile Include="IO\ExcelHandler.cs" />
-    <Compile Include="GUI\MainWindow.xaml.cs">
-      <DependentUpon>MainWindow.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
-    <Page Include="GUI\UafaClPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="LibInfo.cs" />

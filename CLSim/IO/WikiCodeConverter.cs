@@ -34,6 +34,14 @@ namespace Simocracy.CLSim.IO
 
         #endregion
 
+        #region Constants
+
+        public const string TeamStateMacPvKey = "zzymacpv";
+        public const string TeamStateTvKey = "aaatv";
+        public const string TeamStateClRelKeyPrefix = "zzz";
+
+        #endregion
+
         #region Football Base Classes
 
         /// <summary>
@@ -60,14 +68,14 @@ namespace Simocracy.CLSim.IO
             sb.AppendLine("! style=\"width: 12%;\" | Tore");
             sb.AppendLine("! style=\"width: 8%;\" | Pkt.");
 
-            for(int i = 1; i <= table.Rows.Count; i++)
+            for (int i = 1; i <= table.Rows.Count; i++)
             {
                 var row = table.Rows[i - 1];
 
                 var clas = String.Empty;
-                if(i <= qual1Count)
+                if (i <= qual1Count)
                     clas = "class=\"qual1\"";
-                else if(i <= qual1Count + qual2Count)
+                else if (i <= qual1Count + qual2Count)
                     clas = "class=\"qual2\"";
 
                 sb.AppendLine($"|- {clas}");
@@ -101,7 +109,7 @@ namespace Simocracy.CLSim.IO
 
             sb.AppendLine(ToWikiCode(league.Table, qual1Count, qual2Count));
 
-            switch(template)
+            switch (template)
             {
                 case ELeagueTemplate.AlGruppe:
                     sb.Append(AlGroup(league));
@@ -163,7 +171,7 @@ namespace Simocracy.CLSim.IO
 
             var resStr = $"{match.ResultA}:{match.ResultB}";
             var extMatch = match as ExtendedFootballMatch;
-            if(extMatch != null && extMatch.IsExtraTime)
+            if (extMatch != null && extMatch.IsExtraTime)
                 resStr += " n. V.";
             sb.AppendLine($"|Ergebnis={resStr}");
 
@@ -179,12 +187,12 @@ namespace Simocracy.CLSim.IO
         #region Article Tables
 
         /// <summary>
-        /// Builds the participant table sorted by state for UAFA CL/AL.
-        /// First state must be last winner team, last state MAC-PV.
+        /// Builds the participant table sorted by state for UAFA AL.
+        /// First state must be last winner team (or filler), last state MAC-PV followed by CL relegation teams.
         /// </summary>
         /// <param name="participants">Participants sorted by state</param>
         /// <returns>Participant table wiki code</returns>
-        public static string GetUafaClParticipantTable(SortedDictionary<string, Dictionary<FootballTeam, Color>> participants)
+        public static string GetUafaAlParticipantTable(SortedDictionary<string, Dictionary<FootballTeam, Color>> participants)
         {
             SimpleLog.Info("Building participant table for UAFA CL/AL.");
             var sb = new StringBuilder();
@@ -199,24 +207,24 @@ namespace Simocracy.CLSim.IO
             sb.AppendLine("|-");
 
             int i = 1;
-            foreach(var state in participants)
+            foreach (var state in participants)
             {
-                if(state.Key.Contains("macpv"))
+                if (state.Key == TeamStateMacPvKey)
                 {
                     sb.AppendLine($"| style=\"background-color:#{state.Value.First().Value.ToString().Substring(3)}; colspan=\"5\" | Verterter Puerta Venturas: {state.Value.First().Key}");
                 }
-                else if(state.Key.EndsWith("tv"))
+                else if (state.Key == TeamStateTvKey)
                 {
                     sb.AppendLine($"| style=\"background-color:#{participants.First().Value.First().Value.ToString().Substring(3)};\" colspan=\"2\" | Titelverteidiger: {participants.First().Value.First().Key}");
                 }
                 else
                 {
 
-                    foreach(var team in state.Value)
+                    foreach (var team in state.Value)
                         sb.AppendLine($"| style=\"background-color:#{team.Value.ToString().Substring(3)};\" | {team.Key.GetWikiCodeWithRemarks()}");
 
                     i++;
-                    if(i % 2 == 0)
+                    if (i % 2 == 0)
                         sb.AppendLine("|-");
                 }
             }
@@ -247,7 +255,7 @@ namespace Simocracy.CLSim.IO
             sb.AppendLine("! style=\"width:25%;\" | Gruppe D");
             sb.AppendLine("|-");
 
-            for(int i = 0; i < 5; i++)
+            for (int i = 0; i < 5; i++)
             {
                 sb.AppendLine($"| {tArr[i]}");
                 sb.AppendLine($"| {tArr[i + 5]}");
@@ -262,7 +270,7 @@ namespace Simocracy.CLSim.IO
             sb.AppendLine("! style=\"width:25%;\" | Gruppe H");
             sb.AppendLine("|-");
 
-            for(int i = 20; i < 25; i++)
+            for (int i = 20; i < 25; i++)
             {
                 sb.AppendLine($"| {tArr[i]}");
                 sb.AppendLine($"| {tArr[i + 5]}");
@@ -289,7 +297,7 @@ namespace Simocracy.CLSim.IO
         {
             SimpleLog.Info($"Create the match code using Vorlage:AL-Gruppe for league {league.ID}.");
 
-            if(league.TeamCount != 5)
+            if (league.TeamCount != 5)
             {
                 SimpleLog.Error($"Cannot create match code using Vorlage:AL-Gruppe with {league.TeamCount} teams, need 5.");
                 return String.Empty;
@@ -304,26 +312,12 @@ namespace Simocracy.CLSim.IO
             sb.AppendLine($"|A4={league.Teams[3]}");
             sb.AppendLine($"|A5={league.Teams[4]}");
 
-            sb.Append($"|A1-A2={league.Matches.FirstOrDefault(m => m.TeamA == league.Teams[0] && m.TeamB == league.Teams[1])?.FullResultStr ?? String.Empty}\t");
-            sb.AppendLine($"|A2-A1={league.Matches.FirstOrDefault(m => m.TeamA == league.Teams[1] && m.TeamB == league.Teams[0])?.FullResultStr ?? String.Empty}");
-            sb.Append($"|A3-A4={league.Matches.FirstOrDefault(m => m.TeamA == league.Teams[2] && m.TeamB == league.Teams[3])?.FullResultStr ?? String.Empty}\t");
-            sb.AppendLine($"|A4-A3={league.Matches.FirstOrDefault(m => m.TeamA == league.Teams[3] && m.TeamB == league.Teams[2])?.FullResultStr ?? String.Empty}");
-            sb.Append($"|A2-A3={league.Matches.FirstOrDefault(m => m.TeamA == league.Teams[1] && m.TeamB == league.Teams[2])?.FullResultStr ?? String.Empty}\t");
-            sb.AppendLine($"|A3-A2={league.Matches.FirstOrDefault(m => m.TeamA == league.Teams[2] && m.TeamB == league.Teams[1])?.FullResultStr ?? String.Empty}");
-            sb.Append($"|A4-A5={league.Matches.FirstOrDefault(m => m.TeamA == league.Teams[3] && m.TeamB == league.Teams[4])?.FullResultStr ?? String.Empty}\t");
-            sb.AppendLine($"|A5-A4={league.Matches.FirstOrDefault(m => m.TeamA == league.Teams[4] && m.TeamB == league.Teams[3])?.FullResultStr ?? String.Empty}");
-            sb.Append($"|A5-A1={league.Matches.FirstOrDefault(m => m.TeamA == league.Teams[4] && m.TeamB == league.Teams[0])?.FullResultStr ?? String.Empty}\t");
-            sb.AppendLine($"|A1-A5={league.Matches.FirstOrDefault(m => m.TeamA == league.Teams[0] && m.TeamB == league.Teams[4])?.FullResultStr ?? String.Empty}");
-            sb.Append($"|A4-A2={league.Matches.FirstOrDefault(m => m.TeamA == league.Teams[3] && m.TeamB == league.Teams[1])?.FullResultStr ?? String.Empty}\t");
-            sb.AppendLine($"|A2-A4={league.Matches.FirstOrDefault(m => m.TeamA == league.Teams[1] && m.TeamB == league.Teams[3])?.FullResultStr ?? String.Empty}");
-            sb.Append($"|A3-A1={league.Matches.FirstOrDefault(m => m.TeamA == league.Teams[2] && m.TeamB == league.Teams[0])?.FullResultStr ?? String.Empty}\t");
-            sb.AppendLine($"|A1-A3={league.Matches.FirstOrDefault(m => m.TeamA == league.Teams[0] && m.TeamB == league.Teams[2])?.FullResultStr ?? String.Empty}");
-            sb.Append($"|A2-A5={league.Matches.FirstOrDefault(m => m.TeamA == league.Teams[1] && m.TeamB == league.Teams[4])?.FullResultStr ?? String.Empty}\t");
-            sb.AppendLine($"|A5-A2={league.Matches.FirstOrDefault(m => m.TeamA == league.Teams[4] && m.TeamB == league.Teams[1])?.FullResultStr ?? String.Empty}");
-            sb.Append($"|A1-A4={league.Matches.FirstOrDefault(m => m.TeamA == league.Teams[0] && m.TeamB == league.Teams[3])?.FullResultStr ?? String.Empty}\t");
-            sb.AppendLine($"|A4-A1={league.Matches.FirstOrDefault(m => m.TeamA == league.Teams[3] && m.TeamB == league.Teams[0])?.FullResultStr ?? String.Empty}");
-            sb.Append($"|A5-A3={league.Matches.FirstOrDefault(m => m.TeamA == league.Teams[4] && m.TeamB == league.Teams[2])?.FullResultStr ?? String.Empty}\t");
-            sb.AppendLine($"|A3-A5={league.Matches.FirstOrDefault(m => m.TeamA == league.Teams[2] && m.TeamB == league.Teams[4])?.FullResultStr ?? String.Empty}");
+            for (int ta = 1; ta < 5; ta++)
+                for (int tb = ta + 1; tb <= 5; tb++)
+                {
+                    sb.Append($"|A{ta}-A{tb}={league.Matches.FirstOrDefault(m => m.TeamA == league.Teams[ta] && m.TeamB == league.Teams[tb])?.FullResultStr ?? String.Empty}\t");
+                    sb.AppendLine($"|A{tb}-A{ta}={league.Matches.FirstOrDefault(m => m.TeamA == league.Teams[tb] && m.TeamB == league.Teams[ta])?.FullResultStr ?? String.Empty}");
+                }
 
             sb.Append("}}");
 
@@ -331,6 +325,5 @@ namespace Simocracy.CLSim.IO
         }
 
         #endregion
-
     }
 }

@@ -10,9 +10,9 @@ using SimpleLogger;
 namespace Simocracy.CLSim.Football.UAFA
 {
     /// <summary>
-    /// Simulates the UAFA Champions League in the mode since 2051/52
+    /// Simulates the UAFA America League in the mode since 2051/52
     /// </summary>
-    public class ChampionsLeague : INotifyPropertyChanged
+    public class AmericaLeague : INotifyPropertyChanged
     {
 
         #region Members
@@ -23,8 +23,9 @@ namespace Simocracy.CLSim.Football.UAFA
         private ObservableCollection<FootballLeague> _Groups;
         private bool? _IsGroupsSimulatable;
 
+        private ObservableCollection<DoubleMatch> _RoundOf32;
         private ObservableCollection<DoubleMatch> _RoundOf16;
-        private bool? _IsRoundOf16Simulatable;
+        private bool? _IsRoundOf32Simulatable;
         private ObservableCollection<DoubleMatch> _QuarterFinals;
         private ObservableCollection<DoubleMatch> _SemiFinals;
         private ExtendedFootballMatch _Final;
@@ -35,24 +36,25 @@ namespace Simocracy.CLSim.Football.UAFA
 
         #region Constants
 
-        public const int TournamentTeamCount = 40;
+        public const int TournamentTeamCount = 48;
 
         #endregion
 
         #region Constructor
 
         /// <summary>
-        /// Creates a new CL instance
+        /// Creates a new AL instance
         /// </summary>
-        public ChampionsLeague(string season)
+        public AmericaLeague(string season)
         {
             IsGroupsSimulatable = null;
-            IsRoundOf16Simulatable = null;
+            IsRoundOf32Simulatable = null;
             Season = season;
 
             AllTeamsRaw = new ObservableCollection<FootballTeam>();
             Coefficients = new Dictionary<FootballTeam, Coefficient>();
             Groups = new ObservableCollection<FootballLeague>();
+            RoundOf32 = new ObservableCollection<DoubleMatch>();
             RoundOf16 = new ObservableCollection<DoubleMatch>();
             QuarterFinals = new ObservableCollection<DoubleMatch>();
             SemiFinals = new ObservableCollection<DoubleMatch>();
@@ -65,7 +67,7 @@ namespace Simocracy.CLSim.Football.UAFA
         #region Properties
 
         /// <summary>
-        /// All Teams in raw order
+        /// All Teams in raw order, the last 8 teams will be enter in <see cref="RoundOf32"/>
         /// </summary>
         public ObservableCollection<FootballTeam> AllTeamsRaw
         {
@@ -127,6 +129,18 @@ namespace Simocracy.CLSim.Football.UAFA
         public bool IsAllGroupTablesCalculated => (Groups != null && Groups.Count > 0) && Groups.All(g => g.IsTableCalculated);
 
         /// <summary>
+        /// Round of 32
+        /// </summary>
+        public ObservableCollection<DoubleMatch> RoundOf32
+        {
+            get => _RoundOf32;
+            set
+            {
+                _RoundOf32 = value;
+                Notify();
+            }
+        }
+        /// <summary>
         /// Round of 16
         /// </summary>
         public ObservableCollection<DoubleMatch> RoundOf16
@@ -140,14 +154,14 @@ namespace Simocracy.CLSim.Football.UAFA
         }
 
         /// <summary>
-        /// True if drawing round of 16 was successfully, null if no drawing executed
+        /// True if drawing round of 32 was successfully, null if no drawing executed
         /// </summary>
-        public bool? IsRoundOf16Simulatable
+        public bool? IsRoundOf32Simulatable
         {
-            get => _IsRoundOf16Simulatable;
+            get => _IsRoundOf32Simulatable;
             private set
             {
-                _IsRoundOf16Simulatable = value;
+                _IsRoundOf32Simulatable = value;
                 Notify();
             }
         }
@@ -216,7 +230,7 @@ namespace Simocracy.CLSim.Football.UAFA
         /// <returns>Team readed count</returns>
         public int ReadTeamlist(string list)
         {
-            SimpleLog.Info("Read CL team input.");
+            SimpleLog.Info("Read AL team input.");
 
             var strTeams = list.Split(new[] {Environment.NewLine, "\n", "\r"}, StringSplitOptions.RemoveEmptyEntries);
             AllTeamsRaw.Clear();
@@ -244,7 +258,7 @@ namespace Simocracy.CLSim.Football.UAFA
         /// <param name="fileName">File name</param>
         public async Task<bool> ExportCoefficient(string fileName)
         {
-            SimpleLog.Info($"Calculate and export UAFA Coefficient for CL season {Season}.");
+            SimpleLog.Info($"Calculate and export UAFA Coefficient for AL season {Season}.");
 
             CalculateCoefficient();
 
@@ -252,7 +266,7 @@ namespace Simocracy.CLSim.Football.UAFA
 
             var suc = await Coefficient.Export(coeffs, Season, fileName);
 
-            SimpleLog.Info($"UAFA Coefficient for CL season {Season} exported, successfull={suc}.");
+            SimpleLog.Info($"UAFA Coefficient for AL season {Season} exported, successfull={suc}.");
 
             return suc;
         }
@@ -266,7 +280,7 @@ namespace Simocracy.CLSim.Football.UAFA
         /// </summary>
         public void CalculateCoefficient()
         {
-            SimpleLog.Info($"Calculate UAFA Coefficient for CL season {Season}.");
+            SimpleLog.Info($"Calculate UAFA Coefficient for AL season {Season}.");
 
             Coefficients.Clear();
 
@@ -274,24 +288,28 @@ namespace Simocracy.CLSim.Football.UAFA
 
             // Group Matches
             foreach(var match in Groups.SelectMany(g => g.Matches))
-                AddMatchToCoefficients(ETournamentRound.CLGroupStage, match);
+                AddMatchToCoefficients(ETournamentRound.ALGroupStage, match);
+
+            // Round of 32
+            foreach (var match in RoundOf32)
+                AddMatchToCoefficients(ETournamentRound.ALRoundOf32, match);
 
             // Round of 16
-            foreach(var match in RoundOf16)
-                AddMatchToCoefficients(ETournamentRound.CLRoundOf16, match);
+            foreach (var match in RoundOf16)
+                AddMatchToCoefficients(ETournamentRound.ALRoundOf16, match);
 
             // Quarter Finals
-            foreach(var match in QuarterFinals)
-                AddMatchToCoefficients(ETournamentRound.CLQuarterFinals, match);
+            foreach (var match in QuarterFinals)
+                AddMatchToCoefficients(ETournamentRound.ALQuarterFinals, match);
 
             // Semi Finals
             foreach(var match in SemiFinals)
-                AddMatchToCoefficients(ETournamentRound.CLSemiFinals, match);
+                AddMatchToCoefficients(ETournamentRound.ALSemiFinals, match);
 
             // Final
-            AddMatchToCoefficients(ETournamentRound.CLFinal, Final);
+            AddMatchToCoefficients(ETournamentRound.ALFinal, Final);
 
-            SimpleLog.Info($"UAFA Coefficient for CL season {Season} calculated.");
+            SimpleLog.Info($"UAFA Coefficient for AL season {Season} calculated.");
         }
 
         /// <summary>
@@ -335,11 +353,13 @@ namespace Simocracy.CLSim.Football.UAFA
         /// <param name="tryCount">Draw tries</param>
         public void DrawGroups(int tryCount = 5)
         {
-            SimpleLog.Info("Draw CL groups.");
+            SimpleLog.Info("Draw AL groups.");
+
+            var groupStageTeams = AllTeamsRaw.Take(40).ToArray();
 
             for(int trie = 0; trie < tryCount; trie++)
             {
-                var ordered = AllTeamsRaw.OrderBy(x => Globals.Random.Next()).ToArray();
+                var ordered = groupStageTeams.OrderBy(x => Globals.Random.Next()).ToArray();
 
                 Groups.Clear();
                 char groupId = 'A';
@@ -368,7 +388,7 @@ namespace Simocracy.CLSim.Football.UAFA
 
             ResetGroupMatches();
 
-            SimpleLog.Info("CL Groups drawed.");
+            SimpleLog.Info("AL Groups drawed.");
         }
 
         /// <summary>
@@ -377,7 +397,7 @@ namespace Simocracy.CLSim.Football.UAFA
         /// <returns>True for each group if success</returns>
         public bool[] ValidateGroups()
         {
-            SimpleLog.Info("Validate CL Groups.");
+            SimpleLog.Info("Validate AL Groups.");
 
             bool[] isNationValid = new bool[Groups.Count];
             bool reValidNeeded = false;
@@ -437,13 +457,13 @@ namespace Simocracy.CLSim.Football.UAFA
         #region Draw KO
 
         /// <summary>
-        /// Draw round of 16. If validation not succesfull, <paramref name="tryCount"/> times will be tried.
+        /// Draw round of 32. If validation not succesfull, <paramref name="tryCount"/> times will be tried.
         /// The last executed try will be used for match recreation.
         /// </summary>
         /// <param name="tryCount">Draw tries</param>
-        public void DrawRoundOf16(int tryCount = 5)
+        public void DrawRoundOf32(int tryCount = 5)
         {
-            SimpleLog.Info("Draw CL Round of 16.");
+            SimpleLog.Info("Draw AL Round of 32.");
 
             // get group results
             var firsts = Groups.Select(g => g.Table.Pos1).ToArray();
@@ -454,39 +474,39 @@ namespace Simocracy.CLSim.Football.UAFA
                 firsts = firsts.OrderBy(x => Globals.Random.Next()).ToArray();
                 secs = secs.OrderBy(x => Globals.Random.Next()).ToArray();
 
-                RoundOf16.Clear();
+                RoundOf32.Clear();
                 for(int i = 0; i < firsts.Length; i++)
-                    RoundOf16.Add(new DoubleMatch(secs[i], firsts[i]));
+                    RoundOf32.Add(new DoubleMatch(secs[i], firsts[i]));
 
-                bool[] isNationValid = ValidateGroupOf16();
+                bool[] isNationValid = ValidateGroupOf32();
 
-                IsRoundOf16Simulatable = isNationValid.All(x => x);
+                IsRoundOf32Simulatable = isNationValid.All(x => x);
 
-                if(IsRoundOf16Simulatable == true)
+                if(IsRoundOf32Simulatable == true)
                     break;
             }
         }
 
         /// <summary>
-        /// Validate the Round of 16 (no multiple teams from one state or group) and tries to switch teams between matches.
+        /// Validate the Round of 32 (no multiple teams from one state or group) and tries to switch teams between matches.
         /// Returns true for each match if success.
         /// </summary>
         /// <returns>True for each match if success</returns>
-        public bool[] ValidateGroupOf16()
+        public bool[] ValidateGroupOf32()
         {
-            SimpleLog.Info("Validate CL Round of 16.");
+            SimpleLog.Info("Validate AL Round of 32.");
 
-            bool[] isMatchValid = new bool[RoundOf16.Count];
+            bool[] isMatchValid = new bool[RoundOf32.Count];
             bool reValidNeeded = false;
             for(int i = 0; i < RoundOf16.Count; i++)
             {
-                var match = RoundOf16[i];
+                var match = RoundOf32[i];
                 isMatchValid[i] = IsMatchValid(match);
                 if(isMatchValid[i])
                     continue;
 
                 // Switch teams
-                var res = SwitchRoundOf16TeamMatches(i);
+                var res = SwitchRoundOf32TeamMatches(i);
                 if(!reValidNeeded)
                     reValidNeeded = res;
 
@@ -503,29 +523,29 @@ namespace Simocracy.CLSim.Football.UAFA
         /// Returns true if teams switched.
         /// </summary>
         /// <param name="matchNo">Match number</param>
-        private bool SwitchRoundOf16TeamMatches(int matchNo)
+        private bool SwitchRoundOf32TeamMatches(int matchNo)
         {
-            var match = RoundOf16[matchNo];
+            var match = RoundOf32[matchNo];
 
             // Check
             if(IsMatchValid(match))
                 return false;
 
             // Previous match
-            if(matchNo > 0 && RoundOf16[matchNo - 1].TeamA.State != match.TeamA.State)
+            if(matchNo > 0 && RoundOf32[matchNo - 1].TeamA.State != match.TeamA.State)
             {
-                var newTeam = RoundOf16[matchNo - 1].TeamA;
-                RoundOf16[matchNo - 1] = new DoubleMatch(match.TeamA, RoundOf16[matchNo - 1].TeamB);
-                RoundOf16[matchNo] = new DoubleMatch(newTeam, match.TeamB);
-                SimpleLog.Info($"Switched teams in Round of 16 matches {matchNo-1} and {matchNo}");
+                var newTeam = RoundOf32[matchNo - 1].TeamA;
+                RoundOf32[matchNo - 1] = new DoubleMatch(match.TeamA, RoundOf32[matchNo - 1].TeamB);
+                RoundOf32[matchNo] = new DoubleMatch(newTeam, match.TeamB);
+                SimpleLog.Info($"Switched teams in Round of 32 matches {matchNo-1} and {matchNo}");
             }
             // Next group
-            else if(matchNo < RoundOf16.Count - 1 && RoundOf16[matchNo + 1].TeamA.State != match.TeamA.State)
+            else if(matchNo < RoundOf32.Count - 1 && RoundOf32[matchNo + 1].TeamA.State != match.TeamA.State)
             {
-                var newTeam = RoundOf16[matchNo + 1].TeamA;
-                RoundOf16[matchNo + 1] = new DoubleMatch(match.TeamA, RoundOf16[matchNo + 1].TeamB);
-                RoundOf16[matchNo] = new DoubleMatch(newTeam, match.TeamB);
-                SimpleLog.Info($"Switched teams in Round of 16 matches {matchNo} and {matchNo+1}");
+                var newTeam = RoundOf32[matchNo + 1].TeamA;
+                RoundOf32[matchNo + 1] = new DoubleMatch(match.TeamA, RoundOf32[matchNo + 1].TeamB);
+                RoundOf32[matchNo] = new DoubleMatch(newTeam, match.TeamB);
+                SimpleLog.Info($"Switched teams in Round of 32 matches {matchNo} and {matchNo+1}");
             }
             else return false;
 
@@ -548,11 +568,26 @@ namespace Simocracy.CLSim.Football.UAFA
         }
 
         /// <summary>
+        /// Draws the Round of 16
+        /// </summary>
+        public void DrawRoundOf16()
+        {
+            SimpleLog.Info("Draw AL Round of 16.");
+
+            var teams = RoundOf32.Select(m => m.Winner).ToArray();
+            teams = teams.OrderBy(t => Globals.Random.Next()).ToArray();
+
+            RoundOf16.Clear();
+            for(int i = 0; i < teams.Length; i += 2)
+                RoundOf16.Add(new DoubleMatch(teams[i], teams[i + 1]));
+        }
+
+        /// <summary>
         /// Draws the Quarter finals
         /// </summary>
         public void DrawQuarterFinals()
         {
-            SimpleLog.Info("Draw CL Quarter Finals.");
+            SimpleLog.Info("Draw AL Quarter Finals.");
 
             var teams = RoundOf16.Select(m => m.Winner).ToArray();
             teams = teams.OrderBy(t => Globals.Random.Next()).ToArray();
@@ -567,7 +602,7 @@ namespace Simocracy.CLSim.Football.UAFA
         /// </summary>
         public void DrawSemiFinals()
         {
-            SimpleLog.Info("Draw CL Semi Finals.");
+            SimpleLog.Info("Draw AL Semi Finals.");
 
             var teams = QuarterFinals.Select(m => m.Winner).ToArray();
             teams = teams.OrderBy(t => Globals.Random.Next()).ToArray();
@@ -586,7 +621,7 @@ namespace Simocracy.CLSim.Football.UAFA
         /// <param name="refere">Final refere</param>
         public void InitFinal(string stadium, string city, DateTime? date = null, string refere = null)
         {
-            SimpleLog.Info($"Initialize CL Final with Stadium={stadium}, City={city}, Date={date}, Refere={refere}.");
+            SimpleLog.Info($"Initialize AL Final with Stadium={stadium}, City={city}, Date={date}, Refere={refere}.");
 
             Final = new ExtendedFootballMatch(SemiFinals[0].Winner, SemiFinals[1].Winner)
             {
@@ -606,10 +641,21 @@ namespace Simocracy.CLSim.Football.UAFA
         /// </summary>
         public void ResetGroupMatches()
         {
-            SimpleLog.Info("Initialize CL group matches.");
+            SimpleLog.Info("Initialize AL group matches.");
 
             foreach(var g in Groups)
                 g.CreateMatches();
+        }
+
+        /// <summary>
+        /// Resets the matches of the round of 32
+        /// </summary>
+        public void ResetRoundOf32Matches()
+        {
+            SimpleLog.Info("Initialize AL Round of 32 matches.");
+
+            foreach(var m in RoundOf32)
+                m.ResetMatch();
         }
 
         /// <summary>
@@ -617,7 +663,7 @@ namespace Simocracy.CLSim.Football.UAFA
         /// </summary>
         public void ResetRoundOf16Matches()
         {
-            SimpleLog.Info("Initialize CL Round of 16 matches.");
+            SimpleLog.Info("Initialize AL Round of 16 matches.");
 
             foreach(var m in RoundOf16)
                 m.ResetMatch();
@@ -628,7 +674,7 @@ namespace Simocracy.CLSim.Football.UAFA
         /// </summary>
         public void ResetQuarterFinalMatches()
         {
-            SimpleLog.Info("Initialize CL Quarter Finals matches.");
+            SimpleLog.Info("Initialize AL Quarter Finals matches.");
 
             foreach(var m in QuarterFinals)
                 m.ResetMatch();
@@ -639,7 +685,7 @@ namespace Simocracy.CLSim.Football.UAFA
         /// </summary>
         public void ResetSemiFinalMatches()
         {
-            SimpleLog.Info("Initialize CL Semi Finals matches.");
+            SimpleLog.Info("Initialize AL Semi Finals matches.");
 
             foreach(var m in SemiFinals)
                 m.ResetMatch();
@@ -652,7 +698,7 @@ namespace Simocracy.CLSim.Football.UAFA
         {
             if(IsGroupsSimulatable == true && Groups?.Count > 0)
             {
-                SimpleLog.Info("Simulate all CL groups.");
+                SimpleLog.Info("Simulate all AL groups.");
                 foreach(var group in Groups)
                 {
                     group.Simulate();
@@ -670,13 +716,36 @@ namespace Simocracy.CLSim.Football.UAFA
         }
 
         /// <summary>
+        /// Simulates the round of 32
+        /// </summary>
+        public void SimulateRoundOf32()
+        {
+            if(IsRoundOf32Simulatable == true && RoundOf32?.Count > 0)
+            {
+                SimpleLog.Info("Simulate CL Round of 32.");
+                foreach(var match in RoundOf32)
+                {
+                    match.Simulate();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Simulates the round of 32
+        /// </summary>
+        public async Task SimulateRoundOf32Async()
+        {
+            await Task.Run(() => SimulateRoundOf32());
+        }
+
+        /// <summary>
         /// Simulates the round of 16
         /// </summary>
         public void SimulateRoundOf16()
         {
-            if(IsRoundOf16Simulatable == true && RoundOf16?.Count > 0)
+            if(RoundOf16?.Count > 0)
             {
-                SimpleLog.Info("Simulate CL Round of 16.");
+                SimpleLog.Info("Simulate AL Round of 16.");
                 foreach(var match in RoundOf16)
                 {
                     match.Simulate();
@@ -699,7 +768,7 @@ namespace Simocracy.CLSim.Football.UAFA
         {
             if(QuarterFinals?.Count > 0)
             {
-                SimpleLog.Info("Simulate CL Quarter Finals.");
+                SimpleLog.Info("Simulate AL Quarter Finals.");
                 foreach(var match in QuarterFinals)
                 {
                     match.Simulate();
@@ -722,7 +791,7 @@ namespace Simocracy.CLSim.Football.UAFA
         {
             if(SemiFinals?.Count > 0)
             {
-                SimpleLog.Info("Simulate CL Semi Finals.");
+                SimpleLog.Info("Simulate AL Semi Finals.");
                 foreach(var match in SemiFinals)
                 {
                     match.Simulate();
@@ -745,7 +814,7 @@ namespace Simocracy.CLSim.Football.UAFA
         {
             if(Final != null)
             {
-                SimpleLog.Info("Simulate CL Final.");
+                SimpleLog.Info("Simulate AL Final.");
                 Final.Simulate();
             }
         }

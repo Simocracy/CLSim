@@ -10,14 +10,14 @@ namespace Simocracy.CLSim.Test
     [TestClass]
     public class ChampionsLeagueTest
     {
-        private ChampionsLeague Cl;
+        private AmericaLeague Cl;
 
         [TestInitialize]
         public void InitTests()
         {
             Cl = null;
 
-            Cl = new ChampionsLeague("2053/54");
+            Cl = new AmericaLeague("2053/54");
             var groupA = new FootballLeague("A", FootballLeague.EMatchMode.Default,
                 new FootballTeam("{{FRC}} BAM", 12),
                 new FootballTeam("{{UNS}} SRFC", 12),

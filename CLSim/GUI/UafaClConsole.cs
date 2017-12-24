@@ -7,20 +7,20 @@ using SimpleLogger;
 namespace Simocracy.CLSim.GUI
 {
     /// <summary>
-    /// Handler for simulating uafa cl per console
+    /// Handler for simulating uafa al per console
     /// </summary>
-    public class UafaClConsole
+    public class UafaAlConsole
     {
 
         #region Constuctor
 
         /// <summary>
-        /// Starts a new uafa cl simulation in console
+        /// Starts a new uafa al simulation in console
         /// </summary>
         /// <param name="season">The season to be simulated</param>
-        public UafaClConsole(string season)
+        public UafaAlConsole(string season)
         {
-            Cl = new ChampionsLeague(season);
+            Al = new AmericaLeague(season);
         }
 
         #endregion
@@ -28,35 +28,36 @@ namespace Simocracy.CLSim.GUI
         #region Properties
 
         /// <summary>
-        /// The CL instance
+        /// The AL instance
         /// </summary>
-        public ChampionsLeague Cl { get; set; }
+        public AmericaLeague Al { get; set; }
 
         #endregion
 
         #region Main Interaction Methods
 
         /// <summary>
-        /// Initiates the simulation of the Champions League
+        /// Initiates the simulation of the America League
         /// </summary>
         /// <param name="teamListFile">team list file</param>
         public static void Simulate(string teamListFile = null)
         {
-            WriteLine("UAFA Champions League simulation.");
+            WriteLine("UAFA America League simulation.");
             WriteLine();
             WriteLine("Simulated season:");
             var season = Read();
-            var cl = new UafaClConsole(season);
-            WriteLine($"UAFA Champions League season {cl.Cl.Season} created.");
+            var cl = new UafaAlConsole(season);
+            WriteLine($"UAFA America League season {cl.Al.Season} created.");
 
             cl.SimulateGroupStage(teamListFile);
+            cl.SimulateRoundOf32();
             cl.SimulateRoundOf16();
             cl.SimulateQuarterFinals();
             cl.SimulateSemiFinals();
             cl.SimulateFinal();
             cl.ManageExport();
 
-            WriteLine($"Simulation of UAFA Champions League season {cl.Cl.Season} finished.");
+            WriteLine($"Simulation of UAFA America League season {cl.Al.Season} finished.");
         }
 
         /// <summary>
@@ -76,9 +77,9 @@ namespace Simocracy.CLSim.GUI
                 }
                 try
                 {
-                    var teamList = TeamListFileHandler.ReadTeamList(teamListFile, 40);
-                    var teamCount = Cl.ReadTeamlist(teamList);
-                    if(teamCount != 40)
+                    var teamList = TeamListFileHandler.ReadTeamList(teamListFile, 48);
+                    var teamCount = Al.ReadTeamlist(teamList);
+                    if(teamCount != 48)
                     {
                         throw new ArgumentOutOfRangeException(nameof(teamCount), teamCount,
                             @"Teams could not be readed. Wrong file format?");
@@ -89,15 +90,31 @@ namespace Simocracy.CLSim.GUI
                     WriteEx("Error reading team list", e);
                 }
                 firstDoing = false;
-            } while(Cl.AllTeamsRaw.Count != 40);
+            } while(Al.AllTeamsRaw.Count != 40);
 
             WriteLine("Simulating drawing...");
-            do Cl.DrawGroups(); while(Cl.IsGroupsSimulatable != true);
+            do Al.DrawGroups(); while(Al.IsGroupsSimulatable != true);
 
             WriteLine("Simulating groups...");
-            Cl.SimulateGroups();
+            Al.SimulateGroups();
 
             WriteLine("Group stage simulated.");
+        }
+
+        /// <summary>
+        /// Simulates the round of 32
+        /// </summary>
+        public void SimulateRoundOf32()
+        {
+            WriteLine("Start simulating round of 32.");
+
+            WriteLine("Simulating drawing...");
+            do Al.DrawRoundOf32(); while(Al.IsRoundOf32Simulatable != true);
+
+            WriteLine("Simulating matches...");
+            Al.SimulateRoundOf32();
+
+            WriteLine("Round of 32 simulated.");
         }
 
         /// <summary>
@@ -108,10 +125,10 @@ namespace Simocracy.CLSim.GUI
             WriteLine("Start simulating round of 16.");
 
             WriteLine("Simulating drawing...");
-            do Cl.DrawRoundOf16(); while(Cl.IsRoundOf16Simulatable != true);
+            Al.DrawRoundOf16();
 
             WriteLine("Simulating matches...");
-            Cl.SimulateRoundOf16();
+            Al.SimulateRoundOf16();
 
             WriteLine("Round of 16 simulated.");
         }
@@ -124,10 +141,10 @@ namespace Simocracy.CLSim.GUI
             WriteLine("Start simulating quarter finals.");
 
             WriteLine("Simulating drawing...");
-            Cl.DrawQuarterFinals();
+            Al.DrawQuarterFinals();
 
             WriteLine("Simulating matches...");
-            Cl.SimulateQuarterFinals();
+            Al.SimulateQuarterFinals();
 
             WriteLine("Quarter finals simulated.");
         }
@@ -140,22 +157,22 @@ namespace Simocracy.CLSim.GUI
             WriteLine("Start simulating semi finals.");
 
             WriteLine("Simulating drawing...");
-            Cl.DrawSemiFinals();
+            Al.DrawSemiFinals();
 
-            WriteLine($"Enter team logo for {Cl.SemiFinals[0].TeamA}:");
-            Cl.SemiFinals[0].TeamA.Logo = Read();
+            WriteLine($"Enter team logo for {Al.SemiFinals[0].TeamA}:");
+            Al.SemiFinals[0].TeamA.Logo = Read();
 
-            WriteLine($"Enter team logo for {Cl.SemiFinals[0].TeamB}:");
-            Cl.SemiFinals[0].TeamB.Logo = Read();
+            WriteLine($"Enter team logo for {Al.SemiFinals[0].TeamB}:");
+            Al.SemiFinals[0].TeamB.Logo = Read();
 
-            WriteLine($"Enter team logo for {Cl.SemiFinals[1].TeamA}:");
-            Cl.SemiFinals[1].TeamA.Logo = Read();
+            WriteLine($"Enter team logo for {Al.SemiFinals[1].TeamA}:");
+            Al.SemiFinals[1].TeamA.Logo = Read();
 
-            WriteLine($"Enter team logo for {Cl.SemiFinals[1].TeamB}:");
-            Cl.SemiFinals[1].TeamB.Logo = Read();
+            WriteLine($"Enter team logo for {Al.SemiFinals[1].TeamB}:");
+            Al.SemiFinals[1].TeamB.Logo = Read();
 
             WriteLine("Simulating matches...");
-            Cl.SimulateSemiFinals();
+            Al.SimulateSemiFinals();
 
             WriteLine("Semi finals simulated.");
         }
@@ -182,12 +199,12 @@ namespace Simocracy.CLSim.GUI
             } while(date == DateTime.MinValue);
 
             WriteLine("Initializing final...");
-            Cl.InitFinal(stadium, city, date);
+            Al.InitFinal(stadium, city, date);
 
             WriteLine("Simulating final...");
-            Cl.SimulateFinal();
+            Al.SimulateFinal();
 
-            WriteLine($"Final result: {Cl.Final}");
+            WriteLine($"Final result: {Al.Final}");
 
             WriteLine("Final simulated.");
         }
@@ -204,14 +221,14 @@ namespace Simocracy.CLSim.GUI
             if(!String.IsNullOrWhiteSpace(coeffFile))
             {
                 WriteLine("Exporting UAFA Coefficient...");
-                if(Cl.ExportCoefficient(coeffFile).Result)
+                if(Al.ExportCoefficient(coeffFile).Result)
                     WriteLine("Export successfull.");
                 else
                     WriteLine("Export failed:");
             }
 
             WriteLine("Create wiki page...");
-            var exportSucc = ClWikiHandler.CreateWikiPage(Cl);
+            var exportSucc = AlWikiHandler.CreateWikiPage(Al);
             WriteLine(exportSucc ? "Export successfully." : "Errors on export. See log file for details.");
 
             WriteLine("Exporting finished.");
