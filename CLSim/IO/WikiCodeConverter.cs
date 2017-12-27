@@ -29,7 +29,12 @@ namespace Simocracy.CLSim.IO
             /// <summary>
             /// Vorlage:AL-Gruppe
             /// </summary>
-            AlGruppe
+            AlGruppe,
+
+            /// <summary>
+            /// 
+            /// </summary>
+            Gruppentabelle5Kreuz,
         }
 
         #endregion
@@ -107,12 +112,14 @@ namespace Simocracy.CLSim.IO
             SimpleLog.Info($"Convert football league {league.ID} to wiki code.");
             var sb = new StringBuilder();
 
-            sb.AppendLine(ToWikiCode(league.Table, qual1Count, qual2Count));
-
             switch (template)
             {
                 case ELeagueTemplate.AlGruppe:
-                    sb.Append(AlGroup(league));
+                    sb.AppendLine(ToWikiCode(league.Table, qual1Count, qual2Count));
+                    sb.Append(TemplateAlGroupTable(league));
+                    break;
+                case ELeagueTemplate.Gruppentabelle5Kreuz:
+                    sb.Append(Template5GroupTableCross(league));
                     break;
             }
 
@@ -316,7 +323,7 @@ namespace Simocracy.CLSim.IO
         /// </summary>
         /// <param name="league">league</param>
         /// <returns>the wiki code</returns>
-        private static string AlGroup(FootballLeague league)
+        private static string TemplateAlGroupTable(FootballLeague league)
         {
             SimpleLog.Info($"Create the match code using Vorlage:AL-Gruppe for league {league.ID}.");
 
@@ -342,6 +349,45 @@ namespace Simocracy.CLSim.IO
                     sb.AppendLine($"|A{tb}-A{ta}={league.Matches.FirstOrDefault(m => m.TeamA == league.Teams[tb] && m.TeamB == league.Teams[ta])?.FullResultStr ?? String.Empty}");
                 }
 
+            sb.Append("}}");
+
+            return sb.ToString();
+        }
+
+        /// <summary>
+        /// Creates the match code with the template Vorlage:5er-Gruppentabelle Kreuz (default code)
+        /// </summary>
+        /// <param name="league">league</param>
+        /// <returns>the wiki code</returns>
+        private static string Template5GroupTableCross(FootballLeague league)
+        {
+            SimpleLog.Info($"Create the match code using Vorlage:5er-Gruppentabelle Kreuz for league {league.ID}.");
+
+            if (league.TeamCount != 5)
+            {
+                SimpleLog.Error($"Cannot create match code using Vorlage:5er-Gruppentabelle Kreuz with {league.TeamCount} teams, need 5.");
+                return String.Empty;
+            }
+
+            var sb = new StringBuilder();
+
+            sb.AppendLine("{{5er-Gruppentabelle Kreuz");
+            sb.AppendLine($"|A={league.Teams[0].Name}\t|A-fl={league.Teams[0].State}");
+            sb.AppendLine($"|B={league.Teams[1].Name}\t|B-fl={league.Teams[1].State}");
+            sb.AppendLine($"|C={league.Teams[2].Name}\t|C-fl={league.Teams[2].State}");
+            sb.AppendLine($"|D={league.Teams[3].Name}\t|D-fl={league.Teams[3].State}");
+            sb.AppendLine($"|E={league.Teams[4].Name}\t|E-fl={league.Teams[4].State}");
+
+            for(int ta = 0; ta < 5; ta++)
+                for(int tb = 0; tb < 5; tb++)
+                    if(ta != tb)
+                    {
+                        var match = league.Matches.FirstOrDefault(
+                            m => m.TeamA == league.Teams[ta] && m.TeamB == league.Teams[tb]);
+                        sb.AppendLine($"|{Convert.ToChar(ta + 'A')}-{Convert.ToChar(tb + 'A')}={match?.ResultA}|{match?.ResultB}");
+                    }
+
+            sb.AppendLine("|c1=Auf|c2=Auf|c3=PO|c4=|c5=");
             sb.Append("}}");
 
             return sb.ToString();
