@@ -212,22 +212,24 @@ namespace Simocracy.CLSim.PwrBot
         ///  4: final city
         ///  5: winner team
         ///  6: group stage out color
-        ///  7: round of 16 out color
-        ///  8: quarter finals out color
-        ///  9: semi finals out color
-        /// 10: final color
-        /// 11: winner color
-        /// 12: last winner
-        /// 13: participant table
-        /// 14: group team list table
-        /// 15-22: Group A-H Codes
-        /// 23-30: Round of 16 matches
-        /// 31-34: Quarter finals matches
-        /// 35: Semi final 1 first leg
-        /// 36: Semi final 2 first leg
-        /// 37: Semi final 2 second leg
-        /// 38: Semi final 1 second leg
-        /// 39: Final match
+        ///  7: round of 32 out color
+        ///  8: round of 16 out color
+        ///  9: quarter finals out color
+        ///  10: semi finals out color
+        /// 11: final color
+        /// 12: winner color
+        /// 13: last winner
+        /// 14: participant table
+        /// 15: group team list table
+        /// 16-23: Group A-H Codes
+        /// 24-39: Round of 32 matches
+        /// 40-47: Round of 16 matches
+        /// 48-51: Quarter finals matches
+        /// 52: Semi final 1 first leg
+        /// 53: Semi final 2 first leg
+        /// 54: Semi final 2 second leg
+        /// 55: Semi final 1 second leg
+        /// 56: Final match
         /// </remarks>
         public bool CreatePageContent()
         {
@@ -250,6 +252,7 @@ namespace Simocracy.CLSim.PwrBot
                 var finalYear = yearRegexMatch.Groups[3].Value.Substring(yearRegexMatch.Groups[3].Value.Length - 2);
                 var groupTeamList = GetGroupTeamList();
                 var groupCodes = GetGroupCodes();
+                var roundOf32Codes = GetDoubleMatchCodes(Al.RoundOf32);
                 var roundOf16Codes = GetDoubleMatchCodes(Al.RoundOf16);
                 var quarterFinalsCodes = GetDoubleMatchCodes(Al.QuarterFinals);
 
@@ -257,12 +260,17 @@ namespace Simocracy.CLSim.PwrBot
                 sb.AppendFormat(RawPageCode,
                     CurrentSeasonNumber, startYear, finalYear, // season no/years
                     Al.Final.Date.ToLongDateString(), Al.Final.City, Al.Final.Winner, // final infos
-                    ColorGroupStage.ToString().Substring(3), ColorRoundOf16.ToString().Substring(3), // base colors
-                    ColorQuarterFinals.ToString().Substring(3), ColorSemiFinals.ToString().Substring(3), // base colors
-                    ColorFinal.ToString().Substring(3), ColorWinner.ToString().Substring(3), // base colors
+                    ColorGroupStage.ToString().Substring(3), ColorRoundOf32.ToString().Substring(3), // base colors
+                    ColorRoundOf16.ToString().Substring(3), ColorQuarterFinals.ToString().Substring(3), // base colors
+                    ColorSemiFinals.ToString().Substring(3), ColorFinal.ToString().Substring(3), // base colors
+                    ColorWinner.ToString().Substring(3), // base colors
                     participants.Item1, participants.Item2, groupTeamList, // participants
                     groupCodes[0], groupCodes[1], groupCodes[2], groupCodes[3], // groups
                     groupCodes[4], groupCodes[5], groupCodes[6], groupCodes[7], // groups
+                    roundOf32Codes[0], roundOf32Codes[1], roundOf32Codes[2], roundOf32Codes[3], // Round of 32
+                    roundOf32Codes[4], roundOf32Codes[5], roundOf32Codes[6], roundOf32Codes[7], // Round of 32
+                    roundOf32Codes[8], roundOf32Codes[9], roundOf32Codes[10], roundOf32Codes[11], // Round of 32
+                    roundOf32Codes[12], roundOf32Codes[13], roundOf32Codes[14], roundOf32Codes[15], // Round of 32
                     roundOf16Codes[0], roundOf16Codes[1], roundOf16Codes[2], roundOf16Codes[3], // Round of 16
                     roundOf16Codes[4], roundOf16Codes[5], roundOf16Codes[6], roundOf16Codes[7], // Round of 16
                     quarterFinalsCodes[0], quarterFinalsCodes[1], // Quarter Finals
@@ -336,11 +344,13 @@ namespace Simocracy.CLSim.PwrBot
         /// Gets the participants table values for the america league with last winner first
         /// </summary>
         /// <returns>Tuple with the last winner and the table</returns>
+        /// <param name="startYear">Start year(4 digits)</param>
+        /// <param name="finalYear">Final year(2 digits)</param>
         /// <remarks>
         /// The team sorting inside a state is based on <see cref="AmericaLeague.AllTeamsRaw"/>.
         /// The last winner is always the first team, (first) MAC-PV always the last, and after this the 8 CL relegation teams.
         /// </remarks>
-        public Tuple<string, string> GetParticipantsTable()
+        public Tuple<string, string> GetParticipantsTable(int startYear = 0, int finalYear = 0)
         {
             SimpleLog.Info($"Building participants table for AL season {Al.Season}.");
             if(Al.Coefficients.Count <= 0)
@@ -381,6 +391,8 @@ namespace Simocracy.CLSim.PwrBot
                 var stateIndex = team.State;
                 if(i == 0) // tv
                     stateIndex = WikiCodeConverter.TeamStateTvKey;
+                else if(i >= 40) // cl relegations
+                    stateIndex = WikiCodeConverter.TeamStateClRelKeyPrefix + team.State;
                 else if(team.State.ToLower() == "mac-pv" && !rawList.ContainsKey(WikiCodeConverter.TeamStateMacPvKey)) // MAC-PV team
                     stateIndex = WikiCodeConverter.TeamStateMacPvKey;
 
@@ -390,7 +402,7 @@ namespace Simocracy.CLSim.PwrBot
             }
 
             // convert for getting wiki code
-            var table = WikiCodeConverter.GetUafaAlParticipantTable(rawList);
+            var table = WikiCodeConverter.GetUafaAlParticipantTable(rawList, startYear, finalYear);
             var tuple = Tuple.Create(rawList.First().Value.First().Key.FullName, table);
 
             return tuple;

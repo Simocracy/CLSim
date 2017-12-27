@@ -191,8 +191,10 @@ namespace Simocracy.CLSim.IO
         /// First state must be last winner team (or filler), last state MAC-PV followed by CL relegation teams.
         /// </summary>
         /// <param name="participants">Participants sorted by state</param>
+        /// <param name="startYear">Start year of the AL (4 digits)</param>
+        /// <param name="finalYear">Final year of the AL (2 digits)</param>
         /// <returns>Participant table wiki code</returns>
-        public static string GetUafaAlParticipantTable(SortedDictionary<string, Dictionary<FootballTeam, Color>> participants)
+        public static string GetUafaAlParticipantTable(SortedDictionary<string, Dictionary<FootballTeam, Color>> participants, int startYear = 0, int finalYear = 0)
         {
             SimpleLog.Info("Building participant table for UAFA CL/AL.");
             var sb = new StringBuilder();
@@ -206,9 +208,9 @@ namespace Simocracy.CLSim.IO
             sb.AppendLine("! style=\"width:25%;\" | Zweitplatzierter");
             sb.AppendLine("|-");
 
-            int i = 1;
-            foreach (var state in participants)
+            for(int i = 1; i <= participants.Count; i++)
             {
+                var state = participants.ElementAt(i-1);
                 if (state.Key == TeamStateMacPvKey)
                 {
                     sb.AppendLine($"| style=\"background-color:#{state.Value.First().Value.ToString().Substring(3)}; colspan=\"5\" | Verterter Puerta Venturas: {state.Value.First().Key}");
@@ -217,13 +219,12 @@ namespace Simocracy.CLSim.IO
                 {
                     sb.AppendLine($"| style=\"background-color:#{participants.First().Value.First().Value.ToString().Substring(3)};\" colspan=\"2\" | Titelverteidiger: {participants.First().Value.First().Key}");
                 }
-                else
+                else if (!state.Key.StartsWith(TeamStateClRelKeyPrefix))
                 {
 
                     foreach (var team in state.Value)
                         sb.AppendLine($"| style=\"background-color:#{team.Value.ToString().Substring(3)};\" | {team.Key.GetWikiCodeWithRemarks()}");
 
-                    i++;
                     if (i % 2 == 0)
                         sb.AppendLine("|-");
                 }
@@ -231,6 +232,28 @@ namespace Simocracy.CLSim.IO
 
             sb.AppendLine("|}");
             sb.Append("<small><references group=\"A\" /></small>");
+
+            // add cl relegation teams
+            var clRelegations = participants.Where(x => x.Key.StartsWith(TeamStateClRelKeyPrefix));
+            var clRels = clRelegations as KeyValuePair<string, Dictionary<FootballTeam, Color>>[] ?? clRelegations.ToArray();
+            if (clRels.Any())
+            {
+                sb.AppendLine();
+                sb.AppendLine("{| class=\"wikitable\" style=\"width:100%\"");
+                sb.AppendLine($"! colspan=\"4\" | Dritter der Gruppenphase der [[UAFA Champions League " +
+                    $"{startYear}/{finalYear}|Champions League]] (Einstieg in der KO-Runde)");
+                sb.AppendLine("|-");
+                
+                for (int i = 1; i <= clRels.Length; i++)
+                {
+                    var team = clRels.ElementAt(i - 1).Value.First();
+                    sb.AppendLine($"| style=\"background-color:#{team.Value.ToString().Substring(3)};\" | {team.Key.GetWikiCodeWithRemarks()}");
+
+                    if (i % 4 == 0)
+                        sb.AppendLine("|-");
+                }
+                sb.Append("|}");
+            }
 
             return sb.ToString();
         }
