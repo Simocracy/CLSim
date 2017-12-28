@@ -436,7 +436,7 @@ namespace Simocracy.CLSim.PwrBot
 
             var list = new List<string>(8);
             foreach (var g in Al.Groups)
-                list.Add(WikiCodeConverter.ToWikiCode(g, WikiCodeConverter.ELeagueTemplate.AlGruppe));
+                list.Add(WikiCodeConverter.ToWikiCode(g, WikiCodeConverter.ELeagueTemplate.Gruppentabelle5Kreuz, 3, 0));
 
             return list.ToArray();
         }

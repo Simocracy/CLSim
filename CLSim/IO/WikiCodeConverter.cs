@@ -119,7 +119,7 @@ namespace Simocracy.CLSim.IO
                     sb.Append(TemplateAlGroupTable(league));
                     break;
                 case ELeagueTemplate.Gruppentabelle5Kreuz:
-                    sb.Append(Template5GroupTableCross(league));
+                    sb.Append(Template5GroupTableCross(league, qual1Count, qual2Count));
                     break;
             }
 
@@ -358,8 +358,10 @@ namespace Simocracy.CLSim.IO
         /// Creates the match code with the template Vorlage:5er-Gruppentabelle Kreuz (default code)
         /// </summary>
         /// <param name="league">league</param>
+        /// <param name="qual1Count">qual1 count</param>
+        /// <param name="qual2Count">qual2 count</param>
         /// <returns>the wiki code</returns>
-        private static string Template5GroupTableCross(FootballLeague league)
+        private static string Template5GroupTableCross(FootballLeague league, int qual1Count = 2, int qual2Count = 1)
         {
             SimpleLog.Info($"Create the match code using Vorlage:5er-Gruppentabelle Kreuz for league {league.ID}.");
 
@@ -387,7 +389,15 @@ namespace Simocracy.CLSim.IO
                         sb.AppendLine($"|{Convert.ToChar(ta + 'A')}-{Convert.ToChar(tb + 'A')}={match?.ResultA}|{match?.ResultB}");
                     }
 
-            sb.AppendLine("|c1=Auf|c2=Auf|c3=PO|c4=|c5=");
+            for(int i = 1; i <= 5; i++)
+            {
+                sb.Append($"|c{i}=");
+                if(i <= qual1Count)
+                    sb.Append("Auf");
+                else if(i <= qual1Count + qual2Count)
+                    sb.Append("PO");
+            }
+            sb.AppendLine();
             sb.Append("}}");
 
             return sb.ToString();
