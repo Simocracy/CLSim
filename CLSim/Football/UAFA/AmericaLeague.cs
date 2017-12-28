@@ -467,16 +467,20 @@ namespace Simocracy.CLSim.Football.UAFA
 
             // get group results
             var firsts = Groups.Select(g => g.Table.Pos1).ToArray();
-            var secs = Groups.Select(g => g.Table.Pos2).ToArray();
+            var others = Groups.Select(g => g.Table.Pos2)
+                .Concat(Groups.Select(g => g.Table.Pos3))
+                .Concat(AllTeamsRaw.Skip(40).Take(8)).ToArray();
 
             for(int trie = 0; trie < tryCount; trie++)
             {
                 firsts = firsts.OrderBy(x => Globals.Random.Next()).ToArray();
-                secs = secs.OrderBy(x => Globals.Random.Next()).ToArray();
+                others = others.OrderBy(x => Globals.Random.Next()).ToArray();
 
                 RoundOf32.Clear();
                 for(int i = 0; i < firsts.Length; i++)
-                    RoundOf32.Add(new DoubleMatch(secs[i], firsts[i]));
+                    RoundOf32.Add(new DoubleMatch(others[i], firsts[i]));
+                for(int i = firsts.Length; i < others.Length; i += 2)
+                    RoundOf32.Add(new DoubleMatch(others[i], others[i + 1]));
 
                 bool[] isNationValid = ValidateGroupOf32();
 
