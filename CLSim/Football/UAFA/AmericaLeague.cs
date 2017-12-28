@@ -482,7 +482,7 @@ namespace Simocracy.CLSim.Football.UAFA
                 for(int i = firsts.Length; i < others.Length; i += 2)
                     RoundOf32.Add(new DoubleMatch(others[i], others[i + 1]));
 
-                bool[] isNationValid = ValidateGroupOf32();
+                bool[] isNationValid = ValidateRoundOf32();
 
                 IsRoundOf32Simulatable = isNationValid.All(x => x);
 
@@ -496,7 +496,7 @@ namespace Simocracy.CLSim.Football.UAFA
         /// Returns true for each match if success.
         /// </summary>
         /// <returns>True for each match if success</returns>
-        public bool[] ValidateGroupOf32()
+        public bool[] ValidateRoundOf32()
         {
             SimpleLog.Info("Validate AL Round of 32.");
 
