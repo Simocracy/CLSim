@@ -374,11 +374,11 @@ namespace Simocracy.CLSim.IO
             var sb = new StringBuilder();
 
             sb.AppendLine("{{5er-Gruppentabelle Kreuz");
-            sb.AppendLine($"|A={league.Teams[0].Name}\t|A-fl={league.Teams[0].State}");
-            sb.AppendLine($"|B={league.Teams[1].Name}\t|B-fl={league.Teams[1].State}");
-            sb.AppendLine($"|C={league.Teams[2].Name}\t|C-fl={league.Teams[2].State}");
-            sb.AppendLine($"|D={league.Teams[3].Name}\t|D-fl={league.Teams[3].State}");
-            sb.AppendLine($"|E={league.Teams[4].Name}\t|E-fl={league.Teams[4].State}");
+            sb.AppendLine($"|A={league.Teams[0].Name}|A-fl={league.Teams[0].State}");
+            sb.AppendLine($"|B={league.Teams[1].Name}|B-fl={league.Teams[1].State}");
+            sb.AppendLine($"|C={league.Teams[2].Name}|C-fl={league.Teams[2].State}");
+            sb.AppendLine($"|D={league.Teams[3].Name}|D-fl={league.Teams[3].State}");
+            sb.AppendLine($"|E={league.Teams[4].Name}|E-fl={league.Teams[4].State}");
 
             for(int ta = 0; ta < 5; ta++)
                 for(int tb = 0; tb < 5; tb++)
