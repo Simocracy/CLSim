@@ -74,7 +74,7 @@
     <Compile Include="Football\Base\FootballMatch.cs" />
     <Compile Include="Football\Base\FootballTeam.cs" />
     <Compile Include="Football\Base\LeagueTable.cs" />
-    <Compile Include="GUI\UafaClConsole.cs" />
+    <Compile Include="GUI\UafaAlConsole.cs" />
     <Compile Include="IO\TeamListFileHandler.cs" />
     <Compile Include="PropertyChangedPropagator.cs" />
     <Compile Include="PwrBot\PwrBotLoginData.cs" />
