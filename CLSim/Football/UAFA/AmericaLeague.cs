@@ -380,7 +380,7 @@ namespace Simocracy.CLSim.Football.UAFA
 
                 bool[] isNationValid = ValidateGroups();
 
-                IsGroupsSimulatable = isNationValid.Contains(false);
+                IsGroupsSimulatable = !isNationValid.Contains(false);
 
                 if(IsGroupsSimulatable == true)
                     break;
@@ -502,7 +502,7 @@ namespace Simocracy.CLSim.Football.UAFA
 
             bool[] isMatchValid = new bool[RoundOf32.Count];
             bool reValidNeeded = false;
-            for(int i = 0; i < RoundOf16.Count; i++)
+            for(int i = 0; i < RoundOf32.Count; i++)
             {
                 var match = RoundOf32[i];
                 isMatchValid[i] = IsMatchValid(match);

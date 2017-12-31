@@ -259,7 +259,7 @@ namespace Simocracy.CLSim.PwrBot
                 // building
                 sb.AppendFormat(RawPageCode,
                     CurrentSeasonNumber, startYear, finalYear, // season no/years
-                    Al.Final.Date.ToLongDateString(), Al.Final.City, Al.Final.Winner, // final infos
+                    Al.Final.Date.ToString("d. MMMM yyyy"), Al.Final.City, Al.Final.Winner, // final infos
                     ColorGroupStage.ToString().Substring(3), ColorRoundOf32.ToString().Substring(3), // base colors
                     ColorRoundOf16.ToString().Substring(3), ColorQuarterFinals.ToString().Substring(3), // base colors
                     ColorSemiFinals.ToString().Substring(3), ColorFinal.ToString().Substring(3), // base colors
@@ -392,7 +392,7 @@ namespace Simocracy.CLSim.PwrBot
                 if(i == 0) // tv
                     stateIndex = WikiCodeConverter.TeamStateTvKey;
                 else if(i >= 40) // cl relegations
-                    stateIndex = WikiCodeConverter.TeamStateClRelKeyPrefix + team.State;
+                    stateIndex = WikiCodeConverter.TeamStateClRelKeyPrefix + i + team.State;
                 else if(team.State.ToLower() == "mac-pv" && !rawList.ContainsKey(WikiCodeConverter.TeamStateMacPvKey)) // MAC-PV team
                     stateIndex = WikiCodeConverter.TeamStateMacPvKey;
 

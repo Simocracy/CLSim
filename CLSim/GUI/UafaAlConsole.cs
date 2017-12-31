@@ -77,9 +77,9 @@ namespace Simocracy.CLSim.GUI
                 }
                 try
                 {
-                    var teamList = TeamListFileHandler.ReadTeamList(teamListFile, 48);
+                    var teamList = TeamListFileHandler.ReadTeamList(teamListFile, AmericaLeague.TournamentTeamCount);
                     var teamCount = Al.ReadTeamlist(teamList);
-                    if(teamCount != 48)
+                    if(teamCount != AmericaLeague.TournamentTeamCount)
                     {
                         throw new ArgumentOutOfRangeException(nameof(teamCount), teamCount,
                             @"Teams could not be readed. Wrong file format?");
@@ -90,7 +90,7 @@ namespace Simocracy.CLSim.GUI
                     WriteEx("Error reading team list", e);
                 }
                 firstDoing = false;
-            } while(Al.AllTeamsRaw.Count != 40);
+            } while(Al.AllTeamsRaw.Count != AmericaLeague.TournamentTeamCount);
 
             WriteLine("Simulating drawing...");
             do Al.DrawGroups(); while(Al.IsGroupsSimulatable != true);

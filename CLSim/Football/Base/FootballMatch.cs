@@ -287,7 +287,7 @@ namespace Simocracy.CLSim.Football.Base
             int resA = 0;
             int resB = 0;
 
-            time = time / 2;
+            time = time / 3;
 
             _Ball = Kickoff();
             for (int i = 1; i <= time; i++)
