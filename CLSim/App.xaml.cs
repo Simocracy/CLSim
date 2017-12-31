@@ -52,7 +52,7 @@ namespace Simocracy.CLSim
             App app = new App();
             try
             {
-                if(Globals.IsUafaClSimulation)
+                if(Globals.IsUafaAlSimulation)
                 {
                     // UAFA CL in Console
                     ConsoleManager.Show();

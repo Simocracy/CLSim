@@ -37,9 +37,9 @@ namespace Simocracy.CLSim
         public static string LogLevel { get; set; } = "warning";
 
         /// <summary>
-        /// Indicates that the uafa cl will be simulated in console
+        /// Indicates that the uafa al will be simulated in console
         /// </summary>
-        public static bool IsUafaClSimulation { get; set; }
+        public static bool IsUafaAlSimulation { get; set; }
 
         /// <summary>
         /// Team list file for console
@@ -59,9 +59,9 @@ namespace Simocracy.CLSim
                 v => LogLevel = v
             },
             {
-                "cl|uafacl", "Simulates an UAFA Champions League season in the command line." +
+                "al|uafaal", "Simulates an UAFA America League season in the command line." +
                              "Graphical simulation with input for each game will be disabled.",
-                v => IsUafaClSimulation = v != null
+                v => IsUafaAlSimulation = v != null
             },
             {
                 "teamfile", "Use the given file as team file for simulation.",
